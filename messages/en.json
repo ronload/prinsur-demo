@@ -1,0 +1,73 @@
+{
+  "common": {
+    "home": "Home",
+    "about": "About Us",
+    "contact": "Contact",
+    "login": "Login",
+    "register": "Register",
+    "search": "Search",
+    "compare": "Compare",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "next": "Next",
+    "previous": "Previous",
+    "continue": "Continue",
+    "back": "Back"
+  },
+  "navigation": {
+    "insurance": "Insurance",
+    "policies": "My Policies",
+    "agents": "Agents",
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "hero": {
+    "title": "Prinsur - Smart Insurance Matching Platform",
+    "subtitle": "A transparent, efficient, and user-centric insurance ecosystem",
+    "description": "Breaking information asymmetry through online comparison and offline matching (O2O) to create a transparent insurance decision environment",
+    "cta": "Get Started",
+    "learn_more": "Learn More"
+  },
+  "insurance": {
+    "types": {
+      "life": "Life Insurance",
+      "health": "Health Insurance",
+      "accident": "Accident Insurance",
+      "travel": "Travel Insurance",
+      "vehicle": "Vehicle Insurance",
+      "property": "Property Insurance"
+    },
+    "compare": "Compare Insurance",
+    "details": "Insurance Details",
+    "premium": "Premium",
+    "coverage": "Coverage",
+    "terms": "Terms",
+    "apply": "Apply"
+  },
+  "policies": {
+    "my_policies": "My Policies",
+    "policy_number": "Policy Number",
+    "premium_due": "Premium Due",
+    "expiry_date": "Expiry Date",
+    "status": "Status",
+    "active": "Active",
+    "expired": "Expired",
+    "pending": "Pending"
+  },
+  "agents": {
+    "find_agent": "Find Agent",
+    "agent_profile": "Agent Profile",
+    "rating": "Rating",
+    "reviews": "Reviews",
+    "specialties": "Specialties",
+    "contact": "Contact",
+    "book_appointment": "Book Appointment"
+  }
+}

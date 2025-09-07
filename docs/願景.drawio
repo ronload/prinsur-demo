@@ -1,0 +1,64 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15" version="28.1.0">
+  <diagram name="第 1 页" id="iLWY_hcwSyX9t6-8T7zD">
+    <mxGraphModel dx="3191" dy="1408" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="isH7nadZhaSJChhDeK6z-2" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-100" y="545" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-3" value="郭昊鑫的小腦袋瓜" style="text;strokeColor=none;fillColor=none;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="-100" y="545" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-6" value="" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="isH7nadZhaSJChhDeK6z-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="160" y="400" as="sourcePoint" />
+            <mxPoint x="-360" y="410" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-8" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-680" y="90" width="300" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-9" value="&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;想解決的問題：&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;(1)消費者端&lt;br&gt;&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;1.改善在對保單或保險公司的金融商品&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;還不了解的情況下就購買的現況&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;2.親情或人情保單&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;3.孤兒保單、理賠流程無法被確實照顧&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;4.可以自由選擇商品及費率，達到資訊&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;的平等，最重要的莫過於能自由比較同&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;類型商品或相似商品的費率&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;5.在有限的能力及範圍內避免保險業務&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;過多的推銷行為&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;6.管理自己擁有的保單及保單、年金到期&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;提醒，避免到期而不自知的情況&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;(2)保險人員端&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;1,能在居住的地區附近挖掘新的客戶&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;2.大幅度提高成功簽約的可能性&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="-680" y="90" width="300" height="430" as="geometry" />
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-10" value="" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="isH7nadZhaSJChhDeK6z-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="440" y="540" as="sourcePoint" />
+            <mxPoint y="450" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-11" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-220" y="30" width="460" height="400" as="geometry" />
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-12" value="理想上如何解決：&lt;div&gt;(1)消費者端：&lt;/div&gt;&lt;div&gt;1.在開始選購任何金融商品之前放置講解商品的短影片教程（可&lt;/div&gt;&lt;div&gt;跳過的影片），確保不了解的用戶能簡單了解自己購買的商品&lt;/div&gt;&lt;div&gt;2.在用戶搜尋好自己想要的商品後會依照居住或方便的地點配對&lt;/div&gt;&lt;div&gt;專員前往簽約，讓親情保單的機率降低&lt;/div&gt;&lt;div&gt;3.隨著專員端使用人數的增加，可以行程專員離職後由上司或&lt;/div&gt;&lt;div&gt;同公司的專員接手的可能性&lt;/div&gt;&lt;div&gt;4.建立一個類似Hotel.com的價格比較平台，由用戶自行選擇想&lt;/div&gt;&lt;div&gt;購入的商品以逕行比較或組合，更精準的消費需要的產品&lt;/div&gt;&lt;div&gt;5.建立實名制的業務員評分機制，以用戶評價或回饋來抑制不舒服的推銷行為&lt;/div&gt;&lt;div&gt;6.在類似『我的保單、年金』的區域用簡單易懂的格式管理自己&lt;/div&gt;&lt;div&gt;已經擁有的保單，設置可以自由登入就保單跟剛完成簽約的保單的功能&lt;/div&gt;&lt;div&gt;(2)保險人員端&lt;/div&gt;&lt;div&gt;1.一樣使用定位功能配對消費者與專員端&lt;/div&gt;&lt;div&gt;2.由於消費者都是「主動」查詢過商品及費率，近程配對而來，&lt;/div&gt;&lt;div&gt;有更高的機率是最後會完成簽約的族群&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="-220" y="50" width="460" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-13" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-350" y="270" as="sourcePoint" />
+            <mxPoint x="-270" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-14" value="" style="endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;exitX=1;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="1" source="isH7nadZhaSJChhDeK6z-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="440" y="540" as="sourcePoint" />
+            <mxPoint x="320" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-15" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="50" width="370" height="460" as="geometry" />
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-16" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;fontSize=12;startSize=8;endSize=8;curved=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="280" as="sourcePoint" />
+            <mxPoint x="350" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="isH7nadZhaSJChhDeK6z-17" value="實際功能、使用流程&lt;div&gt;(1)無登入註冊的場單查詢&lt;/div&gt;&lt;div&gt;1.輸入性別、年齡&lt;/div&gt;&lt;div&gt;2.選擇想購入的保險、年金等商品&lt;/div&gt;&lt;div&gt;（2.5.如果不確定或不了解自己所需要的商品，點擊介紹影片）&lt;/div&gt;&lt;div&gt;3.按下比價按鈕查詢各公司的金融商品的比價資訊&lt;/div&gt;&lt;div&gt;4.在確認購買後按下「註冊並匹配」與銷售端人員逕行匹配及時間、地點敲定&lt;/div&gt;&lt;div&gt;5.（註冊後）在約定好的時間前提以簡訊或email醒該用戶&lt;/div&gt;&lt;div&gt;6.（註冊後、見面後）以罐頭訊息詢問是否簽約與為該業務員評分，或寫下訊息評論&lt;/div&gt;&lt;div&gt;(2)登入註冊的使用功能說明&lt;/div&gt;&lt;div&gt;1.管理已經預約的時間及地點&lt;/div&gt;&lt;div&gt;2.輸入並登入自己已經持有的保單，便於管理自己持有的商品，我們可以通知用戶商品的費率調整、商品是否到期、繳費日期&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="384" y="60" width="366" height="450" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

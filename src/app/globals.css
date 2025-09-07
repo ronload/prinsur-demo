@@ -67,8 +67,8 @@
   body {
     @apply bg-background text-foreground min-h-screen;
     font-feature-settings:
-      'rlig' 1,
-      'calt' 1;
+      "rlig" 1,
+      "calt" 1;
   }
 
   /* Linear-style typography */

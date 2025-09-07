@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, User } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { LanguageToggle } from '@/components/ui/language-toggle';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { useState, useEffect } from 'react';
-import { cn } from '@/lib/utils';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Menu, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageToggle } from "@/components/ui/language-toggle";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 interface MobileNavProps {
   items: { href: string; label: string }[];
@@ -17,7 +17,7 @@ interface MobileNavProps {
 
 function MobileNav({ items, onItemClick }: MobileNavProps) {
   const pathname = usePathname();
-  const currentLocale = pathname.startsWith('/en') ? 'en' : 'zh-TW';
+  const currentLocale = pathname.startsWith("/en") ? "en" : "zh-TW";
 
   return (
     <div className="flex flex-col space-y-2">
@@ -39,10 +39,10 @@ function MobileNav({ items, onItemClick }: MobileNavProps) {
             href={item.href}
             onClick={onItemClick}
             className={cn(
-              'block px-3 py-2 text-lg transition-colors rounded-md',
+              "block px-3 py-2 text-lg transition-colors rounded-md",
               isActive
-                ? 'text-foreground bg-muted'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                ? "text-foreground bg-muted"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
             )}
           >
             {item.label}
@@ -55,34 +55,34 @@ function MobileNav({ items, onItemClick }: MobileNavProps) {
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLocale, setCurrentLocale] = useState('zh-TW');
+  const [currentLocale, setCurrentLocale] = useState("zh-TW");
   const pathname = usePathname();
 
   useEffect(() => {
     const path = window.location.pathname;
-    if (path.startsWith('/en')) {
-      setCurrentLocale('en');
+    if (path.startsWith("/en")) {
+      setCurrentLocale("en");
     } else {
-      setCurrentLocale('zh-TW');
+      setCurrentLocale("zh-TW");
     }
   }, []);
 
   const navigationItems = [
     {
       href: `/${currentLocale}/insurance`,
-      label: currentLocale === 'en' ? 'Insurance' : '保險商品',
+      label: currentLocale === "en" ? "Insurance" : "保險商品",
     },
     {
       href: `/${currentLocale}/policies`,
-      label: currentLocale === 'en' ? 'My Policies' : '我的保單',
+      label: currentLocale === "en" ? "My Policies" : "我的保單",
     },
     {
       href: `/${currentLocale}/agents`,
-      label: currentLocale === 'en' ? 'Agents' : '業務員',
+      label: currentLocale === "en" ? "Agents" : "業務員",
     },
     {
       href: `/${currentLocale}/dashboard`,
-      label: currentLocale === 'en' ? 'Dashboard' : '儀表板',
+      label: currentLocale === "en" ? "Dashboard" : "儀表板",
     },
   ];
 
@@ -133,10 +133,10 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'text-sm font-medium transition-colors px-3 py-2 rounded-md min-w-[100px] text-center',
+                    "text-sm font-medium transition-colors px-3 py-2 rounded-md min-w-[100px] text-center",
                     isActive
-                      ? 'text-foreground bg-muted'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                      ? "text-foreground bg-muted"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
                   )}
                 >
                   {item.label}

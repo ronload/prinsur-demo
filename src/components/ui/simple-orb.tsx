@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 interface SimpleOrbProps {
   size?: number;
   className?: string;
 }
 
-export function SimpleOrb({ size = 80, className = '' }: SimpleOrbProps) {
+export function SimpleOrb({ size = 80, className = "" }: SimpleOrbProps) {
   return (
     <div
       className={`relative ${className}`}
@@ -15,8 +15,8 @@ export function SimpleOrb({ size = 80, className = '' }: SimpleOrbProps) {
       <div
         className="absolute inset-0 animate-spin border border-foreground/10 rounded-full"
         style={{
-          animation: 'spin 8s linear infinite',
-          borderStyle: 'dashed',
+          animation: "spin 8s linear infinite",
+          borderStyle: "dashed",
         }}
       />
 
@@ -24,8 +24,8 @@ export function SimpleOrb({ size = 80, className = '' }: SimpleOrbProps) {
       <div
         className="absolute inset-2 animate-spin border border-foreground/15 rounded-full"
         style={{
-          animation: 'spin 6s linear infinite reverse',
-          borderStyle: 'dotted',
+          animation: "spin 6s linear infinite reverse",
+          borderStyle: "dotted",
         }}
       />
 
@@ -33,7 +33,7 @@ export function SimpleOrb({ size = 80, className = '' }: SimpleOrbProps) {
       <div
         className="absolute inset-4 animate-spin border border-foreground/20 rounded-full"
         style={{
-          animation: 'spin 4s linear infinite',
+          animation: "spin 4s linear infinite",
         }}
       />
 
@@ -46,7 +46,7 @@ export function SimpleOrb({ size = 80, className = '' }: SimpleOrbProps) {
           key={ring}
           className="absolute inset-0"
           style={{
-            animation: `spin ${12 + ring * 3}s linear infinite ${ring % 2 === 0 ? '' : 'reverse'}`,
+            animation: `spin ${12 + ring * 3}s linear infinite ${ring % 2 === 0 ? "" : "reverse"}`,
           }}
         >
           {Array.from({ length: 4 + ring }, (_, i) => {
@@ -70,7 +70,7 @@ export function SimpleOrb({ size = 80, className = '' }: SimpleOrbProps) {
 }
 
 // 點陣球體
-export function DotSphere({ size = 100, className = '' }: SimpleOrbProps) {
+export function DotSphere({ size = 100, className = "" }: SimpleOrbProps) {
   const dots = [];
 
   // 創建球面上的點
@@ -102,7 +102,7 @@ export function DotSphere({ size = 100, className = '' }: SimpleOrbProps) {
       style={{
         width: size,
         height: size,
-        animation: 'spin 20s linear infinite',
+        animation: "spin 20s linear infinite",
       }}
     >
       {dots.map((dot) => (
@@ -116,7 +116,7 @@ export function DotSphere({ size = 100, className = '' }: SimpleOrbProps) {
             top: `${size / 2 + dot.y}px`,
             opacity: dot.opacity,
             animationDelay: `${dot.delay}s`,
-            animationDuration: '2s',
+            animationDuration: "2s",
           }}
         />
       ))}

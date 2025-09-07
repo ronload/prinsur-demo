@@ -1,10 +1,10 @@
 export type InsuranceType =
-  | 'life'
-  | 'health'
-  | 'accident'
-  | 'travel'
-  | 'vehicle'
-  | 'property';
+  | "life"
+  | "health"
+  | "accident"
+  | "travel"
+  | "vehicle"
+  | "property";
 
 export interface InsuranceProduct {
   id: string;
@@ -33,7 +33,7 @@ export interface InsuranceProduct {
 export interface InsuranceFilter {
   type?: InsuranceType;
   age?: number;
-  gender?: 'male' | 'female';
+  gender?: "male" | "female";
   minPremium?: number;
   maxPremium?: number;
   company?: string;

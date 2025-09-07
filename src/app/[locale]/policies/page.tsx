@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useState, use } from "react";
+import { useTranslations } from "next-intl";
 import {
   FileText,
   DollarSign,
@@ -13,49 +13,50 @@ import {
   CheckCircle,
   Clock,
   X,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { mockPolicies, mockReminders, mockClaims } from '@/data/mock-policies';
-import { PolicyStatus } from '@/types/policy';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { mockPolicies, mockReminders, mockClaims } from "@/data/mock-policies";
+import { PolicyStatus } from "@/types/policy";
 
 export default function PoliciesPage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = use(params);
   const t = useTranslations();
   const [policies] = useState(mockPolicies);
   const [reminders] = useState(mockReminders);
   const [claims] = useState(mockClaims);
 
   const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('zh-TW', {
-      style: 'currency',
-      currency: 'TWD',
+    new Intl.NumberFormat("zh-TW", {
+      style: "currency",
+      currency: "TWD",
       minimumFractionDigits: 0,
     }).format(amount);
 
   const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('zh-TW');
+    new Date(dateString).toLocaleDateString("zh-TW");
 
   const getStatusBadge = (status: PolicyStatus) => {
     const statusConfig = {
-      active: { label: t('policies.active'), variant: 'default' as const },
+      active: { label: t("policies.active"), variant: "default" as const },
       expired: {
-        label: t('policies.expired'),
-        variant: 'destructive' as const,
+        label: t("policies.expired"),
+        variant: "destructive" as const,
       },
-      pending: { label: t('policies.pending'), variant: 'secondary' as const },
-      cancelled: { label: '已取消', variant: 'outline' as const },
+      pending: { label: t("policies.pending"), variant: "secondary" as const },
+      cancelled: { label: "已取消", variant: "outline" as const },
     };
 
     const config = statusConfig[status];
@@ -64,11 +65,11 @@ export default function PoliciesPage({
 
   const getClaimStatusIcon = (status: string) => {
     switch (status) {
-      case 'approved':
+      case "approved":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'processing':
+      case "processing":
         return <Clock className="h-4 w-4 text-yellow-500" />;
-      case 'rejected':
+      case "rejected":
         return <X className="h-4 w-4 text-red-500" />;
       default:
         return <Clock className="h-4 w-4 text-gray-500" />;
@@ -81,7 +82,7 @@ export default function PoliciesPage({
     <div className="container py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">
-          {locale === 'en' ? 'My Policies' : '我的保單'}
+          {locale === "en" ? "My Policies" : "我的保單"}
         </h1>
         <p className="text-muted-foreground">
           管理您的所有保險資產，追蹤繳費狀態和理賠進度
@@ -97,7 +98,7 @@ export default function PoliciesPage({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {policies.filter((p) => p.status === 'active').length}
+              {policies.filter((p) => p.status === "active").length}
             </div>
             <p className="text-xs text-muted-foreground">
               總保單數: {policies.length}
@@ -116,9 +117,10 @@ export default function PoliciesPage({
                 policies
                   .filter(
                     (p) =>
-                      p.status === 'active' && p.premium.frequency === 'monthly'
+                      p.status === "active" &&
+                      p.premium.frequency === "monthly",
                   )
-                  .reduce((sum, p) => sum + p.premium.amount, 0)
+                  .reduce((sum, p) => sum + p.premium.amount, 0),
               )}
             </div>
             <p className="text-xs text-muted-foreground">每月總繳費</p>
@@ -134,8 +136,8 @@ export default function PoliciesPage({
             <div className="text-2xl font-bold">
               {formatCurrency(
                 policies
-                  .filter((p) => p.status === 'active')
-                  .reduce((sum, p) => sum + p.coverage.amount, 0)
+                  .filter((p) => p.status === "active")
+                  .reduce((sum, p) => sum + p.coverage.amount, 0),
               )}
             </div>
             <p className="text-xs text-muted-foreground">總保障金額</p>
@@ -204,11 +206,11 @@ export default function PoliciesPage({
                       </div>
                       <div className="text-sm text-muted-foreground">
                         {(() => {
-                          if (policy.premium.frequency === 'monthly')
-                            return '每月';
-                          if (policy.premium.frequency === 'yearly')
-                            return '每年';
-                          return '每季';
+                          if (policy.premium.frequency === "monthly")
+                            return "每月";
+                          if (policy.premium.frequency === "yearly")
+                            return "每年";
+                          return "每季";
                         })()}
                         繳費
                       </div>
@@ -230,7 +232,7 @@ export default function PoliciesPage({
                         保障金額
                       </div>
                       <div className="text-sm">
-                        {formatDate(policy.coverage.startDate)} -{' '}
+                        {formatDate(policy.coverage.startDate)} -{" "}
                         {formatDate(policy.coverage.endDate)}
                       </div>
                     </div>
@@ -279,14 +281,14 @@ export default function PoliciesPage({
             <Card
               key={reminder.id}
               className={
-                !reminder.isRead ? 'border-orange-200 bg-orange-50/50' : ''
+                !reminder.isRead ? "border-orange-200 bg-orange-50/50" : ""
               }
             >
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <AlertCircle
-                      className={`h-5 w-5 ${!reminder.isRead ? 'text-orange-500' : 'text-muted-foreground'}`}
+                      className={`h-5 w-5 ${!reminder.isRead ? "text-orange-500" : "text-muted-foreground"}`}
                     />
                     <div>
                       <CardTitle className="text-base">
@@ -299,16 +301,16 @@ export default function PoliciesPage({
                   </div>
                   <Badge
                     variant={
-                      reminder.type === 'premium_due'
-                        ? 'destructive'
-                        : 'secondary'
+                      reminder.type === "premium_due"
+                        ? "destructive"
+                        : "secondary"
                     }
                   >
                     {(() => {
-                      if (reminder.type === 'premium_due') return '繳費提醒';
-                      if (reminder.type === 'expiry_warning') return '到期提醒';
-                      if (reminder.type === 'rate_change') return '費率變更';
-                      return '其他';
+                      if (reminder.type === "premium_due") return "繳費提醒";
+                      if (reminder.type === "expiry_warning") return "到期提醒";
+                      if (reminder.type === "rate_change") return "費率變更";
+                      return "其他";
                     })()}
                   </Badge>
                 </div>
@@ -339,7 +341,7 @@ export default function PoliciesPage({
                       {getClaimStatusIcon(claim.status)}
                     </CardTitle>
                     <CardDescription>
-                      申請編號: {claim.claimNumber} •{' '}
+                      申請編號: {claim.claimNumber} •{" "}
                       {formatDate(claim.submitDate)}
                     </CardDescription>
                   </div>
@@ -349,17 +351,17 @@ export default function PoliciesPage({
                     </div>
                     <Badge
                       variant={(() => {
-                        if (claim.status === 'approved') return 'default';
-                        if (claim.status === 'processing') return 'secondary';
-                        if (claim.status === 'rejected') return 'destructive';
-                        return 'outline';
+                        if (claim.status === "approved") return "default";
+                        if (claim.status === "processing") return "secondary";
+                        if (claim.status === "rejected") return "destructive";
+                        return "outline";
                       })()}
                     >
                       {(() => {
-                        if (claim.status === 'approved') return '已核准';
-                        if (claim.status === 'processing') return '審核中';
-                        if (claim.status === 'rejected') return '已拒絕';
-                        return '待審核';
+                        if (claim.status === "approved") return "已核准";
+                        if (claim.status === "processing") return "審核中";
+                        if (claim.status === "rejected") return "已拒絕";
+                        return "待審核";
                       })()}
                     </Badge>
                   </div>

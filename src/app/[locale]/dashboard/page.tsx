@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState, use } from "react";
 import {
   Users,
   Calendar,
@@ -14,53 +14,54 @@ import {
   AlertCircle,
   Target,
   Award,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   mockCustomers,
   mockAppointments,
   mockPerformance,
   mockDeals,
-} from '@/data/mock-agent-data';
-import { CustomerStatus, AppointmentStatus } from '@/types/agent-dashboard';
+} from "@/data/mock-agent-data";
+import { CustomerStatus, AppointmentStatus } from "@/types/agent-dashboard";
 
 export default function DashboardPage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = use(params);
   const [customers] = useState(mockCustomers);
   const [appointments] = useState(mockAppointments);
   const [performance] = useState(mockPerformance);
   const [deals] = useState(mockDeals);
 
   const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('zh-TW', {
-      style: 'currency',
-      currency: 'TWD',
+    new Intl.NumberFormat("zh-TW", {
+      style: "currency",
+      currency: "TWD",
       minimumFractionDigits: 0,
     }).format(amount);
 
   const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('zh-TW');
+    new Date(dateString).toLocaleDateString("zh-TW");
 
   const getCustomerStatusBadge = (status: CustomerStatus) => {
     const statusConfig = {
-      new: { label: '新客戶', variant: 'secondary' as const },
-      contacted: { label: '已聯絡', variant: 'default' as const },
-      meeting_scheduled: { label: '會議預定', variant: 'default' as const },
-      proposal_sent: { label: '已送提案', variant: 'default' as const },
-      closed: { label: '已成交', variant: 'default' as const },
-      lost: { label: '已流失', variant: 'destructive' as const },
+      new: { label: "新客戶", variant: "secondary" as const },
+      contacted: { label: "已聯絡", variant: "default" as const },
+      meeting_scheduled: { label: "會議預定", variant: "default" as const },
+      proposal_sent: { label: "已送提案", variant: "default" as const },
+      closed: { label: "已成交", variant: "default" as const },
+      lost: { label: "已流失", variant: "destructive" as const },
     };
 
     const config = statusConfig[status];
@@ -69,13 +70,13 @@ export default function DashboardPage({
 
   const getAppointmentStatusIcon = (status: AppointmentStatus) => {
     switch (status) {
-      case 'completed':
+      case "completed":
         return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case 'confirmed':
+      case "confirmed":
         return <Clock className="h-4 w-4 text-blue-500" />;
-      case 'scheduled':
+      case "scheduled":
         return <Calendar className="h-4 w-4 text-orange-500" />;
-      case 'cancelled':
+      case "cancelled":
         return <AlertCircle className="h-4 w-4 text-red-500" />;
       default:
         return <Clock className="h-4 w-4 text-gray-500" />;
@@ -84,62 +85,62 @@ export default function DashboardPage({
 
   const getAppointmentTypeText = (type: string) => {
     switch (type) {
-      case 'initial_consultation':
-        return '初次諮詢';
-      case 'product_presentation':
-        return '商品說明';
-      case 'contract_signing':
-        return '合約簽署';
+      case "initial_consultation":
+        return "初次諮詢";
+      case "product_presentation":
+        return "商品說明";
+      case "contract_signing":
+        return "合約簽署";
       default:
-        return '服務拜訪';
+        return "服務拜訪";
     }
   };
 
   const getAppointmentStatusText = (status: AppointmentStatus) => {
     switch (status) {
-      case 'confirmed':
-        return '已確認';
-      case 'scheduled':
-        return '已排程';
-      case 'completed':
-        return '已完成';
+      case "confirmed":
+        return "已確認";
+      case "scheduled":
+        return "已排程";
+      case "completed":
+        return "已完成";
       default:
-        return '其他';
+        return "其他";
     }
   };
 
   const getAppointmentStatusVariant = (status: AppointmentStatus) => {
-    if (status === 'confirmed') {
-      return 'default';
+    if (status === "confirmed") {
+      return "default";
     }
-    if (status === 'scheduled') {
-      return 'secondary';
+    if (status === "scheduled") {
+      return "secondary";
     }
-    return 'outline';
+    return "outline";
   };
 
   const getDealStatusText = (status: string) => {
-    if (status === 'approved') {
-      return '已核准';
+    if (status === "approved") {
+      return "已核准";
     }
-    if (status === 'pending') {
-      return '審核中';
+    if (status === "pending") {
+      return "審核中";
     }
-    return '已取消';
+    return "已取消";
   };
 
   const getDealStatusVariant = (status: string) => {
-    if (status === 'approved') {
-      return 'default';
+    if (status === "approved") {
+      return "default";
     }
-    if (status === 'pending') {
-      return 'secondary';
+    if (status === "pending") {
+      return "secondary";
     }
-    return 'destructive';
+    return "destructive";
   };
 
   const todayAppointments = appointments.filter((apt) => {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
     return apt.date === today;
   });
 
@@ -153,7 +154,7 @@ export default function DashboardPage({
     <div className="container py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">
-          {locale === 'en' ? 'Agent Dashboard' : '業務員工作台'}
+          {locale === "en" ? "Agent Dashboard" : "業務員工作台"}
         </h1>
         <p className="text-muted-foreground">管理您的客戶、預約和業績表現</p>
       </div>
@@ -291,7 +292,7 @@ export default function DashboardPage({
                         {getCustomerStatusBadge(customer.status)}
                       </CardTitle>
                       <CardDescription>
-                        {customer.age}歲 • {customer.location.city}{' '}
+                        {customer.age}歲 • {customer.location.city}{" "}
                         {customer.location.district}
                       </CardDescription>
                     </div>

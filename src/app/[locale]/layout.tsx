@@ -1,20 +1,22 @@
-import React from 'react';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import { notFound } from 'next/navigation';
-import { locales } from '@/i18n/config';
-import { ThemeProvider } from '@/components/providers/theme-provider';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
-import '../globals.css';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-const inter = Inter({ subsets: ['latin'] });
+import React from "react";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
+import { locales } from "@/i18n/config";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import "../globals.css";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Prinsur - 保險智慧媒合平台',
-  description: '一個透明、高效且以使用者為中心的保險生態系統',
+  title: "Prinsur - 保險智慧媒合平台",
+  description: "一個透明、高效且以使用者為中心的保險生態系統",
 };
 
 export function generateStaticParams() {

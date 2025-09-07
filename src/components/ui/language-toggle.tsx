@@ -1,37 +1,37 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { ChevronDown, Globe } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import * as React from "react";
+import { ChevronDown, Globe } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 export function LanguageToggle() {
   const pathname = usePathname();
-  const [currentLocale, setCurrentLocale] = React.useState('zh-TW');
+  const [currentLocale, setCurrentLocale] = React.useState("zh-TW");
 
   React.useEffect(() => {
-    if (pathname.startsWith('/en')) {
-      setCurrentLocale('en');
+    if (pathname.startsWith("/en")) {
+      setCurrentLocale("en");
     } else {
-      setCurrentLocale('zh-TW');
+      setCurrentLocale("zh-TW");
     }
   }, [pathname]);
 
   const getLanguageUrl = (locale: string) => {
-    const pathWithoutLocale = pathname.replace(/^\/(zh-TW|en)/, '') || '/';
-    return `/${locale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`;
+    const pathWithoutLocale = pathname.replace(/^\/(zh-TW|en)/, "") || "/";
+    return `/${locale}${pathWithoutLocale === "/" ? "" : pathWithoutLocale}`;
   };
 
   const getCurrentLanguageLabel = () =>
-    currentLocale === 'en' ? 'English' : '中文';
+    currentLocale === "en" ? "English" : "中文";
 
   return (
     <DropdownMenu>
@@ -48,13 +48,13 @@ export function LanguageToggle() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem asChild>
-          <Link href={getLanguageUrl('zh-TW')} className="w-full">
+          <Link href={getLanguageUrl("zh-TW")} className="w-full">
             {/* <span className="mr-2">🇹🇼</span> */}
             中文
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link href={getLanguageUrl('en')} className="w-full">
+          <Link href={getLanguageUrl("en")} className="w-full">
             {/* <span className="mr-2">🇺🇸</span> */}
             English
           </Link>

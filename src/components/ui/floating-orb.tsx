@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 interface FloatingOrbProps {
   size?: number;
   className?: string;
 }
 
-export function FloatingOrb({ size = 100, className = '' }: FloatingOrbProps) {
+export function FloatingOrb({ size = 100, className = "" }: FloatingOrbProps) {
   return (
     <div
       className={`relative ${className}`}
@@ -15,7 +15,7 @@ export function FloatingOrb({ size = 100, className = '' }: FloatingOrbProps) {
       <div
         className="absolute inset-0 animate-spin"
         style={{
-          animation: 'spin 20s linear infinite',
+          animation: "spin 20s linear infinite",
         }}
       >
         {Array.from({ length: 8 }, (_, i) => {
@@ -41,7 +41,7 @@ export function FloatingOrb({ size = 100, className = '' }: FloatingOrbProps) {
       <div
         className="absolute inset-0"
         style={{
-          animation: 'spin 15s linear infinite reverse',
+          animation: "spin 15s linear infinite reverse",
         }}
       >
         {Array.from({ length: 6 }, (_, i) => {
@@ -70,7 +70,7 @@ export function FloatingOrb({ size = 100, className = '' }: FloatingOrbProps) {
 }
 
 // 更簡潔的版本
-export function MinimalOrb({ size = 80, className = '' }: FloatingOrbProps) {
+export function MinimalOrb({ size = 80, className = "" }: FloatingOrbProps) {
   return (
     <div
       className={`relative ${className}`}
@@ -82,7 +82,7 @@ export function MinimalOrb({ size = 80, className = '' }: FloatingOrbProps) {
           key={ring}
           className="absolute inset-0 rounded-full border border-foreground/10"
           style={{
-            animation: `spin ${8 + ring * 4}s linear infinite ${ring % 2 === 0 ? '' : 'reverse'}`,
+            animation: `spin ${8 + ring * 4}s linear infinite ${ring % 2 === 0 ? "" : "reverse"}`,
             transform: `scale(${0.4 + ring * 0.2})`,
           }}
         >

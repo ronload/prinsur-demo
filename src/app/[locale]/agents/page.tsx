@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { useTranslations } from 'next-intl';
 import { Search, MapPin, Star, Phone, Mail, Calendar } from 'lucide-react';
 import { HiOutlineUserGroup } from 'react-icons/hi2';
@@ -16,11 +16,14 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { mockAgents } from '@/data/mock-insurance';
 
-export default function AgentsPage({
-  params: { locale },
+export default function AgentsPage({ 
+  params 
 }: {
-  params: { locale: string };
+  params: Promise<{
+    locale: string;
+  }>;
 }) {
+  const { locale } = use(params); 
   const t = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
 

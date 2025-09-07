@@ -1,11 +1,11 @@
-import { InsuranceType } from './insurance';
+import { InsuranceType } from "./insurance";
 
-export type PolicyStatus = 'active' | 'expired' | 'pending' | 'cancelled';
+export type PolicyStatus = "active" | "expired" | "pending" | "cancelled";
 
 export interface PolicyDocument {
   id: string;
   name: string;
-  type: 'contract' | 'receipt' | 'certificate' | 'claim';
+  type: "contract" | "receipt" | "certificate" | "claim";
   url: string;
   uploadDate: string;
 }
@@ -16,7 +16,7 @@ export interface Claim {
   claimNumber: string;
   type: string;
   amount: number;
-  status: 'pending' | 'approved' | 'rejected' | 'processing';
+  status: "pending" | "approved" | "rejected" | "processing";
   submitDate: string;
   description: string;
   documents?: PolicyDocument[];
@@ -31,7 +31,7 @@ export interface Policy {
   status: PolicyStatus;
   premium: {
     amount: number;
-    frequency: 'monthly' | 'quarterly' | 'yearly';
+    frequency: "monthly" | "quarterly" | "yearly";
     nextDueDate: string;
   };
   coverage: {
@@ -51,7 +51,7 @@ export interface Policy {
 export interface PolicyReminder {
   id: string;
   policyId: string;
-  type: 'premium_due' | 'expiry_warning' | 'document_required' | 'rate_change';
+  type: "premium_due" | "expiry_warning" | "document_required" | "rate_change";
   title: string;
   message: string;
   dueDate: string;

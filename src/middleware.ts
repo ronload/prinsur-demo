@@ -1,5 +1,5 @@
-import createMiddleware from 'next-intl/middleware';
-import { locales, defaultLocale } from './i18n/config';
+import createMiddleware from "next-intl/middleware";
+import { locales, defaultLocale } from "./i18n/config";
 
 export default createMiddleware({
   // A list of all locales that are supported
@@ -9,10 +9,10 @@ export default createMiddleware({
   defaultLocale,
 
   // Redirect to `/zh-TW` if no locale in the pathname
-  localePrefix: 'always',
+  localePrefix: "always",
 });
 
 export const config = {
   // Match only internationalized pathnames
-  matcher: ['/', '/(zh-TW|en)/:path*'],
+  matcher: ["/", "/(zh-TW|en)/:path*"],
 };

@@ -1,8 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { GridPattern } from '@/components/ui/GridPattern';
-import { cn } from '@/lib/utils';
-import { Search, Users, FileText } from 'lucide-react';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button";
+import { GridPattern } from "@/components/ui/GridPattern";
+import { cn } from "@/lib/utils";
+import { Search, Users, FileText } from "lucide-react";
+import Link from "next/link";
 
 export default async function Home({
   params,
@@ -32,18 +32,18 @@ export default async function Home({
             [16, 8],
           ]}
           className={cn(
-            '[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]',
-            'inset-x-0 inset-y-[-30%] h-[200%] skew-y-12'
+            "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+            "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
           )}
         />
         <div className="container max-w-7xl mx-auto text-center py-6 relative z-10">
           <h1 className="text-5xl lg:text-6xl xl:text-7xl font-medium tracking-tight mb-8">
-            {locale === 'en' ? 'Prinsur.com' : 'Prinsur.com'}
+            {locale === "en" ? "Prinsur.com" : "Prinsur.com"}
           </h1>
           <p className="text-2xl lg:text-3xl text-muted-foreground mb-8 leading-relaxed">
-            {locale === 'en'
-              ? 'A transparent, efficient, and user-centric insurance ecosystem'
-              : '一個透明、高效且以使用者為中心的保險生態系統'}
+            {locale === "en"
+              ? "A transparent, efficient, and user-centric insurance ecosystem"
+              : "一個透明、高效且以使用者為中心的保險生態系統"}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center my-16 px-6">
             <Button
@@ -52,7 +52,7 @@ export default async function Home({
               asChild
             >
               <Link href={`/${locale}/insurance`}>
-                {locale === 'en' ? 'Get Started' : '立即開始'}
+                {locale === "en" ? "Get Started" : "立即開始"}
               </Link>
             </Button>
             <Button
@@ -60,13 +60,13 @@ export default async function Home({
               size="lg"
               className="h-12 px-8 text-lg w-full sm:w-auto max-w-48"
             >
-              {locale === 'en' ? 'Learn More' : '了解更多'}
+              {locale === "en" ? "Learn More" : "了解更多"}
             </Button>
           </div>
           <p className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-            {locale === 'en'
-              ? 'Breaking information asymmetry through online comparison and offline matching (O2O) to create a transparent insurance decision environment'
-              : '透過線上比價、線下媒合 (O2O) 的模式，打破資訊不對稱，建立透明的保險決策環境'}
+            {locale === "en"
+              ? "Breaking information asymmetry through online comparison and offline matching (O2O) to create a transparent insurance decision environment"
+              : "透過線上比價、線下媒合 (O2O) 的模式，打破資訊不對稱，建立透明的保險決策環境"}
           </p>
         </div>
       </section>
@@ -76,12 +76,12 @@ export default async function Home({
         <div className="container">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-medium mb-4">
-              {locale === 'en' ? 'Core Features' : '核心功能'}
+              {locale === "en" ? "Core Features" : "核心功能"}
             </h2>
             <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              {locale === 'en'
-                ? 'Complete insurance service ecosystem for consumers and agents'
-                : '為消費者、業務員提供完整的保險服務生態系統'}
+              {locale === "en"
+                ? "Complete insurance service ecosystem for consumers and agents"
+                : "為消費者、業務員提供完整的保險服務生態系統"}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-5xl mx-auto">
@@ -90,12 +90,12 @@ export default async function Home({
                 <Search className="h-5 w-5 text-foreground transition-transform group-hover:scale-110" />
               </div>
               <h3 className="text-lg font-medium mb-3">
-                {locale === 'en' ? 'Smart Comparison' : '智慧比價'}
+                {locale === "en" ? "Smart Comparison" : "智慧比價"}
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {locale === 'en'
-                  ? 'Transparent insurance product comparison to help you easily find the most suitable insurance plan'
-                  : '透明的保險商品比價，讓您輕鬆找到最適合的保險方案'}
+                {locale === "en"
+                  ? "Transparent insurance product comparison to help you easily find the most suitable insurance plan"
+                  : "透明的保險商品比價，讓您輕鬆找到最適合的保險方案"}
               </p>
             </div>
             <div className="text-center group">
@@ -103,12 +103,12 @@ export default async function Home({
                 <Users className="h-5 w-5 text-foreground transition-transform group-hover:scale-110" />
               </div>
               <h3 className="text-lg font-medium mb-3">
-                {locale === 'en' ? 'Precise Matching' : '精準媒合'}
+                {locale === "en" ? "Precise Matching" : "精準媒合"}
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {locale === 'en'
-                  ? 'Precise matching of suitable insurance agents based on location and needs'
-                  : '根據地理位置和需求，精準媒合合適的保險業務專員'}
+                {locale === "en"
+                  ? "Precise matching of suitable insurance agents based on location and needs"
+                  : "根據地理位置和需求，精準媒合合適的保險業務專員"}
               </p>
             </div>
             <div className="text-center group">
@@ -116,12 +116,12 @@ export default async function Home({
                 <FileText className="h-5 w-5 text-foreground transition-transform group-hover:scale-110" />
               </div>
               <h3 className="text-lg font-medium mb-3">
-                {locale === 'en' ? 'Policy Management' : '保單管理'}
+                {locale === "en" ? "Policy Management" : "保單管理"}
               </h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {locale === 'en'
-                  ? 'Complete policy management system with automatic payment and expiry reminders'
-                  : '完整的保單管理系統，自動提醒繳費和到期時間'}
+                {locale === "en"
+                  ? "Complete policy management system with automatic payment and expiry reminders"
+                  : "完整的保單管理系統，自動提醒繳費和到期時間"}
               </p>
             </div>
           </div>

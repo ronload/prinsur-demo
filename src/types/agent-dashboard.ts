@@ -1,10 +1,10 @@
 export type CustomerStatus =
-  | 'new'
-  | 'contacted'
-  | 'meeting_scheduled'
-  | 'proposal_sent'
-  | 'closed'
-  | 'lost';
+  | "new"
+  | "contacted"
+  | "meeting_scheduled"
+  | "proposal_sent"
+  | "closed"
+  | "lost";
 
 export interface Customer {
   id: string;
@@ -12,7 +12,7 @@ export interface Customer {
   email: string;
   phone: string;
   age: number;
-  gender: 'male' | 'female';
+  gender: "male" | "female";
   location: {
     city: string;
     district: string;
@@ -25,17 +25,17 @@ export interface Customer {
 }
 
 export type AppointmentStatus =
-  | 'scheduled'
-  | 'confirmed'
-  | 'completed'
-  | 'cancelled'
-  | 'rescheduled';
+  | "scheduled"
+  | "confirmed"
+  | "completed"
+  | "cancelled"
+  | "rescheduled";
 
 export type AppointmentType =
-  | 'initial_consultation'
-  | 'product_presentation'
-  | 'contract_signing'
-  | 'service_visit';
+  | "initial_consultation"
+  | "product_presentation"
+  | "contract_signing"
+  | "service_visit";
 
 export interface Appointment {
   id: string;
@@ -68,7 +68,7 @@ export interface Deal {
   productName: string;
   premium: number;
   commission: number;
-  status: 'pending' | 'approved' | 'cancelled';
+  status: "pending" | "approved" | "cancelled";
   signedDate: string;
   effectiveDate: string;
 }

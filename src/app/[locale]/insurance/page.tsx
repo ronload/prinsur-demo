@@ -1,11 +1,12 @@
-'use client';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 
-import { useState, useMemo } from 'react';
-import { useTranslations } from 'next-intl';
-import { Search, Star, Building2, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState, useMemo, use } from "react";
+import { useTranslations } from "next-intl";
+import { Search, Star, Building2, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -13,25 +14,26 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { mockInsuranceProducts } from '@/data/mock-insurance';
-import { InsuranceFilter, InsuranceType } from '@/types/insurance';
+} from "@/components/ui/select";
+import { mockInsuranceProducts } from "@/data/mock-insurance";
+import { InsuranceFilter, InsuranceType } from "@/types/insurance";
 
 export default function InsurancePage({
-  params: { locale },
+  params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
+  const { locale } = use(params);
   const t = useTranslations();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<InsuranceFilter>({});
 
   const filteredProducts = useMemo(
@@ -70,7 +72,7 @@ export default function InsurancePage({
 
         return true;
       }),
-    [searchTerm, filter]
+    [searchTerm, filter],
   );
 
   const handleFilterChange = (key: keyof InsuranceFilter, value: any) => {
@@ -78,14 +80,14 @@ export default function InsurancePage({
   };
 
   const clearAllFilters = () => {
-    setSearchTerm('');
+    setSearchTerm("");
     setFilter({});
   };
 
   const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat('zh-TW', {
-      style: 'currency',
-      currency: 'TWD',
+    new Intl.NumberFormat("zh-TW", {
+      style: "currency",
+      currency: "TWD",
       minimumFractionDigits: 0,
     }).format(amount);
 
@@ -93,12 +95,12 @@ export default function InsurancePage({
     <div className="container py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">
-          {locale === 'en' ? 'Compare Insurance' : '比較保險'}
+          {locale === "en" ? "Compare Insurance" : "比較保險"}
         </h1>
         <p className="text-muted-foreground">
-          {locale === 'en'
-            ? 'Compare insurance products from different companies to find the best plan for you'
-            : '比較各家保險公司的商品，找到最適合您的保險方案'}
+          {locale === "en"
+            ? "Compare insurance products from different companies to find the best plan for you"
+            : "比較各家保險公司的商品，找到最適合您的保險方案"}
         </p>
       </div>
 
@@ -127,11 +129,11 @@ export default function InsurancePage({
           <div>
             <Label htmlFor="insurance-type">保險類型</Label>
             <Select
-              value={filter.type || 'all'}
+              value={filter.type || "all"}
               onValueChange={(value) =>
                 handleFilterChange(
-                  'type',
-                  value === 'all' ? undefined : (value as InsuranceType)
+                  "type",
+                  value === "all" ? undefined : (value as InsuranceType),
                 )
               }
             >
@@ -141,22 +143,22 @@ export default function InsurancePage({
               <SelectContent>
                 <SelectItem value="all">全部類型</SelectItem>
                 <SelectItem value="life">
-                  {t('insurance.types.life')}
+                  {t("insurance.types.life")}
                 </SelectItem>
                 <SelectItem value="health">
-                  {t('insurance.types.health')}
+                  {t("insurance.types.health")}
                 </SelectItem>
                 <SelectItem value="accident">
-                  {t('insurance.types.accident')}
+                  {t("insurance.types.accident")}
                 </SelectItem>
                 <SelectItem value="travel">
-                  {t('insurance.types.travel')}
+                  {t("insurance.types.travel")}
                 </SelectItem>
                 <SelectItem value="vehicle">
-                  {t('insurance.types.vehicle')}
+                  {t("insurance.types.vehicle")}
                 </SelectItem>
                 <SelectItem value="property">
-                  {t('insurance.types.property')}
+                  {t("insurance.types.property")}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -168,11 +170,11 @@ export default function InsurancePage({
               id="age"
               type="number"
               placeholder="輸入年齡"
-              value={filter.age || ''}
+              value={filter.age || ""}
               onChange={(e) =>
                 handleFilterChange(
-                  'age',
-                  parseInt(e.target.value, 10) || undefined
+                  "age",
+                  parseInt(e.target.value, 10) || undefined,
                 )
               }
             />
@@ -184,11 +186,11 @@ export default function InsurancePage({
               id="min-premium"
               type="number"
               placeholder="最低金額"
-              value={filter.minPremium || ''}
+              value={filter.minPremium || ""}
               onChange={(e) =>
                 handleFilterChange(
-                  'minPremium',
-                  parseInt(e.target.value, 10) || undefined
+                  "minPremium",
+                  parseInt(e.target.value, 10) || undefined,
                 )
               }
             />
@@ -200,11 +202,11 @@ export default function InsurancePage({
               id="max-premium"
               type="number"
               placeholder="最高金額"
-              value={filter.maxPremium || ''}
+              value={filter.maxPremium || ""}
               onChange={(e) =>
                 handleFilterChange(
-                  'maxPremium',
-                  parseInt(e.target.value, 10) || undefined
+                  "maxPremium",
+                  parseInt(e.target.value, 10) || undefined,
                 )
               }
             />

@@ -111,15 +111,47 @@ export default function Home({ params }: HomeProps) {
               {locale === "en" ? "Learn More" : "了解更多"}
             </Button>
           </div>
-          <p
+          <div 
             ref={descriptionAnimation.ref}
             style={descriptionAnimation.animationStyle}
-            className="text-lg lg:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto"
+            className="max-w-4xl mx-auto"
           >
-            {locale === "en"
-              ? "Breaking information asymmetry through online comparison and offline matching (O2O) to create a transparent insurance decision environment"
-              : "透過線上比價、線下媒合 (O2O) 的模式，打破資訊不對稱，建立透明的保險決策環境"}
-          </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+              <div className="text-center">
+                <p className="text-sm lg:text-base text-muted-foreground">
+                  {locale === "en" ? "Higher Success Rate" : "成交率提升"}
+                </p>
+                <div className="text-4xl lg:text-5xl font-bold text-primary mb-2 my-2">
+                  85%
+                </div>
+                <p className="text-xs lg:text-sm text-muted-foreground/70 mt-1">
+                  {locale === "en" ? "vs traditional methods" : "相較傳統方式"}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm lg:text-base text-muted-foreground">
+                  {locale === "en" ? "Premium Savings" : "保費節省"}
+                </p>
+                <div className="text-4xl lg:text-5xl font-bold text-primary mb-2 my-2">
+                  30%
+                </div>
+                <p className="text-xs lg:text-sm text-muted-foreground/70 mt-1">
+                  {locale === "en" ? "through smart comparison" : "透過智慧比價"}
+                </p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm lg:text-base text-muted-foreground">
+                  {locale === "en" ? "Fast Matching" : "快速媒合"}
+                </p>
+                <div className="text-4xl lg:text-5xl font-bold text-primary mb-2 my-2">
+                  24h
+                </div>
+                <p className="text-xs lg:text-sm text-muted-foreground/70 mt-1">
+                  {locale === "en" ? "average response time" : "平均回應時間"}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

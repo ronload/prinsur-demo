@@ -1,45 +1,45 @@
-'use client';
+"use client";
 
-import { useState, use } from 'react';
-import { useTranslations } from 'next-intl';
-import { Search, MapPin, Star, Phone, Mail, Calendar } from 'lucide-react';
-import { HiOutlineUserGroup } from 'react-icons/hi2';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useState, use } from "react";
+import { useTranslations } from "next-intl";
+import { Search, MapPin, Star, Phone, Mail, Calendar } from "lucide-react";
+import { HiOutlineUserGroup } from "react-icons/hi2";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { mockAgents } from '@/data/mock-insurance';
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { mockAgents } from "@/data/mock-insurance";
 
-export default function AgentsPage({ 
-  params 
+export default function AgentsPage({
+  params,
 }: {
   params: Promise<{
     locale: string;
   }>;
 }) {
-  const { locale } = use(params); 
+  const { locale } = use(params);
   const t = useTranslations();
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   const filteredAgents = mockAgents.filter(
     (agent) =>
       agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       agent.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
       agent.location.city.includes(searchTerm) ||
-      agent.location.district.includes(searchTerm)
+      agent.location.district.includes(searchTerm),
   );
 
   return (
     <div className="container py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-4">
-          {locale === 'en' ? 'Find Agent' : '尋找業務員'}
+          {locale === "en" ? "Find Agent" : "尋找業務員"}
         </h1>
         <p className="text-muted-foreground">
           根據您的地理位置和需求，找到最適合的保險業務專員
@@ -109,7 +109,7 @@ export default function AgentsPage({
               {/* Specialties */}
               <div>
                 <div className="text-sm font-medium mb-2">
-                  {t('agents.specialties')}
+                  {t("agents.specialties")}
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {agent.specialties.map((specialty) => (
@@ -157,7 +157,7 @@ export default function AgentsPage({
               </Button>
               <Button className="flex-1">
                 <Calendar className="h-4 w-4 mr-2" />
-                {t('agents.book_appointment')}
+                {t("agents.book_appointment")}
               </Button>
             </div>
           </Card>
@@ -173,7 +173,7 @@ export default function AgentsPage({
             沒有找到符合條件的業務專員
           </h3>
           <p className="text-muted-foreground mb-4">請嘗試調整搜尋關鍵字</p>
-          <Button variant="outline" onClick={() => setSearchTerm('')}>
+          <Button variant="outline" onClick={() => setSearchTerm("")}>
             清除搜尋
           </Button>
         </div>

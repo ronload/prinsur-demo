@@ -11,12 +11,12 @@ interface TypewriterTextProps {
   onComplete?: () => void;
 }
 
-export function TypewriterText({ 
-  text, 
-  className, 
-  delay = 0, 
+export function TypewriterText({
+  text,
+  className,
+  delay = 0,
   charDelay = 80,
-  onComplete 
+  onComplete,
 }: TypewriterTextProps) {
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -35,8 +35,8 @@ export function TypewriterText({
 
     if (currentIndex < text.length) {
       const timer = setTimeout(() => {
-        setDisplayedText(prev => prev + text[currentIndex]);
-        setCurrentIndex(prev => prev + 1);
+        setDisplayedText((prev) => prev + text[currentIndex]);
+        setCurrentIndex((prev) => prev + 1);
       }, charDelay);
 
       return () => clearTimeout(timer);
@@ -64,15 +64,15 @@ interface StaggeredTextProps {
   onComplete?: () => void;
 }
 
-export function StaggeredText({ 
-  text, 
-  className, 
-  delay = 0, 
+export function StaggeredText({
+  text,
+  className,
+  delay = 0,
   wordDelay = 150,
   charMode = false,
-  onComplete 
+  onComplete,
 }: StaggeredTextProps) {
-  const elements = charMode ? text.split('') : text.split(' ');
+  const elements = charMode ? text.split("") : text.split(" ");
   const [currentIndex, setCurrentIndex] = useState(-1);
   const [hasStarted, setHasStarted] = useState(false);
 
@@ -90,7 +90,7 @@ export function StaggeredText({
 
     if (currentIndex < elements.length - 1) {
       const timer = setTimeout(() => {
-        setCurrentIndex(prev => prev + 1);
+        setCurrentIndex((prev) => prev + 1);
       }, wordDelay);
 
       return () => clearTimeout(timer);
@@ -108,10 +108,10 @@ export function StaggeredText({
             "inline-block transition-all duration-300 ease-out",
             index <= currentIndex
               ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-2"
+              : "opacity-0 translate-y-2",
           )}
         >
-          {element === ' ' ? '\u00A0' : element}
+          {element === " " ? "\u00A0" : element}
         </span>
       ))}
     </span>

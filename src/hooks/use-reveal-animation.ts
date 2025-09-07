@@ -35,7 +35,7 @@ export function useRevealAnimation(options: UseRevealAnimationOptions = {}) {
           }, delay);
         }
       },
-      { threshold }
+      { threshold },
     );
 
     if (ref.current) {
@@ -66,12 +66,12 @@ export function useStaggeredReveal(count: number, baseDelay: number = 100) {
           // Stagger the animation of child items
           for (let i = 0; i < count; i++) {
             setTimeout(() => {
-              setVisibleItems(prev => new Set(prev).add(i));
+              setVisibleItems((prev) => new Set(prev).add(i));
             }, i * baseDelay);
           }
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     if (ref.current) {
@@ -86,7 +86,8 @@ export function useStaggeredReveal(count: number, baseDelay: number = 100) {
     return {
       opacity: isVisible ? 1 : 0,
       transform: isVisible ? "translateY(0px)" : "translateY(12px)",
-      transition: "opacity 400ms cubic-bezier(0.16, 1, 0.3, 1), transform 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+      transition:
+        "opacity 400ms cubic-bezier(0.16, 1, 0.3, 1), transform 400ms cubic-bezier(0.16, 1, 0.3, 1)",
       willChange: isVisible ? "auto" : "opacity, transform",
     };
   };

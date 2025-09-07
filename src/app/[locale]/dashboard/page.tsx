@@ -56,12 +56,30 @@ export default function DashboardPage({
 
   const getCustomerStatusBadge = (status: CustomerStatus) => {
     const statusConfig = {
-      new: { label: "新客戶", variant: "secondary" as const },
-      contacted: { label: "已聯絡", variant: "default" as const },
-      meeting_scheduled: { label: "會議預定", variant: "default" as const },
-      proposal_sent: { label: "已送提案", variant: "default" as const },
-      closed: { label: "已成交", variant: "default" as const },
-      lost: { label: "已流失", variant: "destructive" as const },
+      new: { 
+        label: locale === "en" ? "New Customer" : "新客戶", 
+        variant: "secondary" as const 
+      },
+      contacted: { 
+        label: locale === "en" ? "Contacted" : "已聯絡", 
+        variant: "default" as const 
+      },
+      meeting_scheduled: { 
+        label: locale === "en" ? "Meeting Scheduled" : "會議預定", 
+        variant: "default" as const 
+      },
+      proposal_sent: { 
+        label: locale === "en" ? "Proposal Sent" : "已送提案", 
+        variant: "default" as const 
+      },
+      closed: { 
+        label: locale === "en" ? "Closed" : "已成交", 
+        variant: "default" as const 
+      },
+      lost: { 
+        label: locale === "en" ? "Lost" : "已流失", 
+        variant: "destructive" as const 
+      },
     };
 
     const config = statusConfig[status];
@@ -86,26 +104,26 @@ export default function DashboardPage({
   const getAppointmentTypeText = (type: string) => {
     switch (type) {
       case "initial_consultation":
-        return "初次諮詢";
+        return locale === "en" ? "Initial Consultation" : "初次諮詢";
       case "product_presentation":
-        return "商品說明";
+        return locale === "en" ? "Product Presentation" : "商品說明";
       case "contract_signing":
-        return "合約簽署";
+        return locale === "en" ? "Contract Signing" : "合約簽署";
       default:
-        return "服務拜訪";
+        return locale === "en" ? "Service Visit" : "服務拜訪";
     }
   };
 
   const getAppointmentStatusText = (status: AppointmentStatus) => {
     switch (status) {
       case "confirmed":
-        return "已確認";
+        return locale === "en" ? "Confirmed" : "已確認";
       case "scheduled":
-        return "已排程";
+        return locale === "en" ? "Scheduled" : "已排程";
       case "completed":
-        return "已完成";
+        return locale === "en" ? "Completed" : "已完成";
       default:
-        return "其他";
+        return locale === "en" ? "Other" : "其他";
     }
   };
 
@@ -121,12 +139,12 @@ export default function DashboardPage({
 
   const getDealStatusText = (status: string) => {
     if (status === "approved") {
-      return "已核准";
+      return locale === "en" ? "Approved" : "已核准";
     }
     if (status === "pending") {
-      return "審核中";
+      return locale === "en" ? "Pending" : "審核中";
     }
-    return "已取消";
+    return locale === "en" ? "Cancelled" : "已取消";
   };
 
   const getDealStatusVariant = (status: string) => {
@@ -156,14 +174,14 @@ export default function DashboardPage({
         <h1 className="text-3xl font-bold mb-4">
           {locale === "en" ? "Agent Dashboard" : "業務員工作台"}
         </h1>
-        <p className="text-muted-foreground">管理您的客戶、預約和業績表現</p>
+        <p className="text-muted-foreground">{locale === "en" ? "Manage your customers, appointments and performance" : "管理您的客戶、預約和業績表現"}</p>
       </div>
 
       {/* Performance Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">總客戶數</CardTitle>
+            <CardTitle className="text-sm font-medium">{locale === "en" ? "Total Customers" : "總客戶數"}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -171,14 +189,14 @@ export default function DashboardPage({
               {performance.totalCustomers}
             </div>
             <p className="text-xs text-muted-foreground">
-              活躍客戶: {performance.activeCustomers}
+              {locale === "en" ? "Active Customers" : "活躍客戶"}: {performance.activeCustomers}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">本月業績</CardTitle>
+            <CardTitle className="text-sm font-medium">{locale === "en" ? "Monthly Performance" : "本月業績"}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -186,14 +204,14 @@ export default function DashboardPage({
               {formatCurrency(performance.revenue)}
             </div>
             <p className="text-xs text-muted-foreground">
-              目標達成率: {performance.monthlyAchievement}%
+              {locale === "en" ? "Target Achievement" : "目標達成率"}: {performance.monthlyAchievement}%
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">成交率</CardTitle>
+            <CardTitle className="text-sm font-medium">{locale === "en" ? "Conversion Rate" : "成交率"}</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -201,14 +219,14 @@ export default function DashboardPage({
               {performance.conversionRate}%
             </div>
             <p className="text-xs text-muted-foreground">
-              成交件數: {performance.closedDeals}
+              {locale === "en" ? "Closed Deals" : "成交件數"}: {performance.closedDeals}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">平均件均</CardTitle>
+            <CardTitle className="text-sm font-medium">{locale === "en" ? "Avg Deal Size" : "平均件均"}</CardTitle>
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -216,7 +234,7 @@ export default function DashboardPage({
               {formatCurrency(performance.averageDealSize)}
             </div>
             <p className="text-xs text-muted-foreground">
-              月目標: {formatCurrency(performance.monthlyTarget)}
+              {locale === "en" ? "Monthly Target" : "月目標"}: {formatCurrency(performance.monthlyTarget)}
             </p>
           </CardContent>
         </Card>
@@ -228,7 +246,7 @@ export default function DashboardPage({
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
-              今日預約 ({todayAppointments.length})
+              {locale === "en" ? "Today's Appointments" : "今日預約"} ({todayAppointments.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -251,9 +269,9 @@ export default function DashboardPage({
                   </div>
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm">
-                      查看詳情
+                      {locale === "en" ? "View Details" : "查看詳情"}
                     </Button>
-                    <Button size="sm">聯絡客戶</Button>
+                    <Button size="sm">{locale === "en" ? "Contact Customer" : "聯絡客戶"}</Button>
                   </div>
                 </div>
               ))}
@@ -264,21 +282,21 @@ export default function DashboardPage({
 
       <Tabs defaultValue="customers" className="space-y-6">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="customers">客戶管理</TabsTrigger>
-          <TabsTrigger value="appointments">預約管理</TabsTrigger>
-          <TabsTrigger value="deals">成交記錄</TabsTrigger>
-          <TabsTrigger value="performance">業績分析</TabsTrigger>
+          <TabsTrigger value="customers">{locale === "en" ? "Customer Management" : "客戶管理"}</TabsTrigger>
+          <TabsTrigger value="appointments">{locale === "en" ? "Appointment Management" : "預約管理"}</TabsTrigger>
+          <TabsTrigger value="deals">{locale === "en" ? "Deal Records" : "成交記錄"}</TabsTrigger>
+          <TabsTrigger value="performance">{locale === "en" ? "Performance Analysis" : "業績分析"}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="customers" className="space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-2xl font-bold">客戶清單</h2>
+              <h2 className="text-2xl font-bold">{locale === "en" ? "Customer List" : "客戶清單"}</h2>
               <p className="text-muted-foreground">
-                管理您的潛在客戶和現有客戶
+                {locale === "en" ? "Manage your prospects and existing customers" : "管理您的潛在客戶和現有客戶"}
               </p>
             </div>
-            <Button>新增客戶</Button>
+            <Button>{locale === "en" ? "Add Customer" : "新增客戶"}</Button>
           </div>
 
           <div className="grid gap-4">
@@ -292,12 +310,12 @@ export default function DashboardPage({
                         {getCustomerStatusBadge(customer.status)}
                       </CardTitle>
                       <CardDescription>
-                        {customer.age}歲 • {customer.location.city}{" "}
+                        {customer.age}{locale === "en" ? " years old" : "歲"} • {customer.location.city}{" "}
                         {customer.location.district}
                       </CardDescription>
                     </div>
                     <div className="text-right text-sm text-muted-foreground">
-                      最後聯絡: {formatDate(customer.lastContact)}
+                      {locale === "en" ? "Last Contact" : "最後聯絡"}: {formatDate(customer.lastContact)}
                     </div>
                   </div>
                 </CardHeader>
@@ -320,7 +338,7 @@ export default function DashboardPage({
                     </div>
 
                     <div>
-                      <div className="text-sm font-medium mb-2">興趣商品</div>
+                      <div className="text-sm font-medium mb-2">{locale === "en" ? "Interested Products" : "興趣商品"}</div>
                       <div className="flex flex-wrap gap-1">
                         {customer.interestedProducts.map((product) => (
                           <Badge
@@ -337,7 +355,7 @@ export default function DashboardPage({
 
                   {customer.notes && (
                     <div className="mb-4 p-3 bg-muted/50 rounded-lg">
-                      <div className="text-sm font-medium mb-1">備註</div>
+                      <div className="text-sm font-medium mb-1">{locale === "en" ? "Notes" : "備註"}</div>
                       <div className="text-sm text-muted-foreground">
                         {customer.notes}
                       </div>
@@ -347,14 +365,14 @@ export default function DashboardPage({
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm">
                       <Phone className="h-4 w-4 mr-2" />
-                      撥打電話
+                      {locale === "en" ? "Make Call" : "撥打電話"}
                     </Button>
                     <Button variant="outline" size="sm">
                       <Calendar className="h-4 w-4 mr-2" />
-                      安排會面
+                      {locale === "en" ? "Schedule Meeting" : "安排會面"}
                     </Button>
                     <Button variant="outline" size="sm">
-                      編輯資料
+                      {locale === "en" ? "Edit Profile" : "編輯資料"}
                     </Button>
                   </div>
                 </CardContent>
@@ -366,10 +384,10 @@ export default function DashboardPage({
         <TabsContent value="appointments" className="space-y-6">
           <div className="flex justify-between items-center">
             <div>
-              <h2 className="text-2xl font-bold">預約管理</h2>
-              <p className="text-muted-foreground">管理與客戶的會面安排</p>
+              <h2 className="text-2xl font-bold">{locale === "en" ? "Appointment Management" : "預約管理"}</h2>
+              <p className="text-muted-foreground">{locale === "en" ? "Manage meetings and appointments with customers" : "管理與客戶的會面安排"}</p>
             </div>
-            <Button>新增預約</Button>
+            <Button>{locale === "en" ? "Add Appointment" : "新增預約"}</Button>
           </div>
 
           <div className="grid gap-4">
@@ -409,7 +427,7 @@ export default function DashboardPage({
 
                     {appointment.productDiscussion && (
                       <div>
-                        <div className="text-sm font-medium mb-2">討論商品</div>
+                        <div className="text-sm font-medium mb-2">{locale === "en" ? "Products to Discuss" : "討論商品"}</div>
                         <div className="flex flex-wrap gap-1">
                           {appointment.productDiscussion.map((product) => (
                             <Badge
@@ -427,7 +445,7 @@ export default function DashboardPage({
 
                   {appointment.notes && (
                     <div className="mb-4 p-3 bg-muted/50 rounded-lg">
-                      <div className="text-sm font-medium mb-1">備註</div>
+                      <div className="text-sm font-medium mb-1">{locale === "en" ? "Notes" : "備註"}</div>
                       <div className="text-sm text-muted-foreground">
                         {appointment.notes}
                       </div>
@@ -436,13 +454,13 @@ export default function DashboardPage({
 
                   <div className="flex gap-2">
                     <Button variant="outline" size="sm">
-                      重新排程
+                      {locale === "en" ? "Reschedule" : "重新排程"}
                     </Button>
                     <Button variant="outline" size="sm">
-                      聯絡客戶
+                      {locale === "en" ? "Contact Customer" : "聯絡客戶"}
                     </Button>
                     <Button variant="outline" size="sm">
-                      查看客戶資料
+                      {locale === "en" ? "View Customer Profile" : "查看客戶資料"}
                     </Button>
                   </div>
                 </CardContent>
@@ -453,8 +471,8 @@ export default function DashboardPage({
 
         <TabsContent value="deals" className="space-y-6">
           <div>
-            <h2 className="text-2xl font-bold mb-2">成交記錄</h2>
-            <p className="text-muted-foreground">查看您的成交紀錄和佣金收入</p>
+            <h2 className="text-2xl font-bold mb-2">{locale === "en" ? "Deal Records" : "成交記錄"}</h2>
+            <p className="text-muted-foreground">{locale === "en" ? "View your closed deals and commission income" : "查看您的成交紀錄和佣金收入"}</p>
           </div>
 
           <div className="grid gap-4">
@@ -476,7 +494,7 @@ export default function DashboardPage({
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <div className="text-sm font-medium text-muted-foreground">
-                        保費
+                        {locale === "en" ? "Premium" : "保費"}
                       </div>
                       <div className="text-lg font-bold">
                         {formatCurrency(deal.premium)}
@@ -484,7 +502,7 @@ export default function DashboardPage({
                     </div>
                     <div>
                       <div className="text-sm font-medium text-muted-foreground">
-                        佣金
+                        {locale === "en" ? "Commission" : "佣金"}
                       </div>
                       <div className="text-lg font-bold text-green-600">
                         {formatCurrency(deal.commission)}
@@ -492,13 +510,13 @@ export default function DashboardPage({
                     </div>
                     <div>
                       <div className="text-sm font-medium text-muted-foreground">
-                        簽約日期
+                        {locale === "en" ? "Signed Date" : "簽約日期"}
                       </div>
                       <div>{formatDate(deal.signedDate)}</div>
                     </div>
                     <div>
                       <div className="text-sm font-medium text-muted-foreground">
-                        生效日期
+                        {locale === "en" ? "Effective Date" : "生效日期"}
                       </div>
                       <div>{formatDate(deal.effectiveDate)}</div>
                     </div>
@@ -511,9 +529,9 @@ export default function DashboardPage({
 
         <TabsContent value="performance" className="space-y-6">
           <div>
-            <h2 className="text-2xl font-bold mb-2">業績分析</h2>
+            <h2 className="text-2xl font-bold mb-2">{locale === "en" ? "Performance Analysis" : "業績分析"}</h2>
             <p className="text-muted-foreground">
-              追蹤您的業績表現和目標達成狀況
+              {locale === "en" ? "Track your performance and goal achievement status" : "追蹤您的業績表現和目標達成狀況"}
             </p>
           </div>
 
@@ -522,19 +540,19 @@ export default function DashboardPage({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5" />
-                  月度目標進度
+                  {locale === "en" ? "Monthly Target Progress" : "月度目標進度"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span>業績目標</span>
+                    <span>{locale === "en" ? "Performance Target" : "業績目標"}</span>
                     <span className="font-bold">
                       {formatCurrency(performance.monthlyTarget)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>目前達成</span>
+                    <span>{locale === "en" ? "Current Achievement" : "目前達成"}</span>
                     <span className="font-bold text-primary">
                       {formatCurrency(performance.revenue)}
                     </span>
@@ -548,7 +566,7 @@ export default function DashboardPage({
                     />
                   </div>
                   <div className="text-center text-sm text-muted-foreground">
-                    達成率: {performance.monthlyAchievement}%
+                    {locale === "en" ? "Achievement Rate" : "達成率"}: {performance.monthlyAchievement}%
                   </div>
                 </div>
               </CardContent>
@@ -558,31 +576,31 @@ export default function DashboardPage({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5" />
-                  關鍵指標
+                  {locale === "en" ? "Key Metrics" : "關鍵指標"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span>成交率</span>
+                    <span>{locale === "en" ? "Conversion Rate" : "成交率"}</span>
                     <span className="font-bold">
                       {performance.conversionRate}%
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>平均件均</span>
+                    <span>{locale === "en" ? "Avg Deal Size" : "平均件均"}</span>
                     <span className="font-bold">
                       {formatCurrency(performance.averageDealSize)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>活躍客戶數</span>
+                    <span>{locale === "en" ? "Active Customers" : "活躍客戶數"}</span>
                     <span className="font-bold">
                       {performance.activeCustomers}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span>本月成交件數</span>
+                    <span>{locale === "en" ? "Monthly Closed Deals" : "本月成交件數"}</span>
                     <span className="font-bold">{performance.closedDeals}</span>
                   </div>
                 </div>

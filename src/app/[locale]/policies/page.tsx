@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
-import { useTranslations } from "next-intl";
+import { useState, useEffect } from "react";
 import {
   FileText,
   DollarSign,
@@ -27,14 +26,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockPolicies, mockReminders, mockClaims } from "@/data/mock-policies";
 import { PolicyStatus } from "@/types/policy";
 
-export default function PoliciesPage({
-  params,
-}: {
+interface PoliciesPageProps {
   params: Promise<{ locale: string }>;
-}) {
-  const { locale } = use(params);
-  const t = useTranslations();
+}
+
+export default function PoliciesPage({ params }: PoliciesPageProps) {
+  const [locale, setLocale] = useState<string>("zh-TW");
   const [policies] = useState(mockPolicies);
+
+  useEffect(() => {
+    params.then(({ locale: paramLocale }) => {
+      setLocale(paramLocale);
+    });
+  }, [params]);
   const [reminders] = useState(mockReminders);
   const [claims] = useState(mockClaims);
 
@@ -50,13 +54,22 @@ export default function PoliciesPage({
 
   const getStatusBadge = (status: PolicyStatus) => {
     const statusConfig = {
-      active: { label: t("policies.active"), variant: "default" as const },
+      active: { 
+        label: locale === "en" ? "Active" : "生效", 
+        variant: "default" as const 
+      },
       expired: {
-        label: t("policies.expired"),
+        label: locale === "en" ? "Expired" : "已到期",
         variant: "destructive" as const,
       },
-      pending: { label: t("policies.pending"), variant: "secondary" as const },
-      cancelled: { label: "已取消", variant: "outline" as const },
+      pending: { 
+        label: locale === "en" ? "Pending" : "待生效", 
+        variant: "secondary" as const 
+      },
+      cancelled: { 
+        label: locale === "en" ? "Cancelled" : "已取消", 
+        variant: "outline" as const 
+      },
     };
 
     const config = statusConfig[status];
@@ -85,7 +98,9 @@ export default function PoliciesPage({
           {locale === "en" ? "My Policies" : "我的保單"}
         </h1>
         <p className="text-muted-foreground">
-          管理您的所有保險資產，追蹤繳費狀態和理賠進度
+          {locale === "en"
+            ? "Manage all your insurance assets, track payment status and claim progress"
+            : "管理您的所有保險資產，追蹤繳費狀態和理賠進度"}
         </p>
       </div>
 
@@ -93,7 +108,7 @@ export default function PoliciesPage({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">生效保單</CardTitle>
+            <CardTitle className="text-sm font-medium">{locale === "en" ? "Active Policies" : "生效保單"}</CardTitle>
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -101,14 +116,14 @@ export default function PoliciesPage({
               {policies.filter((p) => p.status === "active").length}
             </div>
             <p className="text-xs text-muted-foreground">
-              總保單數: {policies.length}
+              {locale === "en" ? "Total Policies" : "總保單數"}: {policies.length}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">月繳保費</CardTitle>
+            <CardTitle className="text-sm font-medium">{locale === "en" ? "Monthly Premium" : "月繳保費"}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -123,13 +138,13 @@ export default function PoliciesPage({
                   .reduce((sum, p) => sum + p.premium.amount, 0),
               )}
             </div>
-            <p className="text-xs text-muted-foreground">每月總繳費</p>
+            <p className="text-xs text-muted-foreground">{locale === "en" ? "Total Monthly Payment" : "每月總繳費"}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">總保障額</CardTitle>
+            <CardTitle className="text-sm font-medium">{locale === "en" ? "Total Coverage" : "總保障額"}</CardTitle>
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -140,36 +155,36 @@ export default function PoliciesPage({
                   .reduce((sum, p) => sum + p.coverage.amount, 0),
               )}
             </div>
-            <p className="text-xs text-muted-foreground">總保障金額</p>
+            <p className="text-xs text-muted-foreground">{locale === "en" ? "Total Coverage Amount" : "總保障金額"}</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">待處理提醒</CardTitle>
+            <CardTitle className="text-sm font-medium">{locale === "en" ? "Pending Reminders" : "待處理提醒"}</CardTitle>
             <Bell className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-orange-600">
               {activeReminders.length}
             </div>
-            <p className="text-xs text-muted-foreground">需要關注的事項</p>
+            <p className="text-xs text-muted-foreground">{locale === "en" ? "Items requiring attention" : "需要關注的事項"}</p>
           </CardContent>
         </Card>
       </div>
 
       <Tabs defaultValue="policies" className="space-y-6">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="policies">我的保單</TabsTrigger>
+          <TabsTrigger value="policies">{locale === "en" ? "My Policies" : "我的保單"}</TabsTrigger>
           <TabsTrigger value="reminders">
-            提醒通知
+            {locale === "en" ? "Reminders" : "提醒通知"}
             {activeReminders.length > 0 && (
               <Badge variant="destructive" className="ml-2 text-xs">
                 {activeReminders.length}
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="claims">理賠記錄</TabsTrigger>
+          <TabsTrigger value="claims">{locale === "en" ? "Claims" : "理賠記錄"}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="policies" className="space-y-6">
@@ -184,11 +199,27 @@ export default function PoliciesPage({
                         {getStatusBadge(policy.status)}
                       </CardTitle>
                       <CardDescription>
-                        保單號碼: {policy.policyNumber} • {policy.company}
+                        {locale === "en" ? "Policy Number" : "保單號碼"}: {policy.policyNumber} • {policy.company}
                       </CardDescription>
                     </div>
                     <Badge variant="secondary">
-                      {t(`insurance.types.${policy.type}`)}
+                      {locale === "en" 
+                        ? {
+                          life: "Life Insurance",
+                          health: "Health Insurance", 
+                          accident: "Accident Insurance",
+                          travel: "Travel Insurance",
+                          vehicle: "Vehicle Insurance",
+                          property: "Property Insurance"
+                        }[policy.type]
+                        : {
+                          life: "壽險",
+                          health: "醫療險",
+                          accident: "意外險", 
+                          travel: "旅遊險",
+                          vehicle: "車險",
+                          property: "財產險"
+                        }[policy.type]}
                     </Badge>
                   </div>
                 </CardHeader>
@@ -199,7 +230,7 @@ export default function PoliciesPage({
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm font-medium">
                         <DollarSign className="h-4 w-4" />
-                        保費資訊
+                        {locale === "en" ? "Premium Info" : "保費資訊"}
                       </div>
                       <div className="text-2xl font-bold text-primary">
                         {formatCurrency(policy.premium.amount)}
@@ -207,15 +238,15 @@ export default function PoliciesPage({
                       <div className="text-sm text-muted-foreground">
                         {(() => {
                           if (policy.premium.frequency === "monthly")
-                            return "每月";
+                            return locale === "en" ? "Monthly" : "每月";
                           if (policy.premium.frequency === "yearly")
-                            return "每年";
-                          return "每季";
+                            return locale === "en" ? "Annual" : "每年";
+                          return locale === "en" ? "Quarterly" : "每季";
                         })()}
-                        繳費
+                        {locale === "en" ? " Payment" : "繳費"}
                       </div>
                       <div className="text-sm">
-                        下次繳費: {formatDate(policy.premium.nextDueDate)}
+                        {locale === "en" ? "Next Payment" : "下次繳費"}: {formatDate(policy.premium.nextDueDate)}
                       </div>
                     </div>
 
@@ -223,13 +254,13 @@ export default function PoliciesPage({
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm font-medium">
                         <Shield className="h-4 w-4" />
-                        保障資訊
+                        {locale === "en" ? "Coverage Info" : "保障資訊"}
                       </div>
                       <div className="text-2xl font-bold text-green-600">
                         {formatCurrency(policy.coverage.amount)}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        保障金額
+                        {locale === "en" ? "Coverage Amount" : "保障金額"}
                       </div>
                       <div className="text-sm">
                         {formatDate(policy.coverage.startDate)} -{" "}
@@ -242,7 +273,7 @@ export default function PoliciesPage({
                       <div className="space-y-2">
                         <div className="flex items-center gap-2 text-sm font-medium">
                           <FileText className="h-4 w-4" />
-                          業務專員
+                          {locale === "en" ? "Agent" : "業務專員"}
                         </div>
                         <div className="font-semibold">{policy.agent.name}</div>
                         <div className="space-y-1">
@@ -261,13 +292,13 @@ export default function PoliciesPage({
 
                   <div className="flex gap-2 mt-6">
                     <Button variant="outline" size="sm">
-                      查看詳情
+                      {locale === "en" ? "View Details" : "查看詳情"}
                     </Button>
                     <Button variant="outline" size="sm">
-                      繳費記錄
+                      {locale === "en" ? "Payment History" : "繳費記錄"}
                     </Button>
                     <Button variant="outline" size="sm">
-                      申請理賠
+                      {locale === "en" ? "File Claim" : "申請理賠"}
                     </Button>
                   </div>
                 </CardContent>
@@ -307,10 +338,10 @@ export default function PoliciesPage({
                     }
                   >
                     {(() => {
-                      if (reminder.type === "premium_due") return "繳費提醒";
-                      if (reminder.type === "expiry_warning") return "到期提醒";
-                      if (reminder.type === "rate_change") return "費率變更";
-                      return "其他";
+                      if (reminder.type === "premium_due") return locale === "en" ? "Payment Due" : "繳費提醒";
+                      if (reminder.type === "expiry_warning") return locale === "en" ? "Expiry Warning" : "到期提醒";
+                      if (reminder.type === "rate_change") return locale === "en" ? "Rate Change" : "費率變更";
+                      return locale === "en" ? "Other" : "其他";
                     })()}
                   </Badge>
                 </div>
@@ -319,9 +350,9 @@ export default function PoliciesPage({
                 <p className="text-sm">{reminder.message}</p>
                 {!reminder.isRead && (
                   <div className="flex gap-2 mt-4">
-                    <Button size="sm">立即處理</Button>
+                    <Button size="sm">{locale === "en" ? "Handle Now" : "立即處理"}</Button>
                     <Button variant="outline" size="sm">
-                      標記已讀
+                      {locale === "en" ? "Mark as Read" : "標記已讀"}
                     </Button>
                   </div>
                 )}
@@ -337,11 +368,11 @@ export default function PoliciesPage({
                 <div className="flex items-start justify-between">
                   <div>
                     <CardTitle className="flex items-center gap-2">
-                      理賠申請 - {claim.type}
+                      {locale === "en" ? "Claim Application" : "理賠申請"} - {claim.type}
                       {getClaimStatusIcon(claim.status)}
                     </CardTitle>
                     <CardDescription>
-                      申請編號: {claim.claimNumber} •{" "}
+                      {locale === "en" ? "Application Number" : "申請編號"}: {claim.claimNumber} •{" "}
                       {formatDate(claim.submitDate)}
                     </CardDescription>
                   </div>
@@ -358,10 +389,10 @@ export default function PoliciesPage({
                       })()}
                     >
                       {(() => {
-                        if (claim.status === "approved") return "已核准";
-                        if (claim.status === "processing") return "審核中";
-                        if (claim.status === "rejected") return "已拒絕";
-                        return "待審核";
+                        if (claim.status === "approved") return locale === "en" ? "Approved" : "已核准";
+                        if (claim.status === "processing") return locale === "en" ? "Processing" : "審核中";
+                        if (claim.status === "rejected") return locale === "en" ? "Rejected" : "已拒絕";
+                        return locale === "en" ? "Pending Review" : "待審核";
                       })()}
                     </Badge>
                   </div>
@@ -371,10 +402,10 @@ export default function PoliciesPage({
                 <p className="text-sm mb-4">{claim.description}</p>
                 <div className="flex gap-2">
                   <Button variant="outline" size="sm">
-                    查看詳情
+                    {locale === "en" ? "View Details" : "查看詳情"}
                   </Button>
                   <Button variant="outline" size="sm">
-                    上傳文件
+                    {locale === "en" ? "Upload Documents" : "上傳文件"}
                   </Button>
                 </div>
               </CardContent>

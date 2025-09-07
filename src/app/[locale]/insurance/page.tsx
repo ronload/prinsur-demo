@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useMemo, use } from "react";
-import { useTranslations } from "next-intl";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Star, Building2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,15 +25,20 @@ import {
 import { mockInsuranceProducts } from "@/data/mock-insurance";
 import { InsuranceFilter, InsuranceType } from "@/types/insurance";
 
-export default function InsurancePage({
-  params,
-}: {
+interface InsurancePageProps {
   params: Promise<{ locale: string }>;
-}) {
-  const { locale } = use(params);
-  const t = useTranslations();
+}
+
+export default function InsurancePage({ params }: InsurancePageProps) {
+  const [locale, setLocale] = useState<string>("zh-TW");
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<InsuranceFilter>({});
+
+  useEffect(() => {
+    params.then(({ locale: paramLocale }) => {
+      setLocale(paramLocale);
+    });
+  }, [params]);
 
   const filteredProducts = useMemo(
     () =>
@@ -111,7 +115,7 @@ export default function InsurancePage({
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="搜尋保險商品或公司..."
+                placeholder={locale === "en" ? "Search insurance products or companies..." : "搜尋保險商品或公司..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"
@@ -120,14 +124,14 @@ export default function InsurancePage({
           </div>
           <Button variant="outline" size="sm" onClick={clearAllFilters}>
             <X className="h-4 w-4 mr-2" />
-            清除篩選
+            {locale === "en" ? "Clear Filters" : "清除篩選"}
           </Button>
         </div>
 
         {/* Filter Controls */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
-            <Label htmlFor="insurance-type">保險類型</Label>
+            <Label htmlFor="insurance-type">{locale === "en" ? "Insurance Type" : "保險類型"}</Label>
             <Select
               value={filter.type || "all"}
               onValueChange={(value) =>
@@ -138,38 +142,38 @@ export default function InsurancePage({
               }
             >
               <SelectTrigger>
-                <SelectValue placeholder="選擇類型" />
+                <SelectValue placeholder={locale === "en" ? "Select Type" : "選擇類型"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">全部類型</SelectItem>
+                <SelectItem value="all">{locale === "en" ? "All Types" : "全部類型"}</SelectItem>
                 <SelectItem value="life">
-                  {t("insurance.types.life")}
+                  {locale === "en" ? "Life Insurance" : "壽險"}
                 </SelectItem>
                 <SelectItem value="health">
-                  {t("insurance.types.health")}
+                  {locale === "en" ? "Health Insurance" : "醫療險"}
                 </SelectItem>
                 <SelectItem value="accident">
-                  {t("insurance.types.accident")}
+                  {locale === "en" ? "Accident Insurance" : "意外險"}
                 </SelectItem>
                 <SelectItem value="travel">
-                  {t("insurance.types.travel")}
+                  {locale === "en" ? "Travel Insurance" : "旅遊險"}
                 </SelectItem>
                 <SelectItem value="vehicle">
-                  {t("insurance.types.vehicle")}
+                  {locale === "en" ? "Vehicle Insurance" : "車險"}
                 </SelectItem>
                 <SelectItem value="property">
-                  {t("insurance.types.property")}
+                  {locale === "en" ? "Property Insurance" : "財產險"}
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="age">年齡</Label>
+            <Label htmlFor="age">{locale === "en" ? "Age" : "年齡"}</Label>
             <Input
               id="age"
               type="number"
-              placeholder="輸入年齡"
+              placeholder={locale === "en" ? "Enter age" : "輸入年齡"}
               value={filter.age || ""}
               onChange={(e) =>
                 handleFilterChange(
@@ -181,11 +185,11 @@ export default function InsurancePage({
           </div>
 
           <div>
-            <Label htmlFor="min-premium">最低保費</Label>
+            <Label htmlFor="min-premium">{locale === "en" ? "Min Premium" : "最低保費"}</Label>
             <Input
               id="min-premium"
               type="number"
-              placeholder="最低金額"
+              placeholder={locale === "en" ? "Min amount" : "最低金額"}
               value={filter.minPremium || ""}
               onChange={(e) =>
                 handleFilterChange(
@@ -197,11 +201,11 @@ export default function InsurancePage({
           </div>
 
           <div>
-            <Label htmlFor="max-premium">最高保費</Label>
+            <Label htmlFor="max-premium">{locale === "en" ? "Max Premium" : "最高保費"}</Label>
             <Input
               id="max-premium"
               type="number"
-              placeholder="最高金額"
+              placeholder={locale === "en" ? "Max amount" : "最高金額"}
               value={filter.maxPremium || ""}
               onChange={(e) =>
                 handleFilterChange(
@@ -217,7 +221,9 @@ export default function InsurancePage({
       {/* Results */}
       <div className="mb-4">
         <p className="text-sm text-muted-foreground">
-          找到 {filteredProducts.length} 個符合條件的保險商品
+          {locale === "en" 
+            ? `Found ${filteredProducts.length} insurance products matching your criteria`
+            : `找到 ${filteredProducts.length} 個符合條件的保險商品`}
         </p>
       </div>
 
@@ -228,7 +234,23 @@ export default function InsurancePage({
             <CardHeader>
               <div className="flex items-center justify-between">
                 <Badge variant="secondary">
-                  {t(`insurance.types.${product.type}`)}
+                  {locale === "en" 
+                    ? {
+                        life: "Life Insurance",
+                        health: "Health Insurance", 
+                        accident: "Accident Insurance",
+                        travel: "Travel Insurance",
+                        vehicle: "Vehicle Insurance",
+                        property: "Property Insurance"
+                      }[product.type]
+                    : {
+                        life: "壽險",
+                        health: "醫療險",
+                        accident: "意外險", 
+                        travel: "旅遊險",
+                        vehicle: "車險",
+                        property: "財產險"
+                      }[product.type]}
                 </Badge>
                 <div className="flex items-center">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -250,18 +272,18 @@ export default function InsurancePage({
                 <div className="text-2xl font-bold text-primary">
                   {formatCurrency(product.premium.monthly)}
                   <span className="text-sm font-normal text-muted-foreground">
-                    /月
+                    {locale === "en" ? "/month" : "/月"}
                   </span>
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  年繳 {formatCurrency(product.premium.annually)}
+                  {locale === "en" ? "Annual" : "年繳"} {formatCurrency(product.premium.annually)}
                 </div>
               </div>
 
               <div className="mb-4">
-                <h4 className="font-semibold mb-2">保障內容</h4>
+                <h4 className="font-semibold mb-2">{locale === "en" ? "Coverage" : "保障內容"}</h4>
                 <div className="text-lg font-semibold text-green-600 mb-2">
-                  最高 {formatCurrency(product.coverage.amount)}
+                  {locale === "en" ? "Up to" : "最高"} {formatCurrency(product.coverage.amount)}
                 </div>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   {product.coverage.description.slice(0, 2).map((item) => (
@@ -269,7 +291,9 @@ export default function InsurancePage({
                   ))}
                   {product.coverage.description.length > 2 && (
                     <li>
-                      • 還有 {product.coverage.description.length - 2} 項保障...
+                      {locale === "en" 
+                        ? `• And ${product.coverage.description.length - 2} more benefits...`
+                        : `• 還有 ${product.coverage.description.length - 2} 項保障...`}
                     </li>
                   )}
                 </ul>
@@ -286,9 +310,9 @@ export default function InsurancePage({
 
             <CardFooter className="flex gap-2">
               <Button variant="outline" className="flex-1">
-                查看詳情
+                {locale === "en" ? "View Details" : "查看詳情"}
               </Button>
-              <Button className="flex-1">立即申請</Button>
+              <Button className="flex-1">{locale === "en" ? "Apply Now" : "立即申請"}</Button>
             </CardFooter>
           </Card>
         ))}
@@ -298,13 +322,15 @@ export default function InsurancePage({
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-lg font-semibold mb-2">
-            沒有找到符合條件的保險商品
+            {locale === "en" ? "No insurance products found" : "沒有找到符合條件的保險商品"}
           </h3>
           <p className="text-muted-foreground mb-4">
-            請嘗試調整搜尋條件或篩選器
+            {locale === "en" 
+              ? "Try adjusting your search terms or filters"
+              : "請嘗試調整搜尋條件或篩選器"}
           </p>
           <Button variant="outline" onClick={clearAllFilters}>
-            清除所有篩選
+            {locale === "en" ? "Clear All Filters" : "清除所有篩選"}
           </Button>
         </div>
       )}

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, use } from "react";
-import { useTranslations } from "next-intl";
+import { useState, useEffect } from "react";
 import { Search, MapPin, Star, Phone, Mail, Calendar } from "lucide-react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { Button } from "@/components/ui/button";
@@ -16,16 +15,19 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { mockAgents } from "@/data/mock-insurance";
 
-export default function AgentsPage({
-  params,
-}: {
-  params: Promise<{
-    locale: string;
-  }>;
-}) {
-  const { locale } = use(params);
-  const t = useTranslations();
+interface AgentsPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export default function AgentsPage({ params }: AgentsPageProps) {
+  const [locale, setLocale] = useState<string>("zh-TW");
   const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    params.then(({ locale: paramLocale }) => {
+      setLocale(paramLocale);
+    });
+  }, [params]);
 
   const filteredAgents = mockAgents.filter(
     (agent) =>
@@ -42,7 +44,9 @@ export default function AgentsPage({
           {locale === "en" ? "Find Agent" : "尋找業務員"}
         </h1>
         <p className="text-muted-foreground">
-          根據您的地理位置和需求，找到最適合的保險業務專員
+          {locale === "en" 
+            ? "Find the most suitable insurance agent based on your location and needs"
+            : "根據您的地理位置和需求，找到最適合的保險業務專員"}
         </p>
       </div>
 
@@ -51,7 +55,7 @@ export default function AgentsPage({
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="搜尋業務員或地區..."
+            placeholder={locale === "en" ? "Search agents or locations..." : "搜尋業務員或地區..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9"
@@ -62,7 +66,9 @@ export default function AgentsPage({
       {/* Results */}
       <div className="mb-4">
         <p className="text-sm text-muted-foreground">
-          找到 {filteredAgents.length} 位符合條件的業務專員
+          {locale === "en" 
+            ? `Found ${filteredAgents.length} agents matching your criteria`
+            : `找到 ${filteredAgents.length} 位符合條件的業務專員`}
         </p>
       </div>
 
@@ -102,14 +108,14 @@ export default function AgentsPage({
 
               {/* Experience */}
               <div className="text-sm">
-                <span className="font-medium">經驗：</span>
-                {agent.experience} 年
+                <span className="font-medium">{locale === "en" ? "Experience:" : "經驗："}</span>
+                {agent.experience} {locale === "en" ? "years" : "年"}
               </div>
 
               {/* Specialties */}
               <div>
                 <div className="text-sm font-medium mb-2">
-                  {t("agents.specialties")}
+                  {locale === "en" ? "Specialties" : "專業領域"}
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {agent.specialties.map((specialty) => (
@@ -118,7 +124,23 @@ export default function AgentsPage({
                       variant="secondary"
                       className="text-xs"
                     >
-                      {t(`insurance.types.${specialty}`)}
+                      {locale === "en" 
+                        ? {
+                          life: "Life Insurance",
+                          health: "Health Insurance", 
+                          accident: "Accident Insurance",
+                          travel: "Travel Insurance",
+                          vehicle: "Vehicle Insurance",
+                          property: "Property Insurance"
+                        }[specialty]
+                        : {
+                          life: "壽險",
+                          health: "醫療險",
+                          accident: "意外險", 
+                          travel: "旅遊險",
+                          vehicle: "車險",
+                          property: "財產險"
+                        }[specialty]}
                     </Badge>
                   ))}
                 </div>
@@ -126,7 +148,7 @@ export default function AgentsPage({
 
               {/* Languages */}
               <div>
-                <div className="text-sm font-medium mb-2">語言能力</div>
+                <div className="text-sm font-medium mb-2">{locale === "en" ? "Languages" : "語言能力"}</div>
                 <div className="flex flex-wrap gap-1">
                   {agent.languages.map((language) => (
                     <Badge key={language} variant="outline" className="text-xs">
@@ -153,11 +175,11 @@ export default function AgentsPage({
 
             <div className="p-6 pt-0 flex gap-2">
               <Button variant="outline" className="flex-1">
-                查看檔案
+                {locale === "en" ? "View Profile" : "查看檔案"}
               </Button>
               <Button className="flex-1">
                 <Calendar className="h-4 w-4 mr-2" />
-                {t("agents.book_appointment")}
+                {locale === "en" ? "Book Appointment" : "預約會面"}
               </Button>
             </div>
           </Card>
@@ -170,22 +192,32 @@ export default function AgentsPage({
             <HiOutlineUserGroup className="h-24 w-24 text-muted-foreground/50" />
           </div>
           <h3 className="text-lg font-semibold mb-2">
-            沒有找到符合條件的業務專員
+            {locale === "en" ? "No agents found" : "沒有找到符合條件的業務專員"}
           </h3>
-          <p className="text-muted-foreground mb-4">請嘗試調整搜尋關鍵字</p>
+          <p className="text-muted-foreground mb-4">
+            {locale === "en" 
+              ? "Please try adjusting your search keywords"
+              : "請嘗試調整搜尋關鍵字"}
+          </p>
           <Button variant="outline" onClick={() => setSearchTerm("")}>
-            清除搜尋
+            {locale === "en" ? "Clear Search" : "清除搜尋"}
           </Button>
         </div>
       )}
 
       {/* CTA Section */}
       <div className="mt-16 bg-muted/50 rounded-lg p-8 text-center">
-        <h2 className="text-2xl font-bold mb-4">找不到合適的業務專員？</h2>
+        <h2 className="text-2xl font-bold mb-4">
+          {locale === "en" 
+            ? "Can't find the right agent?"
+            : "找不到合適的業務專員？"}
+        </h2>
         <p className="text-muted-foreground mb-6">
-          告訴我們您的需求，我們會為您推薦最適合的保險專家
+          {locale === "en" 
+            ? "Tell us your needs and we'll recommend the most suitable insurance expert for you"
+            : "告訴我們您的需求，我們會為您推薦最適合的保險專家"}
         </p>
-        <Button size="lg">提交需求</Button>
+        <Button size="lg">{locale === "en" ? "Submit Requirements" : "提交需求"}</Button>
       </div>
     </div>
   );

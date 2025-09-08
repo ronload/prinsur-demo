@@ -146,7 +146,7 @@ export default function Home({ params }: HomeProps) {
                   {locale === "en" ? "Fast Matching" : "快速媒合"}
                 </p>
                 <div className="text-2xl sm:text-3xl lg:text-5xl font-bold text-primary mb-1 my-1 sm:my-2">
-                  24h
+                  &lt;24h
                 </div>
                 <p className="text-xs lg:text-sm text-muted-foreground/70 mt-1">
                   {locale === "en" ? "average response time" : "平均回應時間"}

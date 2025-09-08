@@ -116,12 +116,12 @@ export default function Home({ params }: HomeProps) {
             style={descriptionAnimation.animationStyle}
             className="max-w-4xl mx-auto"
           >
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-12">
               <div className="text-center">
-                <p className="text-sm lg:text-base text-muted-foreground">
+                <p className="text-xs sm:text-sm lg:text-base text-muted-foreground">
                   {locale === "en" ? "Higher Success Rate" : "成交率提升"}
                 </p>
-                <div className="text-4xl lg:text-5xl font-bold text-primary mb-2 my-2">
+                <div className="text-2xl sm:text-3xl lg:text-5xl font-bold text-primary mb-1 my-1 sm:my-2">
                   85%
                 </div>
                 <p className="text-xs lg:text-sm text-muted-foreground/70 mt-1">
@@ -129,10 +129,10 @@ export default function Home({ params }: HomeProps) {
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm lg:text-base text-muted-foreground">
+                <p className="text-xs sm:text-sm lg:text-base text-muted-foreground">
                   {locale === "en" ? "Premium Savings" : "保費節省"}
                 </p>
-                <div className="text-4xl lg:text-5xl font-bold text-primary mb-2 my-2">
+                <div className="text-2xl sm:text-3xl lg:text-5xl font-bold text-primary mb-1 my-1 sm:my-2">
                   30%
                 </div>
                 <p className="text-xs lg:text-sm text-muted-foreground/70 mt-1">
@@ -140,10 +140,10 @@ export default function Home({ params }: HomeProps) {
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm lg:text-base text-muted-foreground">
+                <p className="text-xs sm:text-sm lg:text-base text-muted-foreground">
                   {locale === "en" ? "Fast Matching" : "快速媒合"}
                 </p>
-                <div className="text-4xl lg:text-5xl font-bold text-primary mb-2 my-2">
+                <div className="text-2xl sm:text-3xl lg:text-5xl font-bold text-primary mb-1 my-1 sm:my-2">
                   24h
                 </div>
                 <p className="text-xs lg:text-sm text-muted-foreground/70 mt-1">

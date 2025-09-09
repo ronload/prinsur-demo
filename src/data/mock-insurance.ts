@@ -488,7 +488,8 @@ const generateAgents = (): Agent[] => {
     "楊": "yang", "趙": "zhao", "黃": "huang", "周": "zhou", "吳": "wu",
     "徐": "xu", "孫": "sun", "胡": "hu", "朱": "zhu", "高": "gao",
     "林": "lin", "何": "he", "郭": "guo", "馬": "ma", "羅": "luo",
-    "梁": "liang", "宋": "song", "鄭": "zheng", "謝": "xie", "韓": "han", "唐": "tang"
+    "梁": "liang", "宋": "song", "鄭": "zheng", "謝": "xie", "韓": "han", "唐": "tang",
+    "馮": "feng", "于": "yu", "董": "dong", "蕭": "xiao"
   };
 
   const firstNamePinyin: Record<string, string> = {
@@ -525,7 +526,7 @@ const generateAgents = (): Agent[] => {
       experience: Math.floor(seededRandom() * 20 + 1), // 1-20 years
       languages: languages[Math.floor(seededRandom() * languages.length)],
       contactInfo: {
-        phone: `09${Math.floor(seededRandom() * 9) + 1}${Math.floor(seededRandom() * 900 + 100)}-${Math.floor(seededRandom() * 900 + 100)}`,
+        phone: `09${Math.floor(seededRandom() * 9) + 1}${Math.floor(seededRandom() * 9)}-${Math.floor(seededRandom() * 900 + 100)}-${Math.floor(seededRandom() * 900 + 100)}`,
         email: `${lastNamePinyin[lastName] || lastName.toLowerCase()}${firstNamePinyin[firstName] || firstName.toLowerCase()}@${["fubon", "cathay", "taipei", "chunghwa", "nanshan", "shinkong", "globallife", "twlife", "axa", "zurich", "allianz", "metlife", "prudential", "manulife", "takaful", "ming"][Math.floor(seededRandom() * 16)]}.com`,
       },
     });

@@ -15,8 +15,8 @@ import "../globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Prinsur - 保險智慧媒合平台",
-  description: "一個透明、高效且以使用者為中心的保險生態系統",
+  title: "Prinsur - Smart Insurance Matching",
+  description: "A transparent, efficient, and user-centric insurance ecosystem",
 };
 
 export function generateStaticParams() {

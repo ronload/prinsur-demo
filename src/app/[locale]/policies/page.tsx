@@ -312,7 +312,7 @@ export default function PoliciesPage({ params }: PoliciesPageProps) {
             <Card
               key={reminder.id}
               className={
-                !reminder.isRead ? "border-orange-200 bg-orange-50/50" : ""
+                !reminder.isRead ? "border-orange-200 bg-orange-50/50 dark:border-orange-800 dark:bg-orange-950/20" : ""
               }
             >
               <CardHeader>

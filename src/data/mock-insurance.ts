@@ -53,6 +53,12 @@ const generateCoverageDescription = (type: string, amount: number) => {
 
 // Generate 100+ insurance products
 const generateInsuranceProducts = (): InsuranceProduct[] => {
+  // 使用種子隨機數生成器來確保SSR和客戶端一致性  
+  let seed = 54321;
+  const seededRandom = () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
   const companies = [
     "台灣人壽",
     "國泰人壽",
@@ -207,7 +213,7 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
       for (let p = 0; p < productsPerName; p++) {
         if (products.length >= 120) return; // Generate 120 products
 
-        const company = companies[Math.floor(Math.random() * companies.length)];
+        const company = companies[Math.floor(seededRandom() * companies.length)];
         const basePriceMap = {
           life: [1500, 5000],
           health: [800, 3000],
@@ -220,7 +226,7 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
         const basePrice = basePriceMap[type as keyof typeof basePriceMap];
 
         const monthlyPremium = Math.floor(
-          Math.random() * (basePrice[1] - basePrice[0]) + basePrice[0],
+          seededRandom() * (basePrice[1] - basePrice[0]) + basePrice[0],
         );
         const coverage = monthlyPremium * getCoverageMultiplier(type);
 
@@ -237,9 +243,9 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
             amount: coverage,
             description: generateCoverageDescription(type as any, coverage),
           },
-          rating: Math.round((Math.random() * 1.5 + 3.5) * 10) / 10, // 3.5-5.0 rating
-          reviewCount: Math.floor(Math.random() * 200 + 10),
-          features: features[Math.floor(Math.random() * features.length)],
+          rating: Math.round((seededRandom() * 1.5 + 3.5) * 10) / 10, // 3.5-5.0 rating
+          reviewCount: Math.floor(seededRandom() * 200 + 10),
+          features: features[Math.floor(seededRandom() * features.length)],
           ageRange: {
             min: type === "travel" ? 0 : 16,
             max: getMaxAge(type),
@@ -256,6 +262,12 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
 
 // Generate 50+ agents
 const generateAgents = (): Agent[] => {
+  // 使用種子隨機數生成器來確保SSR和客戶端一致性
+  let seed = 12345;
+  const seededRandom = () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
   const firstNames = [
     "小明",
     "美華",
@@ -470,31 +482,51 @@ const generateAgents = (): Agent[] => {
 
   const agents: Agent[] = [];
 
+  // 姓名拼音映射表
+  const lastNamePinyin: Record<string, string> = {
+    "王": "wang", "李": "li", "張": "zhang", "劉": "liu", "陳": "chen",
+    "楊": "yang", "趙": "zhao", "黃": "huang", "周": "zhou", "吳": "wu",
+    "徐": "xu", "孫": "sun", "胡": "hu", "朱": "zhu", "高": "gao",
+    "林": "lin", "何": "he", "郭": "guo", "馬": "ma", "羅": "luo",
+    "梁": "liang", "宋": "song", "鄭": "zheng", "謝": "xie", "韓": "han", "唐": "tang"
+  };
+
+  const firstNamePinyin: Record<string, string> = {
+    "小明": "xiaoming", "美華": "meihua", "志強": "zhiqiang", "淑芬": "shufen",
+    "建華": "jianhua", "雅婷": "yating", "志偉": "zhiwei", "怡君": "yijun",
+    "文雄": "wenxiong", "麗娟": "lijuan", "俊傑": "junjie", "佳蓉": "jiarong",
+    "宗翰": "zonghan", "慧如": "huiru", "家豪": "jiahao", "純如": "chunru",
+    "冠廷": "guanting", "玉婷": "yuting", "士豪": "shihao", "惠如": "huiru",
+    "凱文": "kaiwen", "雅雯": "yawen", "宏達": "hongda", "淑敏": "shumin",
+    "進財": "jincai", "素梅": "sumei", "耀輝": "yaohui", "秀蘭": "xiulan",
+    "國華": "guohua", "鳳儀": "fengyi"
+  };
+
   for (let i = 0; i < 60; i++) {
-    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-    const location = cities[Math.floor(Math.random() * cities.length)];
+    const lastName = lastNames[Math.floor(seededRandom() * lastNames.length)];
+    const firstName = firstNames[Math.floor(seededRandom() * firstNames.length)];
+    const location = cities[Math.floor(seededRandom() * cities.length)];
     const district =
-      location.districts[Math.floor(Math.random() * location.districts.length)];
+      location.districts[Math.floor(seededRandom() * location.districts.length)];
 
     agents.push({
       id: (i + 1).toString(),
       name: `${lastName}${firstName}`,
-      company: companies[Math.floor(Math.random() * companies.length)],
+      company: companies[Math.floor(seededRandom() * companies.length)],
       specialties: specialties[
-        Math.floor(Math.random() * specialties.length)
+        Math.floor(seededRandom() * specialties.length)
       ] as any,
-      rating: Math.round((Math.random() * 1.5 + 3.5) * 10) / 10, // 3.5-5.0 rating
-      reviewCount: Math.floor(Math.random() * 80 + 5),
+      rating: Math.round((seededRandom() * 1.5 + 3.5) * 10) / 10, // 3.5-5.0 rating
+      reviewCount: Math.floor(seededRandom() * 80 + 5),
       location: {
         city: location.city,
         district,
       },
-      experience: Math.floor(Math.random() * 20 + 1), // 1-20 years
-      languages: languages[Math.floor(Math.random() * languages.length)],
+      experience: Math.floor(seededRandom() * 20 + 1), // 1-20 years
+      languages: languages[Math.floor(seededRandom() * languages.length)],
       contactInfo: {
-        phone: `09${Math.floor(Math.random() * 9) + 1}${Math.floor(Math.random() * 900 + 100)}-${Math.floor(Math.random() * 900 + 100)}`,
-        email: `${lastName.toLowerCase()}${firstName.toLowerCase()}@${companies[Math.floor(Math.random() * companies.length)].replace("人壽", "").replace("產險", "").toLowerCase()}.com`,
+        phone: `09${Math.floor(seededRandom() * 9) + 1}${Math.floor(seededRandom() * 900 + 100)}-${Math.floor(seededRandom() * 900 + 100)}`,
+        email: `${lastNamePinyin[lastName] || lastName.toLowerCase()}${firstNamePinyin[firstName] || firstName.toLowerCase()}@${["fubon", "cathay", "taipei", "chunghwa", "nanshan", "shinkong", "globallife", "twlife", "axa", "zurich", "allianz", "metlife", "prudential", "manulife", "takaful", "ming"][Math.floor(seededRandom() * 16)]}.com`,
       },
     });
   }

@@ -174,12 +174,14 @@ export default function AgentsPage({ params }: AgentsPageProps) {
             </CardContent>
 
             <div className="p-6 pt-0 flex gap-2">
-              <Button variant="outline" className="flex-1">
+              <Button variant="outline" className="flex-1 min-w-0">
                 {locale === "en" ? "View Profile" : "查看檔案"}
               </Button>
-              <Button className="flex-1">
-                <Calendar className="h-4 w-4 mr-2" />
-                {locale === "en" ? "Book Appointment" : "預約會面"}
+              <Button className="flex-1 min-w-0">
+                <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                <span className="truncate">
+                  {locale === "en" ? "Book Meeting" : "預約會面"}
+                </span>
               </Button>
             </div>
           </Card>

@@ -113,7 +113,7 @@ export default function Home({ params }: HomeProps) {
               {locale === "en" ? "Learn More" : "了解更多"}
             </Button>
           </div>
-          <div 
+          <div
             ref={descriptionAnimation.ref}
             style={descriptionAnimation.animationStyle}
             className="max-w-4xl mx-auto"
@@ -138,7 +138,9 @@ export default function Home({ params }: HomeProps) {
                   +30%
                 </div>
                 <p className="text-xs lg:text-sm text-muted-foreground/70 mt-1">
-                  {locale === "en" ? "through smart comparison" : "透過智慧比價"}
+                  {locale === "en"
+                    ? "through smart comparison"
+                    : "透過智慧比價"}
                 </p>
               </div>
               <div className="text-center">

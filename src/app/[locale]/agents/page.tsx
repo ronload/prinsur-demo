@@ -44,7 +44,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
           {locale === "en" ? "Find Agent" : "尋找業務員"}
         </h1>
         <p className="text-muted-foreground">
-          {locale === "en" 
+          {locale === "en"
             ? "Find the most suitable insurance agent based on your location and needs"
             : "根據您的地理位置和需求，找到最適合的保險業務專員"}
         </p>
@@ -55,7 +55,11 @@ export default function AgentsPage({ params }: AgentsPageProps) {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder={locale === "en" ? "Search agents or locations..." : "搜尋業務員或地區..."}
+            placeholder={
+              locale === "en"
+                ? "Search agents or locations..."
+                : "搜尋業務員或地區..."
+            }
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-9"
@@ -66,7 +70,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
       {/* Results */}
       <div className="mb-4">
         <p className="text-sm text-muted-foreground">
-          {locale === "en" 
+          {locale === "en"
             ? `Found ${filteredAgents.length} agents matching your criteria`
             : `找到 ${filteredAgents.length} 位符合條件的業務專員`}
         </p>
@@ -108,7 +112,9 @@ export default function AgentsPage({ params }: AgentsPageProps) {
 
               {/* Experience */}
               <div className="text-sm">
-                <span className="font-medium">{locale === "en" ? "Experience:" : "經驗："}</span>
+                <span className="font-medium">
+                  {locale === "en" ? "Experience:" : "經驗："}
+                </span>
                 {agent.experience} {locale === "en" ? "years" : "年"}
               </div>
 
@@ -124,23 +130,23 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                       variant="secondary"
                       className="text-xs"
                     >
-                      {locale === "en" 
+                      {locale === "en"
                         ? {
-                          life: "Life Insurance",
-                          health: "Health Insurance", 
-                          accident: "Accident Insurance",
-                          travel: "Travel Insurance",
-                          vehicle: "Vehicle Insurance",
-                          property: "Property Insurance"
-                        }[specialty]
+                            life: "Life Insurance",
+                            health: "Health Insurance",
+                            accident: "Accident Insurance",
+                            travel: "Travel Insurance",
+                            vehicle: "Vehicle Insurance",
+                            property: "Property Insurance",
+                          }[specialty]
                         : {
-                          life: "壽險",
-                          health: "醫療險",
-                          accident: "意外險", 
-                          travel: "旅遊險",
-                          vehicle: "車險",
-                          property: "財產險"
-                        }[specialty]}
+                            life: "壽險",
+                            health: "醫療險",
+                            accident: "意外險",
+                            travel: "旅遊險",
+                            vehicle: "車險",
+                            property: "財產險",
+                          }[specialty]}
                     </Badge>
                   ))}
                 </div>
@@ -148,7 +154,9 @@ export default function AgentsPage({ params }: AgentsPageProps) {
 
               {/* Languages */}
               <div>
-                <div className="text-sm font-medium mb-2">{locale === "en" ? "Languages" : "語言能力"}</div>
+                <div className="text-sm font-medium mb-2">
+                  {locale === "en" ? "Languages" : "語言能力"}
+                </div>
                 <div className="flex flex-wrap gap-1">
                   {agent.languages.map((language) => (
                     <Badge key={language} variant="outline" className="text-xs">
@@ -197,7 +205,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
             {locale === "en" ? "No agents found" : "沒有找到符合條件的業務專員"}
           </h3>
           <p className="text-muted-foreground mb-4">
-            {locale === "en" 
+            {locale === "en"
               ? "Please try adjusting your search keywords"
               : "請嘗試調整搜尋關鍵字"}
           </p>
@@ -210,16 +218,18 @@ export default function AgentsPage({ params }: AgentsPageProps) {
       {/* CTA Section */}
       <div className="mt-16 bg-muted/50 rounded-lg p-8 text-center">
         <h2 className="text-2xl font-bold mb-4">
-          {locale === "en" 
+          {locale === "en"
             ? "Can't find the right agent?"
             : "找不到合適的業務專員？"}
         </h2>
         <p className="text-muted-foreground mb-6">
-          {locale === "en" 
+          {locale === "en"
             ? "Tell us your needs and we'll recommend the most suitable insurance expert for you"
             : "告訴我們您的需求，我們會為您推薦最適合的保險專家"}
         </p>
-        <Button size="lg">{locale === "en" ? "Submit Requirements" : "提交需求"}</Button>
+        <Button size="lg">
+          {locale === "en" ? "Submit Requirements" : "提交需求"}
+        </Button>
       </div>
     </div>
   );

@@ -53,7 +53,7 @@ const generateCoverageDescription = (type: string, amount: number) => {
 
 // Generate 100+ insurance products
 const generateInsuranceProducts = (): InsuranceProduct[] => {
-  // 使用種子隨機數生成器來確保SSR和客戶端一致性  
+  // 使用種子隨機數生成器來確保SSR和客戶端一致性
   let seed = 54321;
   const seededRandom = () => {
     seed = (seed * 9301 + 49297) % 233280;
@@ -213,7 +213,8 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
       for (let p = 0; p < productsPerName; p++) {
         if (products.length >= 120) return; // Generate 120 products
 
-        const company = companies[Math.floor(seededRandom() * companies.length)];
+        const company =
+          companies[Math.floor(seededRandom() * companies.length)];
         const basePriceMap = {
           life: [1500, 5000],
           health: [800, 3000],
@@ -484,31 +485,80 @@ const generateAgents = (): Agent[] => {
 
   // 姓名拼音映射表
   const lastNamePinyin: Record<string, string> = {
-    "王": "wang", "李": "li", "張": "zhang", "劉": "liu", "陳": "chen",
-    "楊": "yang", "趙": "zhao", "黃": "huang", "周": "zhou", "吳": "wu",
-    "徐": "xu", "孫": "sun", "胡": "hu", "朱": "zhu", "高": "gao",
-    "林": "lin", "何": "he", "郭": "guo", "馬": "ma", "羅": "luo",
-    "梁": "liang", "宋": "song", "鄭": "zheng", "謝": "xie", "韓": "han", "唐": "tang",
-    "馮": "feng", "于": "yu", "董": "dong", "蕭": "xiao"
+    王: "wang",
+    李: "li",
+    張: "zhang",
+    劉: "liu",
+    陳: "chen",
+    楊: "yang",
+    趙: "zhao",
+    黃: "huang",
+    周: "zhou",
+    吳: "wu",
+    徐: "xu",
+    孫: "sun",
+    胡: "hu",
+    朱: "zhu",
+    高: "gao",
+    林: "lin",
+    何: "he",
+    郭: "guo",
+    馬: "ma",
+    羅: "luo",
+    梁: "liang",
+    宋: "song",
+    鄭: "zheng",
+    謝: "xie",
+    韓: "han",
+    唐: "tang",
+    馮: "feng",
+    于: "yu",
+    董: "dong",
+    蕭: "xiao",
   };
 
   const firstNamePinyin: Record<string, string> = {
-    "小明": "xiaoming", "美華": "meihua", "志強": "zhiqiang", "淑芬": "shufen",
-    "建華": "jianhua", "雅婷": "yating", "志偉": "zhiwei", "怡君": "yijun",
-    "文雄": "wenxiong", "麗娟": "lijuan", "俊傑": "junjie", "佳蓉": "jiarong",
-    "宗翰": "zonghan", "慧如": "huiru", "家豪": "jiahao", "純如": "chunru",
-    "冠廷": "guanting", "玉婷": "yuting", "士豪": "shihao", "惠如": "huiru",
-    "凱文": "kaiwen", "雅雯": "yawen", "宏達": "hongda", "淑敏": "shumin",
-    "進財": "jincai", "素梅": "sumei", "耀輝": "yaohui", "秀蘭": "xiulan",
-    "國華": "guohua", "鳳儀": "fengyi"
+    小明: "xiaoming",
+    美華: "meihua",
+    志強: "zhiqiang",
+    淑芬: "shufen",
+    建華: "jianhua",
+    雅婷: "yating",
+    志偉: "zhiwei",
+    怡君: "yijun",
+    文雄: "wenxiong",
+    麗娟: "lijuan",
+    俊傑: "junjie",
+    佳蓉: "jiarong",
+    宗翰: "zonghan",
+    慧如: "huiru",
+    家豪: "jiahao",
+    純如: "chunru",
+    冠廷: "guanting",
+    玉婷: "yuting",
+    士豪: "shihao",
+    惠如: "huiru",
+    凱文: "kaiwen",
+    雅雯: "yawen",
+    宏達: "hongda",
+    淑敏: "shumin",
+    進財: "jincai",
+    素梅: "sumei",
+    耀輝: "yaohui",
+    秀蘭: "xiulan",
+    國華: "guohua",
+    鳳儀: "fengyi",
   };
 
   for (let i = 0; i < 60; i++) {
     const lastName = lastNames[Math.floor(seededRandom() * lastNames.length)];
-    const firstName = firstNames[Math.floor(seededRandom() * firstNames.length)];
+    const firstName =
+      firstNames[Math.floor(seededRandom() * firstNames.length)];
     const location = cities[Math.floor(seededRandom() * cities.length)];
     const district =
-      location.districts[Math.floor(seededRandom() * location.districts.length)];
+      location.districts[
+        Math.floor(seededRandom() * location.districts.length)
+      ];
 
     agents.push({
       id: (i + 1).toString(),

@@ -23,7 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { mockInsuranceProducts } from "@/data/mock-insurance";
-import { InsuranceFilter, InsuranceType } from "@/types/insurance";
+import { InsuranceFilter, InsuranceType, InsuranceProduct } from "@/types/insurance";
+import { ProductDetailModal } from "@/components/insurance/product-detail-modal";
 
 interface InsurancePageProps {
   params: Promise<{ locale: string }>;
@@ -33,6 +34,7 @@ export default function InsurancePage({ params }: InsurancePageProps) {
   const [locale, setLocale] = useState<string>("zh-TW");
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<InsuranceFilter>({});
+  const [selectedProduct, setSelectedProduct] = useState<InsuranceProduct | null>(null);
 
   useEffect(() => {
     params.then(({ locale: paramLocale }) => {
@@ -110,26 +112,27 @@ export default function InsurancePage({ params }: InsurancePageProps) {
 
       {/* Search and Filters */}
       <div className="mb-8 space-y-4">
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={locale === "en" ? "Search insurance products or companies..." : "搜尋保險商品或公司..."}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={locale === "en" ? "Search insurance products or companies..." : "搜尋保險商品或公司..."}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
             </div>
+            <Button variant="outline" size="sm" onClick={clearAllFilters} className="hidden md:flex">
+              <X className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Clear Filters" : "清除篩選"}
+            </Button>
           </div>
-          <Button variant="outline" size="sm" onClick={clearAllFilters}>
-            <X className="h-4 w-4 mr-2" />
-            {locale === "en" ? "Clear Filters" : "清除篩選"}
-          </Button>
-        </div>
 
-        {/* Filter Controls */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Filter Controls */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <Label htmlFor="insurance-type">{locale === "en" ? "Insurance Type" : "保險類型"}</Label>
             <Select
@@ -215,6 +218,13 @@ export default function InsurancePage({ params }: InsurancePageProps) {
               }
             />
           </div>
+          </div>
+          
+          {/* Mobile Clear Filters Button */}
+          <Button variant="outline" size="sm" onClick={clearAllFilters} className="md:hidden w-full">
+            <X className="h-4 w-4 mr-2" />
+            {locale === "en" ? "Clear Filters" : "清除篩選"}
+          </Button>
         </div>
       </div>
 
@@ -309,7 +319,11 @@ export default function InsurancePage({ params }: InsurancePageProps) {
             </CardContent>
 
             <CardFooter className="flex gap-2">
-              <Button variant="outline" className="flex-1">
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => setSelectedProduct(product)}
+              >
                 {locale === "en" ? "View Details" : "查看詳情"}
               </Button>
               <Button className="flex-1">{locale === "en" ? "Apply Now" : "立即申請"}</Button>
@@ -334,6 +348,13 @@ export default function InsurancePage({ params }: InsurancePageProps) {
           </Button>
         </div>
       )}
+
+      {/* Product Detail Modal */}
+      <ProductDetailModal
+        product={selectedProduct}
+        locale={locale}
+        onClose={() => setSelectedProduct(null)}
+      />
     </div>
   );
 }

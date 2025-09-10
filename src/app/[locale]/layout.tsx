@@ -8,6 +8,7 @@ import { getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { locales } from "@/i18n/config";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { LoadingProvider } from "@/components/providers/loading-provider";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import "../globals.css";
@@ -50,13 +51,15 @@ export default async function LocaleLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider messages={messages}>
-            <div className="relative flex min-h-screen flex-col">
-              <Header />
-              <main className="flex-1">{children}</main>
-              <Footer locale={locale} />
-            </div>
-          </NextIntlClientProvider>
+          <LoadingProvider>
+            <NextIntlClientProvider messages={messages}>
+              <div className="relative flex min-h-screen flex-col">
+                <Header />
+                <main className="flex-1">{children}</main>
+                <Footer locale={locale} />
+              </div>
+            </NextIntlClientProvider>
+          </LoadingProvider>
         </ThemeProvider>
       </body>
     </html>

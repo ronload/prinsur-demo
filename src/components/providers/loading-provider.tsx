@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { PageLoading } from "@/components/ui/loading";
 
 interface LoadingContextType {
   isPageLoading: boolean;
@@ -54,6 +55,7 @@ export function LoadingProvider({ children }: LoadingProviderProps) {
       }}
     >
       {children}
+      {isPageLoading && <PageLoading />}
     </LoadingContext.Provider>
   );
 }

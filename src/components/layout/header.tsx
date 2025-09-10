@@ -55,17 +55,17 @@ function MobileNav({ items, onItemClick }: MobileNavProps) {
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLocale, setCurrentLocale] = useState("zh-TW");
   const pathname = usePathname();
+  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const [currentLocale, setCurrentLocale] = useState(localeFromPath);
 
   useEffect(() => {
-    const path = window.location.pathname;
-    if (path.startsWith("/en")) {
-      setCurrentLocale("en");
-    } else {
-      setCurrentLocale("zh-TW");
+    const path = pathname;
+    const newLocale = path.split('/')[1] || 'zh-TW';
+    if (newLocale !== currentLocale) {
+      setCurrentLocale(newLocale);
     }
-  }, []);
+  }, [pathname, currentLocale]);
 
   const navigationItems = [
     {

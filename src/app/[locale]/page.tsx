@@ -11,7 +11,7 @@ import {
 } from "@/hooks/use-reveal-animation";
 import { cn } from "@/lib/utils";
 import { Search, Users, FileText } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface HomeProps {
@@ -19,7 +19,9 @@ interface HomeProps {
 }
 
 export default function Home({ params }: HomeProps) {
-  const [locale, setLocale] = useState<string>("zh-TW");
+  const pathname = usePathname();
+  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
 

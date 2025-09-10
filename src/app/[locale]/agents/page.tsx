@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Search, MapPin, Star, Phone, Mail, Calendar } from "lucide-react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,9 @@ interface AgentsPageProps {
 }
 
 export default function AgentsPage({ params }: AgentsPageProps) {
-  const [locale, setLocale] = useState<string>("zh-TW");
+  const pathname = usePathname();
+  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {

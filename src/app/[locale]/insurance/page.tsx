@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { Search, Star, Building2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +37,9 @@ interface InsurancePageProps {
 }
 
 export default function InsurancePage({ params, searchParams }: InsurancePageProps) {
-  const [locale, setLocale] = useState<string>("zh-TW");
+  const pathname = usePathname();
+  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<InsuranceFilter>({});
   const [selectedProduct, setSelectedProduct] =

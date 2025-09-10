@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
   FileText,
   DollarSign,
@@ -31,7 +32,9 @@ interface PoliciesPageProps {
 }
 
 export default function PoliciesPage({ params }: PoliciesPageProps) {
-  const [locale, setLocale] = useState<string>("zh-TW");
+  const pathname = usePathname();
+  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const [locale, setLocale] = useState<string>(localeFromPath);
   const [policies] = useState(mockPolicies);
 
   useEffect(() => {

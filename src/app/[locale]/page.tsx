@@ -3,6 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GridPattern } from "@/components/ui/GridPattern";
+import TextType from "@/components/ui/TextType";
+import "@/components/ui/TextType.css";
 import {
   useRevealAnimation,
   useStaggeredReveal,
@@ -21,28 +23,28 @@ export default function Home({ params }: HomeProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
 
-  // Animation hooks with staggered delays for smooth reveal effect
-  const titleAnimation = useRevealAnimation({
-    delay: 200,
-    duration: 1000,
-    distance: 40,
-  });
-  const searchAnimation = useRevealAnimation({
-    delay: 800,
-    duration: 800,
-    distance: 30,
-  });
+  // Animation hooks - synchronized animations without stagger
+  const [showTextType, setShowTextType] = useState(false);
   const loginSuggestionAnimation = useRevealAnimation({
-    delay: 1200,
+    delay: 200,
     duration: 800,
     distance: 30,
   });
   const descriptionAnimation = useRevealAnimation({
-    delay: 1600,
+    delay: 200,
     duration: 800,
     distance: 30,
   });
   const featuresAnimation = useStaggeredReveal(3, 200);
+
+  // Trigger TextType after other animations complete
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowTextType(true);
+    }, 600); // Reduced delay for immediate start after animations begin
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     params.then(({ locale: paramLocale }) => {
@@ -146,17 +148,24 @@ export default function Home({ params }: HomeProps) {
         />
         <div className="container mx-auto text-center relative z-10 flex flex-col items-center justify-center flex-1 px-4">
           <div className="flex flex-col items-center justify-center w-full">
-            <h1
-              ref={titleAnimation.ref}
-              style={titleAnimation.animationStyle}
-              className="text-5xl lg:text-6xl xl:text-7xl font-medium tracking-tight mb-16"
-            >
-              Prinsur.com
-            </h1>
+            <div className="text-5xl lg:text-6xl xl:text-7xl font-medium tracking-tight mb-16 min-h-[4rem] lg:min-h-[5rem] xl:min-h-[6rem]">
+              {showTextType && (
+                <TextType
+                  text="Prinsur.com"
+                  typingSpeed={80}
+                  showCursor={true}
+                  loop={false}
+                  className=""
+                  cursorCharacter="|"
+                  cursorBlinkDuration={0.7}
+                  hideCursorWhileTyping={false}
+                  pauseDuration={1000}
+                  variableSpeed={{ min: 50, max: 100 }}
+                />
+              )}
+            </div>
             <div className="flex flex-col items-center justify-center space-y-8 w-full">
               <div
-                ref={searchAnimation.ref}
-                style={searchAnimation.animationStyle}
                 className="w-full max-w-4xl px-2 sm:px-8"
               >
                 <form onSubmit={handleSearch}>

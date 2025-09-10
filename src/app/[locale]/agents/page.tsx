@@ -22,7 +22,7 @@ interface AgentsPageProps {
 
 export default function AgentsPage({ params }: AgentsPageProps) {
   const pathname = usePathname();
-  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const localeFromPath = pathname.split("/")[1] || "zh-TW";
   const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchTerm, setSearchTerm] = useState("");
 

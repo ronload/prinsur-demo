@@ -20,7 +20,7 @@ interface HomeProps {
 
 export default function Home({ params }: HomeProps) {
   const pathname = usePathname();
-  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const localeFromPath = pathname.split("/")[1] || "zh-TW";
   const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const router = useRouter();
@@ -57,8 +57,8 @@ export default function Home({ params }: HomeProps) {
   // Force page to top on mount/refresh
   useEffect(() => {
     // Disable browser scroll restoration
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
     }
 
     // Multiple attempts to ensure scroll to top
@@ -77,10 +77,10 @@ export default function Home({ params }: HomeProps) {
 
     // Also listen for window load
     const handleLoad = () => scrollToTop();
-    window.addEventListener('load', handleLoad);
+    window.addEventListener("load", handleLoad);
 
     return () => {
-      window.removeEventListener('load', handleLoad);
+      window.removeEventListener("load", handleLoad);
     };
   }, []);
 
@@ -94,15 +94,15 @@ export default function Home({ params }: HomeProps) {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
         // Trigger a resize to fix viewport
-        window.dispatchEvent(new Event('resize'));
+        window.dispatchEvent(new Event("resize"));
       }, 100);
     };
 
     const searchInput = document.querySelector('input[type="text"]');
     if (searchInput) {
-      searchInput.addEventListener('blur', handleInputBlur);
+      searchInput.addEventListener("blur", handleInputBlur);
       return () => {
-        searchInput.removeEventListener('blur', handleInputBlur);
+        searchInput.removeEventListener("blur", handleInputBlur);
       };
     }
   }, []);
@@ -110,7 +110,9 @@ export default function Home({ params }: HomeProps) {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/${locale}/insurance?search=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(
+        `/${locale}/insurance?search=${encodeURIComponent(searchQuery.trim())}`,
+      );
     }
   };
   return (
@@ -167,22 +169,22 @@ export default function Home({ params }: HomeProps) {
               )}
             </div>
             <div className="flex flex-col items-center justify-center space-y-8 w-full">
-              <div
-                className="w-full max-w-4xl px-2 sm:px-8"
-              >
+              <div className="w-full max-w-4xl px-2 sm:px-8">
                 <form onSubmit={handleSearch}>
-                <div className="relative">
-                  <Search className="absolute left-4 top-[18px] h-5 w-5 text-muted-foreground z-10" />
-                  <Input
-                    type="text"
-                    placeholder={locale === "en" 
-                      ? "e.g. life insurance, travel insurance"
-                      : "例如：壽險、旅平險"}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="h-14 pl-12 pr-4 text-base sm:text-lg border-2 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-full placeholder:text-sm sm:placeholder:text-base bg-white/5 backdrop-blur-sm border-gray-300 dark:border-white/10"
-                  />
-                </div>
+                  <div className="relative">
+                    <Search className="absolute left-4 top-[18px] h-5 w-5 text-muted-foreground z-10" />
+                    <Input
+                      type="text"
+                      placeholder={
+                        locale === "en"
+                          ? "e.g. life insurance, travel insurance"
+                          : "例如：壽險、旅平險"
+                      }
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="h-14 pl-12 pr-4 text-base sm:text-lg border-2 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-full placeholder:text-sm sm:placeholder:text-base bg-white/5 backdrop-blur-sm border-gray-300 dark:border-white/10"
+                    />
+                  </div>
                 </form>
               </div>
               <div
@@ -196,7 +198,10 @@ export default function Home({ params }: HomeProps) {
                       ? "Login for better results - "
                       : "登入獲得更佳結果 - "}
                   </span>
-                  <Button variant="link" className="text-primary p-0 h-auto text-sm underline">
+                  <Button
+                    variant="link"
+                    className="text-primary p-0 h-auto text-sm underline"
+                  >
                     {locale === "en" ? "Go to Login" : "前往登入"}
                   </Button>
                 </div>

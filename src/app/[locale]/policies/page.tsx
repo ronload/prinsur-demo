@@ -33,7 +33,7 @@ interface PoliciesPageProps {
 
 export default function PoliciesPage({ params }: PoliciesPageProps) {
   const pathname = usePathname();
-  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const localeFromPath = pathname.split("/")[1] || "zh-TW";
   const [locale, setLocale] = useState<string>(localeFromPath);
   const [policies] = useState(mockPolicies);
 

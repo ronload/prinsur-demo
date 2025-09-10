@@ -36,9 +36,12 @@ interface InsurancePageProps {
   searchParams: Promise<{ search?: string }>;
 }
 
-export default function InsurancePage({ params, searchParams }: InsurancePageProps) {
+export default function InsurancePage({
+  params,
+  searchParams,
+}: InsurancePageProps) {
   const pathname = usePathname();
-  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const localeFromPath = pathname.split("/")[1] || "zh-TW";
   const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<InsuranceFilter>({});

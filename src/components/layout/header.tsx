@@ -56,12 +56,12 @@ function MobileNav({ items, onItemClick }: MobileNavProps) {
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const localeFromPath = pathname.split("/")[1] || "zh-TW";
   const [currentLocale, setCurrentLocale] = useState(localeFromPath);
 
   useEffect(() => {
     const path = pathname;
-    const newLocale = path.split('/')[1] || 'zh-TW';
+    const newLocale = path.split("/")[1] || "zh-TW";
     if (newLocale !== currentLocale) {
       setCurrentLocale(newLocale);
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { GridPattern } from "@/components/ui/GridPattern";
 import {
   useRevealAnimation,
@@ -8,7 +9,7 @@ import {
 } from "@/hooks/use-reveal-animation";
 import { cn } from "@/lib/utils";
 import { Search, Users, FileText } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface HomeProps {
@@ -17,6 +18,8 @@ interface HomeProps {
 
 export default function Home({ params }: HomeProps) {
   const [locale, setLocale] = useState<string>("zh-TW");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const router = useRouter();
 
   // Animation hooks with staggered delays for smooth reveal effect
   const titleAnimation = useRevealAnimation({
@@ -24,12 +27,12 @@ export default function Home({ params }: HomeProps) {
     duration: 1000,
     distance: 40,
   });
-  const subtitleAnimation = useRevealAnimation({
+  const searchAnimation = useRevealAnimation({
     delay: 800,
     duration: 800,
     distance: 30,
   });
-  const buttonsAnimation = useRevealAnimation({
+  const loginSuggestionAnimation = useRevealAnimation({
     delay: 1200,
     duration: 800,
     distance: 30,
@@ -46,14 +49,81 @@ export default function Home({ params }: HomeProps) {
       setLocale(paramLocale);
     });
   }, [params]);
+
+  // Force page to top on mount/refresh
+  useEffect(() => {
+    // Disable browser scroll restoration
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+
+    // Multiple attempts to ensure scroll to top
+    const scrollToTop = () => {
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    };
+
+    // Immediate scroll
+    scrollToTop();
+
+    // Delayed scroll to override any browser restoration
+    setTimeout(scrollToTop, 0);
+    setTimeout(scrollToTop, 100);
+
+    // Also listen for window load
+    const handleLoad = () => scrollToTop();
+    window.addEventListener('load', handleLoad);
+
+    return () => {
+      window.removeEventListener('load', handleLoad);
+    };
+  }, []);
+
+  // Handle mobile keyboard issues
+  useEffect(() => {
+    const handleInputBlur = () => {
+      // Force page to scroll back to top when keyboard disappears
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        // Force viewport recalculation
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+        // Trigger a resize to fix viewport
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+    };
+
+    const searchInput = document.querySelector('input[type="text"]');
+    if (searchInput) {
+      searchInput.addEventListener('blur', handleInputBlur);
+      return () => {
+        searchInput.removeEventListener('blur', handleInputBlur);
+      };
+    }
+  }, []);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/${locale}/insurance?search=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center -mt-16 relative overflow-hidden">
+      <section className="min-h-screen flex flex-col items-center justify-center -mt-16 relative overflow-hidden">
         <GridPattern
           x={500}
-          y={500}
+          y={400}
           squares={[
+            [-11, 9],
+            [-9, 8],
+            [-8, 10],
+            [-10, 4],
+            [-7, 11],
+            [-6, 9],
+            [-4, 12],
             [4, 4],
             [5, 1],
             [8, 2],
@@ -68,57 +138,66 @@ export default function Home({ params }: HomeProps) {
             [16, 8],
           ]}
           className={cn(
-            "[mask-image:radial-gradient(300px_circle_at_center,white,transparent)]",
+            "[mask-image:radial-gradient(250px_circle_at_center,white,transparent)]",
             "sm:[mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
             "md:[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
-            "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12",
+            "inset-x-0 inset-y-[-40%] h-[200%] skew-y-12",
           )}
         />
-        <div className="container max-w-7xl mx-auto text-center py-6 relative z-10">
-          <h1
-            ref={titleAnimation.ref}
-            style={titleAnimation.animationStyle}
-            className="text-5xl lg:text-6xl xl:text-7xl font-medium tracking-tight mb-8"
-          >
-            Prinsur.com
-          </h1>
-          <p
-            ref={subtitleAnimation.ref}
-            style={subtitleAnimation.animationStyle}
-            className="text-2xl lg:text-3xl text-muted-foreground mb-8 leading-relaxed"
-          >
-            {locale === "en"
-              ? "A transparent, efficient, and user-centric insurance ecosystem"
-              : "一個透明、高效且以使用者為中心的保險生態系統"}
-          </p>
-          <div
-            ref={buttonsAnimation.ref}
-            style={buttonsAnimation.animationStyle}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center my-16 px-6"
-          >
-            <Button
-              size="lg"
-              className="h-12 px-8 text-lg w-full sm:w-auto max-w-48"
-              asChild
+        <div className="container mx-auto text-center relative z-10 flex flex-col items-center justify-center flex-1 px-4">
+          <div className="flex flex-col items-center justify-center w-full">
+            <h1
+              ref={titleAnimation.ref}
+              style={titleAnimation.animationStyle}
+              className="text-5xl lg:text-6xl xl:text-7xl font-medium tracking-tight mb-16"
             >
-              <Link href={`/${locale}/insurance`}>
-                {locale === "en" ? "Get Started" : "立即開始"}
-              </Link>
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-12 px-8 text-lg w-full sm:w-auto max-w-48"
-            >
-              {locale === "en" ? "Learn More" : "了解更多"}
-            </Button>
+              Prinsur.com
+            </h1>
+            <div className="flex flex-col items-center justify-center space-y-8 w-full">
+              <div
+                ref={searchAnimation.ref}
+                style={searchAnimation.animationStyle}
+                className="w-full max-w-4xl px-2 sm:px-8"
+              >
+                <form onSubmit={handleSearch}>
+                <div className="relative">
+                  <Search className="absolute left-4 top-[18px] h-5 w-5 text-muted-foreground z-10" />
+                  <Input
+                    type="text"
+                    placeholder={locale === "en" 
+                      ? "e.g. life insurance, travel insurance"
+                      : "例如：壽險、旅平險"}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="h-14 pl-12 pr-4 text-base sm:text-lg border-2 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-full placeholder:text-sm sm:placeholder:text-base bg-white/5 backdrop-blur-sm border-gray-300 dark:border-white/10"
+                  />
+                </div>
+                </form>
+              </div>
+              <div
+                ref={loginSuggestionAnimation.ref}
+                style={loginSuggestionAnimation.animationStyle}
+                className="text-center"
+              >
+                <div className="flex flex-row items-center justify-center gap-1">
+                  <span className="text-muted-foreground text-sm">
+                    {locale === "en"
+                      ? "Login for better results - "
+                      : "登入獲得更佳結果 - "}
+                  </span>
+                  <Button variant="link" className="text-primary p-0 h-auto text-sm underline">
+                    {locale === "en" ? "Go to Login" : "前往登入"}
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
           <div
             ref={descriptionAnimation.ref}
             style={descriptionAnimation.animationStyle}
-            className="max-w-4xl mx-auto"
+            className="max-w-4xl mx-auto mt-16"
           >
-            <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-12">
+            <div className="grid grid-cols-3 gap-2 sm:gap-6 md:gap-12">
               <div className="text-center">
                 <p className="text-xs sm:text-sm lg:text-base text-muted-foreground">
                   {locale === "en" ? "Success Rate" : "成交率提升"}

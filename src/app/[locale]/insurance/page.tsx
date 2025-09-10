@@ -32,9 +32,10 @@ import { ProductDetailModal } from "@/components/insurance/product-detail-modal"
 
 interface InsurancePageProps {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ search?: string }>;
 }
 
-export default function InsurancePage({ params }: InsurancePageProps) {
+export default function InsurancePage({ params, searchParams }: InsurancePageProps) {
   const [locale, setLocale] = useState<string>("zh-TW");
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<InsuranceFilter>({});
@@ -46,6 +47,14 @@ export default function InsurancePage({ params }: InsurancePageProps) {
       setLocale(paramLocale);
     });
   }, [params]);
+
+  useEffect(() => {
+    searchParams.then(({ search }) => {
+      if (search) {
+        setSearchTerm(decodeURIComponent(search));
+      }
+    });
+  }, [searchParams]);
 
   const filteredProducts = useMemo(
     () =>

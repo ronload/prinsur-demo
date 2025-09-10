@@ -15,15 +15,15 @@ import {
 
 export function LanguageToggle() {
   const pathname = usePathname();
-  const [currentLocale, setCurrentLocale] = React.useState("zh-TW");
+  const localeFromPath = pathname.split('/')[1] || 'zh-TW';
+  const [currentLocale, setCurrentLocale] = React.useState(localeFromPath);
 
   React.useEffect(() => {
-    if (pathname.startsWith("/en")) {
-      setCurrentLocale("en");
-    } else {
-      setCurrentLocale("zh-TW");
+    const newLocale = pathname.split('/')[1] || 'zh-TW';
+    if (newLocale !== currentLocale) {
+      setCurrentLocale(newLocale);
     }
-  }, [pathname]);
+  }, [pathname, currentLocale]);
 
   const getLanguageUrl = (locale: string) => {
     const pathWithoutLocale = pathname.replace(/^\/(zh-TW|en)/, "") || "/";

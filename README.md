@@ -1,6 +1,6 @@
-![alt text](screenshots/homepage-dark.png)
-
 # Prinsur - 智慧保險媒合平台
+
+![alt text](screenshots/homepage-dark.png)
 
 一個透明、高效且以使用者為中心的保險生態系統，透過線上比價、線下媒合 (O2O) 的模式，打破資訊不對稱，建立透明的保險決策環境。
 

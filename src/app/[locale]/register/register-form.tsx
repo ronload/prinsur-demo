@@ -73,6 +73,8 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
     phone: "",
     password: "",
     confirmPassword: "",
+    birthDate: undefined as Date | undefined,
+    gender: "",
     licenseNumber: "",
     company: "",
     experience: "",
@@ -93,6 +95,10 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
 
   const handleAgentInputChange = (field: string, value: string) => {
     setAgentForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleAgentDateChange = (date: Date | undefined) => {
+    setAgentForm((prev) => ({ ...prev, birthDate: date }));
   };
 
   const handleConsumerSubmit = () => {
@@ -491,6 +497,54 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                       handleAgentInputChange("phone", e.target.value)
                     }
                   />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="agent-birthDate">
+                      {locale === "en" ? "Birth Date" : "出生日期"} *
+                    </Label>
+                    <DatePicker
+                      date={agentForm.birthDate}
+                      onDateChange={handleAgentDateChange}
+                      placeholder={
+                        locale === "en" ? "Select birth date" : "選擇出生日期"
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="agent-gender">
+                      {locale === "en" ? "Gender" : "性別"} *
+                    </Label>
+                    <Select
+                      value={agentForm.gender}
+                      onValueChange={(value) =>
+                        handleAgentInputChange("gender", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={
+                            locale === "en" ? "Select gender" : "選擇性別"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="male">
+                          {locale === "en" ? "Male" : "男性"}
+                        </SelectItem>
+                        <SelectItem value="female">
+                          {locale === "en" ? "Female" : "女性"}
+                        </SelectItem>
+                        <SelectItem value="other">
+                          {locale === "en" ? "Other" : "其他"}
+                        </SelectItem>
+                        <SelectItem value="prefer-not-to-say">
+                          {locale === "en" ? "Prefer not to say" : "不願透露"}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
 

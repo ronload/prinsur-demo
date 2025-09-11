@@ -201,6 +201,7 @@ export default function Home({ params }: HomeProps) {
                   <Button
                     variant="link"
                     className="text-primary p-0 h-auto text-sm underline"
+                    onClick={() => router.push(`/${locale}/login`)}
                   >
                     {locale === "en" ? "Go to Login" : "前往登入"}
                   </Button>

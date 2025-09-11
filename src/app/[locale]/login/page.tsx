@@ -191,7 +191,10 @@ export default function LoginPage() {
                     {locale === "en"
                       ? "Don't have an account? "
                       : "還沒有帳戶？ "}
-                    <Link href={`/${locale}/register?tab=consumer`} className="text-primary hover:underline">
+                    <Link
+                      href={`/${locale}/register?tab=consumer`}
+                      className="text-primary hover:underline"
+                    >
                       {locale === "en" ? "Sign up" : "立即註冊"}
                     </Link>
                   </div>
@@ -313,7 +316,10 @@ export default function LoginPage() {
                   </div>
                   <div className="text-center text-sm text-muted-foreground">
                     {locale === "en" ? "New agent? " : "新業務員？ "}
-                    <Link href={`/${locale}/register?tab=agent`} className="text-primary hover:underline">
+                    <Link
+                      href={`/${locale}/register?tab=agent`}
+                      className="text-primary hover:underline"
+                    >
                       {locale === "en" ? "Apply now" : "立即申請"}
                     </Link>
                   </div>

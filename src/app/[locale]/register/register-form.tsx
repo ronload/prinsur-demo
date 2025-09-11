@@ -257,7 +257,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                     <SelectTrigger className="h-9 !h-9 !min-h-9 !max-h-9">
                       <SelectValue
                         placeholder={
-                          locale === "en" ? "Select" : "選擇"
+                          locale === "en" ? "Select gender" : "選擇性別"
                         }
                       />
                     </SelectTrigger>

@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Eye, EyeOff, User, Briefcase, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { DatePicker } from "@/components/ui/date-picker";
 
 interface RegisterFormProps {
   locale: string;
@@ -61,7 +62,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
     phone: "",
     password: "",
     confirmPassword: "",
-    birthDate: "",
+    birthDate: undefined as Date | undefined,
     gender: "",
   });
 
@@ -84,6 +85,10 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
 
   const handleConsumerInputChange = (field: string, value: string) => {
     setConsumerForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleConsumerDateChange = (date: Date | undefined) => {
+    setConsumerForm((prev) => ({ ...prev, birthDate: date }));
   };
 
   const handleAgentInputChange = (field: string, value: string) => {
@@ -156,8 +161,8 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                     id="consumer-firstName"
                     placeholder={
                       locale === "en"
-                        ? "Enter your first name"
-                        : "請輸入您的姓氏"
+                        ? "e.g., John"
+                        : "例：王"
                     }
                     value={consumerForm.firstName}
                     onChange={(e) =>
@@ -173,8 +178,8 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                     id="consumer-lastName"
                     placeholder={
                       locale === "en"
-                        ? "Enter your last name"
-                        : "請輸入您的名字"
+                        ? "e.g., Smith"
+                        : "例：小明"
                     }
                     value={consumerForm.lastName}
                     onChange={(e) =>
@@ -225,12 +230,11 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                   <Label htmlFor="consumer-birthDate">
                     {locale === "en" ? "Birth Date" : "出生日期"}
                   </Label>
-                  <Input
-                    id="consumer-birthDate"
-                    type="date"
-                    value={consumerForm.birthDate}
-                    onChange={(e) =>
-                      handleConsumerInputChange("birthDate", e.target.value)
+                  <DatePicker
+                    date={consumerForm.birthDate}
+                    onDateChange={handleConsumerDateChange}
+                    placeholder={
+                      locale === "en" ? "Select birth date" : "選擇出生日期"
                     }
                   />
                 </div>
@@ -244,10 +248,10 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                       handleConsumerInputChange("gender", value)
                     }
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-9 !h-9 !min-h-9 !max-h-9">
                       <SelectValue
                         placeholder={
-                          locale === "en" ? "Select gender" : "選擇性別"
+                          locale === "en" ? "Select" : "選擇"
                         }
                       />
                     </SelectTrigger>
@@ -423,8 +427,8 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                       id="agent-firstName"
                       placeholder={
                         locale === "en"
-                          ? "Enter your first name"
-                          : "請輸入您的姓氏"
+                          ? "e.g., John"
+                          : "例：王"
                       }
                       value={agentForm.firstName}
                       onChange={(e) =>
@@ -440,8 +444,8 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                       id="agent-lastName"
                       placeholder={
                         locale === "en"
-                          ? "Enter your last name"
-                          : "請輸入您的名字"
+                          ? "e.g., Smith"
+                          : "例：小明"
                       }
                       value={agentForm.lastName}
                       onChange={(e) =>
@@ -451,43 +455,42 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="agent-email">
-                      {locale === "en" ? "Email" : "電子郵件"} *
-                    </Label>
-                    <Input
-                      id="agent-email"
-                      type="email"
-                      placeholder={
-                        locale === "en"
-                          ? "Enter your email"
-                          : "請輸入您的電子郵件"
-                      }
-                      value={agentForm.email}
-                      onChange={(e) =>
-                        handleAgentInputChange("email", e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="agent-phone">
-                      {locale === "en" ? "Phone Number" : "手機號碼"} *
-                    </Label>
-                    <Input
-                      id="agent-phone"
-                      type="tel"
-                      placeholder={
-                        locale === "en"
-                          ? "Enter your phone number"
-                          : "請輸入您的手機號碼"
-                      }
-                      value={agentForm.phone}
-                      onChange={(e) =>
-                        handleAgentInputChange("phone", e.target.value)
-                      }
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="agent-email">
+                    {locale === "en" ? "Email" : "電子郵件"} *
+                  </Label>
+                  <Input
+                    id="agent-email"
+                    type="email"
+                    placeholder={
+                      locale === "en"
+                        ? "Enter your email"
+                        : "請輸入您的電子郵件"
+                    }
+                    value={agentForm.email}
+                    onChange={(e) =>
+                      handleAgentInputChange("email", e.target.value)
+                    }
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="agent-phone">
+                    {locale === "en" ? "Phone Number" : "手機號碼"} *
+                  </Label>
+                  <Input
+                    id="agent-phone"
+                    type="tel"
+                    placeholder={
+                      locale === "en"
+                        ? "Enter your phone number"
+                        : "請輸入您的手機號碼"
+                    }
+                    value={agentForm.phone}
+                    onChange={(e) =>
+                      handleAgentInputChange("phone", e.target.value)
+                    }
+                  />
                 </div>
               </div>
 
@@ -506,8 +509,8 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                       id="agent-licenseNumber"
                       placeholder={
                         locale === "en"
-                          ? "Enter your license number"
-                          : "請輸入您的執照號碼"
+                          ? "License #"
+                          : "執照號碼"
                       }
                       value={agentForm.licenseNumber}
                       onChange={(e) =>
@@ -523,8 +526,8 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                       id="agent-company"
                       placeholder={
                         locale === "en"
-                          ? "Enter your company name"
-                          : "請輸入您的公司名稱"
+                          ? "Company name"
+                          : "公司名稱"
                       }
                       value={agentForm.company}
                       onChange={(e) =>
@@ -548,7 +551,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                       <SelectTrigger>
                         <SelectValue
                           placeholder={
-                            locale === "en" ? "Select experience" : "選擇年資"
+                            locale === "en" ? "Experience" : "年資"
                           }
                         />
                       </SelectTrigger>
@@ -582,8 +585,8 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                         <SelectValue
                           placeholder={
                             locale === "en"
-                              ? "Select education"
-                              : "選擇教育程度"
+                              ? "Education"
+                              : "教育程度"
                           }
                         />
                       </SelectTrigger>

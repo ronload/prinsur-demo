@@ -93,7 +93,7 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform" style={{ transform: 'translateZ(0)' }}>
       <div className="container flex h-14 items-center">
         {/* Logo */}
         <div className="mr-6 hidden md:flex">

@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { Search, Users, FileText } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/auth-context";
 
 interface HomeProps {
   params: Promise<{ locale: string }>;
@@ -23,7 +24,9 @@ export default function Home({ params }: HomeProps) {
   const localeFromPath = pathname.split("/")[1] || "zh-TW";
   const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const { user, isLoading } = useAuth();
 
   // Animation hooks - synchronized animations without stagger
   const [showTextType, setShowTextType] = useState(false);
@@ -38,6 +41,11 @@ export default function Home({ params }: HomeProps) {
     distance: 30,
   });
   const featuresAnimation = useStaggeredReveal(3, 200);
+
+  // Set mounted state on client-side
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Trigger TextType after other animations complete
   useEffect(() => {
@@ -187,26 +195,28 @@ export default function Home({ params }: HomeProps) {
                   </div>
                 </form>
               </div>
-              <div
-                ref={loginSuggestionAnimation.ref}
-                style={loginSuggestionAnimation.animationStyle}
-                className="text-center"
-              >
-                <div className="flex flex-row items-center justify-center gap-1">
-                  <span className="text-muted-foreground text-sm">
-                    {locale === "en"
-                      ? "Login for better results - "
-                      : "登入獲得更佳結果 - "}
-                  </span>
-                  <Button
-                    variant="link"
-                    className="text-primary p-0 h-auto text-sm underline"
-                    onClick={() => router.push(`/${locale}/login`)}
-                  >
-                    {locale === "en" ? "Go to Login" : "前往登入"}
-                  </Button>
+              {mounted && !isLoading && !user && (
+                <div
+                  ref={loginSuggestionAnimation.ref}
+                  style={loginSuggestionAnimation.animationStyle}
+                  className="text-center"
+                >
+                  <div className="flex flex-row items-center justify-center gap-1">
+                    <span className="text-muted-foreground text-sm">
+                      {locale === "en"
+                        ? "Login for better results - "
+                        : "登入獲得更佳結果 - "}
+                    </span>
+                    <Button
+                      variant="link"
+                      className="text-primary p-0 h-auto text-sm underline"
+                      onClick={() => router.push(`/${locale}/login`)}
+                    >
+                      {locale === "en" ? "Go to Login" : "前往登入"}
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
           <div

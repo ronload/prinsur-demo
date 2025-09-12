@@ -209,7 +209,7 @@ export default function DashboardPage({
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="text-sm md:text-xl font-bold">
+                <div className="text-lg md:text-2xl font-bold truncate">
                   {formatCurrency(performance.revenue)}
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -242,7 +242,7 @@ export default function DashboardPage({
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="text-sm md:text-xl font-bold">
+                <div className="text-lg md:text-2xl font-bold truncate">
                   {formatCurrency(performance.averageDealSize)}
                 </div>
                 <p className="text-xs text-muted-foreground truncate">
@@ -298,30 +298,42 @@ export default function DashboardPage({
 
           <Tabs defaultValue="customers" className="space-y-4 md:space-y-6">
             <div className="overflow-x-auto">
-              <TabsList className="grid w-full grid-cols-4 min-w-[320px]">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger
                   value="customers"
-                  className="text-xs md:text-sm px-2 md:px-4"
+                  className="text-xs md:text-sm px-2 md:px-4 flex items-center gap-1 md:gap-2"
                 >
-                  {locale === "en" ? "Customers" : "客戶"}
+                  <Users className="h-4 w-4 flex-shrink-0" />
+                  <span className="hidden sm:inline">
+                    {locale === "en" ? "Customers" : "客戶"}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="appointments"
-                  className="text-xs md:text-sm px-2 md:px-4"
+                  className="text-xs md:text-sm px-2 md:px-4 flex items-center gap-1 md:gap-2"
                 >
-                  {locale === "en" ? "Appts" : "預約"}
+                  <Calendar className="h-4 w-4 flex-shrink-0" />
+                  <span className="hidden sm:inline">
+                    {locale === "en" ? "Appointments" : "預約"}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="deals"
-                  className="text-xs md:text-sm px-2 md:px-4"
+                  className="text-xs md:text-sm px-2 md:px-4 flex items-center gap-1 md:gap-2"
                 >
-                  {locale === "en" ? "Deals" : "成交"}
+                  <TrendingUp className="h-4 w-4 flex-shrink-0" />
+                  <span className="hidden sm:inline">
+                    {locale === "en" ? "Deals" : "成交"}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="performance"
-                  className="text-xs md:text-sm px-2 md:px-4"
+                  className="text-xs md:text-sm px-2 md:px-4 flex items-center gap-1 md:gap-2"
                 >
-                  {locale === "en" ? "Stats" : "統計"}
+                  <Target className="h-4 w-4 flex-shrink-0" />
+                  <span className="hidden sm:inline">
+                    {locale === "en" ? "Performance" : "統計"}
+                  </span>
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -346,45 +358,48 @@ export default function DashboardPage({
 
               <div className="space-y-3">
                 {customers.map((customer) => (
-                  <Card key={customer.id} className="shadow-none">
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between mb-3">
+                  <Card key={customer.id} className="w-full overflow-hidden">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
                           <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                             <Users className="h-5 w-5 text-primary" />
                           </div>
                           <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold truncate">
-                                {customer.name}
-                              </h3>
-                              {getCustomerStatusBadge(customer.status)}
-                            </div>
-                            <p className="text-xs text-muted-foreground">
+                            <CardTitle className="truncate mb-1">
+                              {customer.name}
+                            </CardTitle>
+                            <CardDescription>
                               {customer.age}
                               {locale === "en" ? "yrs" : "歲"} •{" "}
                               {customer.location.city}
-                            </p>
+                            </CardDescription>
                           </div>
+                        </div>
+                        <div className="flex-shrink-0">
+                          {getCustomerStatusBadge(customer.status)}
                         </div>
                       </div>
+                    </CardHeader>
 
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-2 text-sm">
-                            <Phone className="h-3 w-3 text-muted-foreground" />
+                    <CardContent>
+
+                      <div className="mb-3">
+                        <div className="grid grid-cols-3 gap-3 mb-2">
+                          <div className="flex items-center gap-2 text-sm col-span-2">
+                            <Phone className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                             <span className="truncate">{customer.phone}</span>
                           </div>
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Mail className="h-3 w-3" />
-                            <span className="truncate">{customer.email}</span>
-                          </div>
-                        </div>
-                        <div className="text-right sm:text-left">
-                          <div className="text-xs text-muted-foreground mb-1">
+                          <div className="text-xs text-muted-foreground text-right sm:text-left">
                             {locale === "en" ? "Last Contact" : "最後聯絡"}
                           </div>
-                          <div className="text-sm font-medium">
+                        </div>
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground col-span-2">
+                            <Mail className="h-3 w-3 flex-shrink-0" />
+                            <span className="truncate">{customer.email}</span>
+                          </div>
+                          <div className="text-sm font-medium text-right sm:text-left">
                             {formatDate(customer.lastContact)}
                           </div>
                         </div>
@@ -428,26 +443,26 @@ export default function DashboardPage({
               </div>
             </TabsContent>
 
-            <TabsContent value="appointments" className="space-y-6">
-              <div className="flex justify-between items-center">
+            <TabsContent value="appointments" className="space-y-4 md:space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h2 className="text-2xl font-bold">
+                  <h2 className="text-lg md:text-2xl font-bold">
                     {locale === "en" ? "Appointment Management" : "預約管理"}
                   </h2>
-                  <p className="text-muted-foreground">
+                  <p className="text-sm text-muted-foreground">
                     {locale === "en"
                       ? "Manage meetings and appointments with customers"
                       : "管理與客戶的會面安排"}
                   </p>
                 </div>
-                <Button>
+                <Button size="sm" className="self-start sm:self-auto">
                   {locale === "en" ? "Add Appointment" : "新增預約"}
                 </Button>
               </div>
 
               <div className="grid gap-4">
                 {upcomingAppointments.map((appointment) => (
-                  <Card key={appointment.id}>
+                  <Card key={appointment.id} className="w-full overflow-hidden">
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
@@ -515,17 +530,15 @@ export default function DashboardPage({
                         </div>
                       )}
 
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                      <div className="flex gap-2 flex-wrap">
+                        <Button variant="outline" size="sm" className="text-xs">
                           {locale === "en" ? "Reschedule" : "重新排程"}
                         </Button>
-                        <Button variant="outline" size="sm">
-                          {locale === "en" ? "Contact Customer" : "聯絡客戶"}
+                        <Button variant="outline" size="sm" className="text-xs">
+                          {locale === "en" ? "Contact" : "聯絡"}
                         </Button>
-                        <Button variant="outline" size="sm">
-                          {locale === "en"
-                            ? "View Customer Profile"
-                            : "查看客戶資料"}
+                        <Button variant="outline" size="sm" className="text-xs">
+                          {locale === "en" ? "Profile" : "資料"}
                         </Button>
                       </div>
                     </CardContent>
@@ -534,12 +547,12 @@ export default function DashboardPage({
               </div>
             </TabsContent>
 
-            <TabsContent value="deals" className="space-y-6">
+            <TabsContent value="deals" className="space-y-4 md:space-y-6">
               <div>
-                <h2 className="text-2xl font-bold mb-2">
+                <h2 className="text-lg md:text-2xl font-bold mb-2">
                   {locale === "en" ? "Deal Records" : "成交記錄"}
                 </h2>
-                <p className="text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {locale === "en"
                     ? "View your closed deals and commission income"
                     : "查看您的成交紀錄和佣金收入"}
@@ -548,7 +561,7 @@ export default function DashboardPage({
 
               <div className="grid gap-4">
                 {deals.map((deal) => (
-                  <Card key={deal.id}>
+                  <Card key={deal.id} className="w-full overflow-hidden">
                     <CardHeader>
                       <div className="flex items-start justify-between">
                         <div>
@@ -598,20 +611,20 @@ export default function DashboardPage({
               </div>
             </TabsContent>
 
-            <TabsContent value="performance" className="space-y-6">
+            <TabsContent value="performance" className="space-y-4 md:space-y-6">
               <div>
-                <h2 className="text-2xl font-bold mb-2">
+                <h2 className="text-lg md:text-2xl font-bold mb-2">
                   {locale === "en" ? "Performance Analysis" : "業績分析"}
                 </h2>
-                <p className="text-muted-foreground">
+                <p className="text-sm text-muted-foreground">
                   {locale === "en"
                     ? "Track your performance and goal achievement status"
                     : "追蹤您的業績表現和目標達成狀況"}
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <Card className="w-full overflow-hidden">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Target className="h-5 w-5" />
@@ -654,7 +667,7 @@ export default function DashboardPage({
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="w-full overflow-hidden">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <TrendingUp className="h-5 w-5" />

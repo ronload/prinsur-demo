@@ -19,17 +19,17 @@ export default function AgentClientsPage() {
     {
       id: "1",
       name: "王小明",
-      email: "wang@example.com", 
+      email: "wang@example.com",
       phone: "0912-345-678",
       status: "active",
       joinDate: "2024-01-15",
       policies: 2,
     },
     {
-      id: "2", 
+      id: "2",
       name: "李美华",
       email: "li@example.com",
-      phone: "0987-654-321", 
+      phone: "0987-654-321",
       status: "pending",
       joinDate: "2024-02-20",
       policies: 1,
@@ -39,7 +39,7 @@ export default function AgentClientsPage() {
       name: "陈建文",
       email: "chen@example.com",
       phone: "0923-456-789",
-      status: "active", 
+      status: "active",
       joinDate: "2024-03-10",
       policies: 3,
     },
@@ -47,136 +47,150 @@ export default function AgentClientsPage() {
 
   const getStatusBadge = (status: string) => {
     if (status === "active") {
-      return <Badge className="bg-green-100 text-green-700">{locale === "en" ? "Active" : "活躍"}</Badge>;
+      return (
+        <Badge className="bg-green-100 text-green-700">
+          {locale === "en" ? "Active" : "活躍"}
+        </Badge>
+      );
     } else {
-      return <Badge variant="secondary">{locale === "en" ? "Pending" : "待處理"}</Badge>;
+      return (
+        <Badge variant="secondary">
+          {locale === "en" ? "Pending" : "待處理"}
+        </Badge>
+      );
     }
   };
 
   return (
     <AgentGuard>
       <div className="container mx-auto p-6 space-y-6">
-      {/* 页面标题和操作 */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            {locale === "en" ? "Client Management" : "客戶管理"}
-          </h1>
-          <p className="text-muted-foreground">
-            {locale === "en" ? "Manage your clients and their policies" : "管理您的客戶和保單"}
-          </p>
-        </div>
-        <Button>
-          <Plus className="h-4 w-4 mr-2" />
-          {locale === "en" ? "Add Client" : "新增客戶"}
-        </Button>
-      </div>
-
-      {/* 搜索栏 */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder={locale === "en" ? "Search clients..." : "搜尋客戶..."}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8"
-            />
+        {/* 页面标题和操作 */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {locale === "en" ? "Client Management" : "客戶管理"}
+            </h1>
+            <p className="text-muted-foreground">
+              {locale === "en"
+                ? "Manage your clients and their policies"
+                : "管理您的客戶和保單"}
+            </p>
           </div>
-        </CardContent>
-      </Card>
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            {locale === "en" ? "Add Client" : "新增客戶"}
+          </Button>
+        </div>
 
-      {/* 客户列表 */}
-      <div className="grid gap-4">
-        {clients.map((client) => (
-          <Card key={client.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center">
-                    <User className="h-6 w-6 text-primary-foreground" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg">{client.name}</h3>
-                    <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                      <div className="flex items-center">
-                        <Mail className="h-4 w-4 mr-1" />
-                        {client.email}
+        {/* 搜索栏 */}
+        <Card>
+          <CardContent className="p-6">
+            <div className="relative">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={
+                  locale === "en" ? "Search clients..." : "搜尋客戶..."
+                }
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 客户列表 */}
+        <div className="grid gap-4">
+          {clients.map((client) => (
+            <Card key={client.id} className="hover:shadow-md transition-shadow">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center">
+                      <User className="h-6 w-6 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-lg">{client.name}</h3>
+                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                        <div className="flex items-center">
+                          <Mail className="h-4 w-4 mr-1" />
+                          {client.email}
+                        </div>
+                        <div className="flex items-center">
+                          <Phone className="h-4 w-4 mr-1" />
+                          {client.phone}
+                        </div>
                       </div>
+                    </div>
+                  </div>
+                  <div className="text-right space-y-2">
+                    {getStatusBadge(client.status)}
+                    <div className="text-sm text-muted-foreground">
                       <div className="flex items-center">
-                        <Phone className="h-4 w-4 mr-1" />
-                        {client.phone}
+                        <Calendar className="h-4 w-4 mr-1" />
+                        {locale === "en" ? "Joined" : "加入日期"}:{" "}
+                        {client.joinDate}
+                      </div>
+                      <div className="mt-1">
+                        {locale === "en" ? "Policies" : "保單數量"}:{" "}
+                        {client.policies}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="text-right space-y-2">
-                  {getStatusBadge(client.status)}
-                  <div className="text-sm text-muted-foreground">
-                    <div className="flex items-center">
-                      <Calendar className="h-4 w-4 mr-1" />
-                      {locale === "en" ? "Joined" : "加入日期"}: {client.joinDate}
-                    </div>
-                    <div className="mt-1">
-                      {locale === "en" ? "Policies" : "保單數量"}: {client.policies}
-                    </div>
-                  </div>
-                </div>
-              </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        {/* 统计卡片 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {locale === "en" ? "Total Clients" : "總客戶數"}
+              </CardTitle>
+              <User className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{clients.length}</div>
+              <p className="text-xs text-muted-foreground">
+                {locale === "en" ? "Active clients" : "活躍客戶"}
+              </p>
             </CardContent>
           </Card>
-        ))}
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {locale === "en" ? "Total Policies" : "總保單數"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {clients.reduce((sum, client) => sum + client.policies, 0)}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {locale === "en" ? "Active policies" : "有效保單"}
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                {locale === "en" ? "New This Month" : "本月新增"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">1</div>
+              <p className="text-xs text-muted-foreground">
+                {locale === "en" ? "New clients" : "新客戶"}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-
-      {/* 统计卡片 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {locale === "en" ? "Total Clients" : "總客戶數"}
-            </CardTitle>
-            <User className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{clients.length}</div>
-            <p className="text-xs text-muted-foreground">
-              {locale === "en" ? "Active clients" : "活躍客戶"}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {locale === "en" ? "Total Policies" : "總保單數"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {clients.reduce((sum, client) => sum + client.policies, 0)}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              {locale === "en" ? "Active policies" : "有效保單"}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              {locale === "en" ? "New This Month" : "本月新增"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">1</div>
-            <p className="text-xs text-muted-foreground">
-              {locale === "en" ? "New clients" : "新客戶"}
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
     </AgentGuard>
   );
 }

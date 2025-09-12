@@ -10,10 +10,10 @@ interface RoleGuardProps {
   requireAuth?: boolean;
 }
 
-export function RoleGuard({ 
-  children, 
-  allowedRoles, 
-  requireAuth = false 
+export function RoleGuard({
+  children,
+  allowedRoles,
+  requireAuth = false,
 }: RoleGuardProps) {
   const { user, isLoading } = useAuth();
   const router = useRouter();
@@ -97,9 +97,5 @@ export function AgentGuard({ children }: { children: React.ReactNode }) {
 }
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  return (
-    <RoleGuard requireAuth={true}>
-      {children}
-    </RoleGuard>
-  );
+  return <RoleGuard requireAuth={true}>{children}</RoleGuard>;
 }

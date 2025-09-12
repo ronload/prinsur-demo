@@ -145,7 +145,10 @@ export function Header() {
   const navigationItems = getNavigationItems();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform" style={{ transform: 'translateZ(0)' }}>
+    <header
+      className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform"
+      style={{ transform: "translateZ(0)" }}
+    >
       <div className="container flex h-14 items-center">
         {/* Logo */}
         <div className="mr-6 hidden md:flex">
@@ -212,7 +215,7 @@ export function Header() {
           <nav className="flex items-center space-x-1">
             <ThemeToggle />
             <LanguageToggle />
-            
+
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -228,26 +231,40 @@ export function Header() {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {user.name}
+                      </p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}
                       </p>
                       <p className="text-xs leading-none text-muted-foreground">
-                        {user.type === "consumer" 
-                          ? (currentLocale === "en" ? "Consumer" : "消費者")
-                          : (currentLocale === "en" ? "Insurance Agent" : "保險業務員")
-                        }
+                        {user.type === "consumer"
+                          ? currentLocale === "en"
+                            ? "Consumer"
+                            : "消費者"
+                          : currentLocale === "en"
+                            ? "Insurance Agent"
+                            : "保險業務員"}
                       </p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href={user.type === "consumer" ? `/${currentLocale}/consumer/dashboard` : `/${currentLocale}/agent/dashboard`}>
-                      <Settings className="mr-2 h-4 w-4" />
-                      {user.type === "consumer" 
-                        ? (currentLocale === "en" ? "Dashboard" : "個人中心")
-                        : (currentLocale === "en" ? "Dashboard" : "工作台")
+                    <Link
+                      href={
+                        user.type === "consumer"
+                          ? `/${currentLocale}/consumer/dashboard`
+                          : `/${currentLocale}/agent/dashboard`
                       }
+                    >
+                      <Settings className="mr-2 h-4 w-4" />
+                      {user.type === "consumer"
+                        ? currentLocale === "en"
+                          ? "Dashboard"
+                          : "個人中心"
+                        : currentLocale === "en"
+                          ? "Dashboard"
+                          : "工作台"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

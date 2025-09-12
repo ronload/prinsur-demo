@@ -383,7 +383,6 @@ export default function DashboardPage({
                     </CardHeader>
 
                     <CardContent>
-
                       <div className="mb-3">
                         <div className="grid grid-cols-3 gap-3 mb-2">
                           <div className="flex items-center gap-2 text-sm col-span-2">
@@ -443,7 +442,10 @@ export default function DashboardPage({
               </div>
             </TabsContent>
 
-            <TabsContent value="appointments" className="space-y-4 md:space-y-6">
+            <TabsContent
+              value="appointments"
+              className="space-y-4 md:space-y-6"
+            >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h2 className="text-lg md:text-2xl font-bold">

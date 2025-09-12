@@ -165,11 +165,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                   </Label>
                   <Input
                     id="consumer-firstName"
-                    placeholder={
-                      locale === "en"
-                        ? "e.g., John"
-                        : "例：王"
-                    }
+                    placeholder={locale === "en" ? "e.g., John" : "例：王"}
                     value={consumerForm.firstName}
                     onChange={(e) =>
                       handleConsumerInputChange("firstName", e.target.value)
@@ -182,11 +178,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                   </Label>
                   <Input
                     id="consumer-lastName"
-                    placeholder={
-                      locale === "en"
-                        ? "e.g., Smith"
-                        : "例：小明"
-                    }
+                    placeholder={locale === "en" ? "e.g., Smith" : "例：小明"}
                     value={consumerForm.lastName}
                     onChange={(e) =>
                       handleConsumerInputChange("lastName", e.target.value)
@@ -431,11 +423,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                     </Label>
                     <Input
                       id="agent-firstName"
-                      placeholder={
-                        locale === "en"
-                          ? "e.g., John"
-                          : "例：王"
-                      }
+                      placeholder={locale === "en" ? "e.g., John" : "例：王"}
                       value={agentForm.firstName}
                       onChange={(e) =>
                         handleAgentInputChange("firstName", e.target.value)
@@ -448,11 +436,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                     </Label>
                     <Input
                       id="agent-lastName"
-                      placeholder={
-                        locale === "en"
-                          ? "e.g., Smith"
-                          : "例：小明"
-                      }
+                      placeholder={locale === "en" ? "e.g., Smith" : "例：小明"}
                       value={agentForm.lastName}
                       onChange={(e) =>
                         handleAgentInputChange("lastName", e.target.value)
@@ -561,11 +545,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                     </Label>
                     <Input
                       id="agent-licenseNumber"
-                      placeholder={
-                        locale === "en"
-                          ? "License #"
-                          : "執照號碼"
-                      }
+                      placeholder={locale === "en" ? "License #" : "執照號碼"}
                       value={agentForm.licenseNumber}
                       onChange={(e) =>
                         handleAgentInputChange("licenseNumber", e.target.value)
@@ -579,9 +559,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                     <Input
                       id="agent-company"
                       placeholder={
-                        locale === "en"
-                          ? "Company name"
-                          : "公司名稱"
+                        locale === "en" ? "Company name" : "公司名稱"
                       }
                       value={agentForm.company}
                       onChange={(e) =>
@@ -604,9 +582,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                     >
                       <SelectTrigger>
                         <SelectValue
-                          placeholder={
-                            locale === "en" ? "Experience" : "年資"
-                          }
+                          placeholder={locale === "en" ? "Experience" : "年資"}
                         />
                       </SelectTrigger>
                       <SelectContent>
@@ -638,9 +614,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                       <SelectTrigger>
                         <SelectValue
                           placeholder={
-                            locale === "en"
-                              ? "Education"
-                              : "教育程度"
+                            locale === "en" ? "Education" : "教育程度"
                           }
                         />
                       </SelectTrigger>

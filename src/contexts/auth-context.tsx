@@ -11,7 +11,11 @@ export interface User {
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string, userType: "consumer" | "agent") => Promise<boolean>;
+  login: (
+    email: string,
+    password: string,
+    userType: "consumer" | "agent",
+  ) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
@@ -31,14 +35,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (email: string, password: string, userType: "consumer" | "agent"): Promise<boolean> => {
+  const login = async (
+    email: string,
+    password: string,
+    userType: "consumer" | "agent",
+  ): Promise<boolean> => {
     // 简单验证：只要邮箱和密码都有值就算登录成功
     if (!email.trim() || !password.trim()) {
       return false;
     }
 
     // 模拟API调用延迟
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // 创建用户对象
     const newUser: User = {
@@ -51,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // 保存用户信息
     setUser(newUser);
     localStorage.setItem("prinsur_user", JSON.stringify(newUser));
-    
+
     return true;
   };
 

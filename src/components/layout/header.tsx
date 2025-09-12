@@ -114,10 +114,6 @@ export function Header() {
           href: `/${currentLocale}/consumer/agents`,
           label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
         },
-        {
-          href: `/${currentLocale}/consumer/dashboard`,
-          label: currentLocale === "en" ? "Dashboard" : "個人中心",
-        },
       ];
     } else {
       // 业务员菜单

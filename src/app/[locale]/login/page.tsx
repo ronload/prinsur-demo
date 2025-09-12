@@ -49,11 +49,11 @@ export default function LoginPage() {
       const success = await login(formData.email, formData.password, userType);
       
       if (success) {
-        // 登录成功，跳转到对应页面
+        // 登录成功，跳转到对应的角色专区
         if (userType === "consumer") {
-          router.push(`/${locale}/dashboard`);
+          router.push(`/${locale}/consumer/dashboard`);
         } else {
-          router.push(`/${locale}/agents`);
+          router.push(`/${locale}/agent/dashboard`);
         }
       } else {
         setError(locale === "en" ? "Invalid email or password" : "電子郵件或密碼錯誤");

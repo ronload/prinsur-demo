@@ -83,24 +83,66 @@ export function Header() {
     }
   }, [pathname, currentLocale]);
 
-  const navigationItems = [
-    {
-      href: `/${currentLocale}/insurance`,
-      label: currentLocale === "en" ? "Insurance" : "保險商品",
-    },
-    {
-      href: `/${currentLocale}/policies`,
-      label: currentLocale === "en" ? "My Policies" : "我的保單",
-    },
-    {
-      href: `/${currentLocale}/agents`,
-      label: currentLocale === "en" ? "Agents" : "業務員",
-    },
-    {
-      href: `/${currentLocale}/dashboard`,
-      label: currentLocale === "en" ? "Dashboard" : "儀表板",
-    },
-  ];
+  // 根据用户角色生成不同的导航菜单
+  const getNavigationItems = () => {
+    if (!user) {
+      // 未登录用户显示公共页面
+      return [
+        {
+          href: `/${currentLocale}/insurance`,
+          label: currentLocale === "en" ? "Insurance" : "保險商品",
+        },
+        {
+          href: `/${currentLocale}/agents`,
+          label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
+        },
+      ];
+    }
+
+    if (user.type === "consumer") {
+      // 消费者菜单
+      return [
+        {
+          href: `/${currentLocale}/consumer/insurance`,
+          label: currentLocale === "en" ? "Insurance" : "保險商品",
+        },
+        {
+          href: `/${currentLocale}/consumer/policies`,
+          label: currentLocale === "en" ? "My Policies" : "我的保單",
+        },
+        {
+          href: `/${currentLocale}/consumer/agents`,
+          label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
+        },
+        {
+          href: `/${currentLocale}/consumer/dashboard`,
+          label: currentLocale === "en" ? "Dashboard" : "個人中心",
+        },
+      ];
+    } else {
+      // 业务员菜单
+      return [
+        {
+          href: `/${currentLocale}/agent/dashboard`,
+          label: currentLocale === "en" ? "Dashboard" : "工作台",
+        },
+        {
+          href: `/${currentLocale}/agent/clients`,
+          label: currentLocale === "en" ? "Clients" : "客戶管理",
+        },
+        {
+          href: `/${currentLocale}/agent/policies`,
+          label: currentLocale === "en" ? "Policies" : "保單管理",
+        },
+        {
+          href: `/${currentLocale}/agent/reports`,
+          label: currentLocale === "en" ? "Reports" : "業績報表",
+        },
+      ];
+    }
+  };
+
+  const navigationItems = getNavigationItems();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform" style={{ transform: 'translateZ(0)' }}>
@@ -200,9 +242,12 @@ export function Header() {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link href={`/${currentLocale}/dashboard`}>
+                    <Link href={user.type === "consumer" ? `/${currentLocale}/consumer/dashboard` : `/${currentLocale}/agent/dashboard`}>
                       <Settings className="mr-2 h-4 w-4" />
-                      {currentLocale === "en" ? "Dashboard" : "儀表板"}
+                      {user.type === "consumer" 
+                        ? (currentLocale === "en" ? "Dashboard" : "個人中心")
+                        : (currentLocale === "en" ? "Dashboard" : "工作台")
+                      }
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

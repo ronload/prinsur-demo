@@ -2,10 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, User } from "lucide-react";
+import { Menu, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -14,6 +22,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
 
 interface MobileNavProps {
@@ -61,6 +70,7 @@ function MobileNav({ items, onItemClick }: MobileNavProps) {
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
   const pathname = usePathname();
   const localeFromPath = pathname.split("/")[1] || "zh-TW";
   const [currentLocale, setCurrentLocale] = useState(localeFromPath);
@@ -73,27 +83,68 @@ export function Header() {
     }
   }, [pathname, currentLocale]);
 
-  const navigationItems = [
-    {
-      href: `/${currentLocale}/insurance`,
-      label: currentLocale === "en" ? "Insurance" : "保險商品",
-    },
-    {
-      href: `/${currentLocale}/policies`,
-      label: currentLocale === "en" ? "My Policies" : "我的保單",
-    },
-    {
-      href: `/${currentLocale}/agents`,
-      label: currentLocale === "en" ? "Agents" : "業務員",
-    },
-    {
-      href: `/${currentLocale}/dashboard`,
-      label: currentLocale === "en" ? "Dashboard" : "儀表板",
-    },
-  ];
+  // 根据用户角色生成不同的导航菜单
+  const getNavigationItems = () => {
+    if (!user) {
+      // 未登录用户显示公共页面
+      return [
+        {
+          href: `/${currentLocale}/insurance`,
+          label: currentLocale === "en" ? "Insurance" : "保險商品",
+        },
+        {
+          href: `/${currentLocale}/agents`,
+          label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
+        },
+      ];
+    }
+
+    if (user.type === "consumer") {
+      // 消费者菜单
+      return [
+        {
+          href: `/${currentLocale}/consumer/insurance`,
+          label: currentLocale === "en" ? "Insurance" : "保險商品",
+        },
+        {
+          href: `/${currentLocale}/consumer/policies`,
+          label: currentLocale === "en" ? "My Policies" : "我的保單",
+        },
+        {
+          href: `/${currentLocale}/consumer/agents`,
+          label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
+        },
+      ];
+    } else {
+      // 业务员菜单
+      return [
+        {
+          href: `/${currentLocale}/agent/dashboard`,
+          label: currentLocale === "en" ? "Dashboard" : "工作台",
+        },
+        {
+          href: `/${currentLocale}/agent/clients`,
+          label: currentLocale === "en" ? "Clients" : "客戶管理",
+        },
+        {
+          href: `/${currentLocale}/agent/policies`,
+          label: currentLocale === "en" ? "Policies" : "保單管理",
+        },
+        {
+          href: `/${currentLocale}/agent/reports`,
+          label: currentLocale === "en" ? "Reports" : "業績報表",
+        },
+      ];
+    }
+  };
+
+  const navigationItems = getNavigationItems();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform" style={{ transform: 'translateZ(0)' }}>
+    <header
+      className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform"
+      style={{ transform: "translateZ(0)" }}
+    >
       <div className="container flex h-14 items-center">
         {/* Logo */}
         <div className="mr-6 hidden md:flex">
@@ -160,10 +211,73 @@ export function Header() {
           <nav className="flex items-center space-x-1">
             <ThemeToggle />
             <LanguageToggle />
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <User className="h-4 w-4" />
-              <span className="sr-only">User menu</span>
-            </Button>
+
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-primary-foreground text-xs font-medium">
+                        {user.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <span className="sr-only">User menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {user.name}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.type === "consumer"
+                          ? currentLocale === "en"
+                            ? "Consumer"
+                            : "消費者"
+                          : currentLocale === "en"
+                            ? "Insurance Agent"
+                            : "保險業務員"}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link
+                      href={
+                        user.type === "consumer"
+                          ? `/${currentLocale}/consumer/dashboard`
+                          : `/${currentLocale}/agent/dashboard`
+                      }
+                    >
+                      <Settings className="mr-2 h-4 w-4" />
+                      {user.type === "consumer"
+                        ? currentLocale === "en"
+                          ? "Dashboard"
+                          : "個人中心"
+                        : currentLocale === "en"
+                          ? "Dashboard"
+                          : "工作台"}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    {currentLocale === "en" ? "Sign out" : "登出"}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" size="sm" asChild>
+                <Link href={`/${currentLocale}/login`}>
+                  <User className="h-4 w-4 mr-2" />
+                  {currentLocale === "en" ? "Sign in" : "登入"}
+                </Link>
+              </Button>
+            )}
           </nav>
         </div>
       </div>

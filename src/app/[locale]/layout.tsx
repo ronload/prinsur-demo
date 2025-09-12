@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { locales } from "@/i18n/config";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { LoadingProvider } from "@/components/providers/loading-provider";
+import { AuthProvider } from "@/contexts/auth-context";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import "../globals.css";
@@ -52,13 +53,15 @@ export default async function LocaleLayout({
           disableTransitionOnChange
         >
           <LoadingProvider>
-            <NextIntlClientProvider messages={messages}>
-              <div className="relative flex min-h-screen flex-col">
-                <Header />
-                <main className="flex-1">{children}</main>
-                <Footer locale={locale} />
-              </div>
-            </NextIntlClientProvider>
+            <AuthProvider>
+              <NextIntlClientProvider messages={messages}>
+                <div className="relative flex min-h-screen flex-col">
+                  <Header />
+                  <main className="flex-1">{children}</main>
+                  <Footer locale={locale} />
+                </div>
+              </NextIntlClientProvider>
+            </AuthProvider>
           </LoadingProvider>
         </ThemeProvider>
       </body>

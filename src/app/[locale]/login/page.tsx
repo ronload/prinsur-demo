@@ -51,7 +51,7 @@ export default function LoginPage() {
       if (success) {
         // 登录成功，跳转到对应的角色专区
         if (userType === "consumer") {
-          router.push(`/${locale}/consumer/dashboard`);
+          router.push(`/${locale}/consumer/`);
         } else {
           router.push(`/${locale}/agent/dashboard`);
         }

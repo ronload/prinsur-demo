@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,8 +13,12 @@ import Link from "next/link";
 
 export default function LoginPage() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { login } = useAuth();
   const locale = pathname.split("/")[1] || "zh-TW";
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -21,11 +26,44 @@ export default function LoginPage() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    // 清除错误信息
+    if (error) setError("");
   };
 
-  const handleSubmit = (userType: "consumer" | "agent") => {
-    console.log(`${userType} login:`, formData);
-    // TODO: 實作登入邏輯
+  const handleSubmit = async (userType: "consumer" | "agent") => {
+    setError("");
+    
+    // 基本验证
+    if (!formData.email.trim()) {
+      setError(locale === "en" ? "Email is required" : "請輸入電子郵件");
+      return;
+    }
+    if (!formData.password.trim()) {
+      setError(locale === "en" ? "Password is required" : "請輸入密碼");
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      const success = await login(formData.email, formData.password, userType);
+      
+      if (success) {
+        // 登录成功，跳转到对应页面
+        if (userType === "consumer") {
+          router.push(`/${locale}/dashboard`);
+        } else {
+          router.push(`/${locale}/agents`);
+        }
+      } else {
+        setError(locale === "en" ? "Invalid email or password" : "電子郵件或密碼錯誤");
+      }
+    } catch (err) {
+      setError(locale === "en" ? "Login failed. Please try again." : "登入失敗，請稍後再試");
+      console.error("Login error:", err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -141,13 +179,27 @@ export default function LoginPage() {
                       {locale === "en" ? "Forgot password?" : "忘記密碼？"}
                     </Link>
                   </div>
+                  
+                  {/* 错误信息 */}
+                  {error && (
+                    <div className="text-sm text-red-500 text-center bg-red-50 dark:bg-red-950/20 p-3 rounded-md">
+                      {error}
+                    </div>
+                  )}
+
                   <Button
                     className="w-full"
                     onClick={() => handleSubmit("consumer")}
+                    disabled={isLoading}
                   >
-                    {locale === "en"
-                      ? "Sign In as Consumer"
-                      : "以消費者身份登入"}
+                    {isLoading ? (
+                      <>
+                        <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-background border-t-transparent" />
+                        {locale === "en" ? "Signing in..." : "登入中..."}
+                      </>
+                    ) : (
+                      locale === "en" ? "Sign In as Consumer" : "以消費者身份登入"
+                    )}
                   </Button>
                   {/* 其他登入方式 */}
                   <div className="text-center text-sm text-muted-foreground mt-6 mb-4">
@@ -270,11 +322,27 @@ export default function LoginPage() {
                       {locale === "en" ? "Forgot password?" : "忘記密碼？"}
                     </Link>
                   </div>
+                  
+                  {/* 错误信息 */}
+                  {error && (
+                    <div className="text-sm text-red-500 text-center bg-red-50 dark:bg-red-950/20 p-3 rounded-md">
+                      {error}
+                    </div>
+                  )}
+
                   <Button
                     className="w-full"
                     onClick={() => handleSubmit("agent")}
+                    disabled={isLoading}
                   >
-                    {locale === "en" ? "Sign In as Agent" : "以業務員身份登入"}
+                    {isLoading ? (
+                      <>
+                        <div className="h-4 w-4 mr-2 animate-spin rounded-full border-2 border-background border-t-transparent" />
+                        {locale === "en" ? "Signing in..." : "登入中..."}
+                      </>
+                    ) : (
+                      locale === "en" ? "Sign In as Agent" : "以業務員身份登入"
+                    )}
                   </Button>
                   {/* 其他登入方式 */}
                   <div className="text-center text-sm text-muted-foreground mt-6 mb-4">

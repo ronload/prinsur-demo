@@ -2,10 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, User } from "lucide-react";
+import { Menu, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -14,6 +22,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
 
 interface MobileNavProps {
@@ -61,6 +70,7 @@ function MobileNav({ items, onItemClick }: MobileNavProps) {
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
   const pathname = usePathname();
   const localeFromPath = pathname.split("/")[1] || "zh-TW";
   const [currentLocale, setCurrentLocale] = useState(localeFromPath);
@@ -160,10 +170,56 @@ export function Header() {
           <nav className="flex items-center space-x-1">
             <ThemeToggle />
             <LanguageToggle />
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <User className="h-4 w-4" />
-              <span className="sr-only">User menu</span>
-            </Button>
+            
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center">
+                      <span className="text-primary-foreground text-xs font-medium">
+                        {user.name.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <span className="sr-only">User menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.email}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user.type === "consumer" 
+                          ? (currentLocale === "en" ? "Consumer" : "消費者")
+                          : (currentLocale === "en" ? "Insurance Agent" : "保險業務員")
+                        }
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${currentLocale}/dashboard`}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      {currentLocale === "en" ? "Dashboard" : "儀表板"}
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    {currentLocale === "en" ? "Sign out" : "登出"}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" size="sm" asChild>
+                <Link href={`/${currentLocale}/login`}>
+                  <User className="h-4 w-4 mr-2" />
+                  {currentLocale === "en" ? "Sign in" : "登入"}
+                </Link>
+              </Button>
+            )}
           </nav>
         </div>
       </div>

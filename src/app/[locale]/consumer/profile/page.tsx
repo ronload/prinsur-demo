@@ -4,7 +4,13 @@ import { useState, useEffect, use } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/contexts/auth-context";
 import { Save, User, Activity, Heart } from "lucide-react";
@@ -26,8 +32,14 @@ const MEDICAL_CONDITIONS = [
   { id: "heart_disease", label: { "zh-TW": "心臟疾病", en: "Heart Disease" } },
   { id: "asthma", label: { "zh-TW": "哮喘", en: "Asthma" } },
   { id: "cancer", label: { "zh-TW": "癌症", en: "Cancer" } },
-  { id: "mental_health", label: { "zh-TW": "精神健康疾病", en: "Mental Health Conditions" } },
-  { id: "kidney_disease", label: { "zh-TW": "腎臟疾病", en: "Kidney Disease" } },
+  {
+    id: "mental_health",
+    label: { "zh-TW": "精神健康疾病", en: "Mental Health Conditions" },
+  },
+  {
+    id: "kidney_disease",
+    label: { "zh-TW": "腎臟疾病", en: "Kidney Disease" },
+  },
   { id: "liver_disease", label: { "zh-TW": "肝臟疾病", en: "Liver Disease" } },
 ];
 
@@ -56,12 +68,19 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
     setIsSaving(true);
     try {
       // Save to localStorage (mock implementation)
-      localStorage.setItem(`consumer_profile_${user?.id}`, JSON.stringify(profile));
+      localStorage.setItem(
+        `consumer_profile_${user?.id}`,
+        JSON.stringify(profile),
+      );
 
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      alert(locale === "en" ? "Profile saved successfully!" : "個人資料已成功儲存！");
+      alert(
+        locale === "en"
+          ? "Profile saved successfully!"
+          : "個人資料已成功儲存！",
+      );
     } catch (error) {
       alert(locale === "en" ? "Failed to save profile" : "儲存失敗");
     } finally {
@@ -69,12 +88,15 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
     }
   };
 
-  const handleMedicalConditionChange = (conditionId: string, checked: boolean) => {
-    setProfile(prev => ({
+  const handleMedicalConditionChange = (
+    conditionId: string,
+    checked: boolean,
+  ) => {
+    setProfile((prev) => ({
       ...prev,
       medicalConditions: checked
         ? [...prev.medicalConditions, conditionId]
-        : prev.medicalConditions.filter(id => id !== conditionId)
+        : prev.medicalConditions.filter((id) => id !== conditionId),
     }));
   };
 
@@ -126,11 +148,15 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                     min="0"
                     max="120"
                     value={profile.age || ""}
-                    onChange={(e) => setProfile(prev => ({
-                      ...prev,
-                      age: parseInt(e.target.value) || 0
-                    }))}
-                    placeholder={locale === "en" ? "Enter your age" : "輸入年齡"}
+                    onChange={(e) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        age: parseInt(e.target.value) || 0,
+                      }))
+                    }
+                    placeholder={
+                      locale === "en" ? "Enter your age" : "輸入年齡"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -143,10 +169,12 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                     min="0"
                     max="500"
                     value={profile.weight || ""}
-                    onChange={(e) => setProfile(prev => ({
-                      ...prev,
-                      weight: parseFloat(e.target.value) || 0
-                    }))}
+                    onChange={(e) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        weight: parseFloat(e.target.value) || 0,
+                      }))
+                    }
                     placeholder={locale === "en" ? "Enter weight" : "輸入體重"}
                   />
                 </div>
@@ -160,10 +188,12 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                     min="0"
                     max="300"
                     value={profile.height || ""}
-                    onChange={(e) => setProfile(prev => ({
-                      ...prev,
-                      height: parseFloat(e.target.value) || 0
-                    }))}
+                    onChange={(e) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        height: parseFloat(e.target.value) || 0,
+                      }))
+                    }
                     placeholder={locale === "en" ? "Enter height" : "輸入身高"}
                   />
                 </div>
@@ -196,7 +226,10 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {MEDICAL_CONDITIONS.map((condition) => (
-                  <div key={condition.id} className="flex items-center space-x-2">
+                  <div
+                    key={condition.id}
+                    className="flex items-center space-x-2"
+                  >
                     <Checkbox
                       id={condition.id}
                       checked={profile.medicalConditions.includes(condition.id)}
@@ -228,9 +261,12 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
             <Button onClick={handleSave} disabled={isSaving}>
               <Save className="h-4 w-4 mr-2" />
               {isSaving
-                ? (locale === "en" ? "Saving..." : "儲存中...")
-                : (locale === "en" ? "Save Profile" : "儲存資料")
-              }
+                ? locale === "en"
+                  ? "Saving..."
+                  : "儲存中..."
+                : locale === "en"
+                  ? "Save Profile"
+                  : "儲存資料"}
             </Button>
           </div>
         </div>

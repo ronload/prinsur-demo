@@ -232,7 +232,10 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
         const coverage = monthlyPremium * getCoverageMultiplier(type);
 
         // Generate premium calculation data based on insurance type
-        const generatePremiumCalculation = (insuranceType: string, baseMonthly: number) => {
+        const generatePremiumCalculation = (
+          insuranceType: string,
+          baseMonthly: number,
+        ) => {
           const calculationsByType = {
             life: {
               description: "基本保費 × 年齡係數 × BMI係數 × 疾病係數",
@@ -243,10 +246,16 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
                   diabetes: 1.3,
                   hypertension: 1.2,
                   heart_disease: 1.5,
-                  cancer: 2.0
-                }
+                  cancer: 2.0,
+                },
               },
-              requiredFields: ['age', 'weight', 'height'] as ('age' | 'weight' | 'height' | 'gender' | 'medicalConditions')[]
+              requiredFields: ["age", "weight", "height"] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
             },
             health: {
               description: "基本保費 × 年齡係數 × BMI係數 × 疾病史係數",
@@ -258,48 +267,86 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
                   hypertension: 1.25,
                   heart_disease: 1.6,
                   asthma: 1.2,
-                  cancer: 2.5
-                }
+                  cancer: 2.5,
+                },
               },
-              requiredFields: ['age', 'weight', 'height', 'medicalConditions'] as ('age' | 'weight' | 'height' | 'gender' | 'medicalConditions')[]
+              requiredFields: [
+                "age",
+                "weight",
+                "height",
+                "medicalConditions",
+              ] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
             },
             accident: {
               description: "基本保費 × 年齡係數",
               factors: {
-                age: { multiplier: 0.02, range: { min: 16, max: 80 } }
+                age: { multiplier: 0.02, range: { min: 16, max: 80 } },
               },
-              requiredFields: ['age'] as ('age' | 'weight' | 'height' | 'gender' | 'medicalConditions')[]
+              requiredFields: ["age"] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
             },
             travel: {
               description: "基本保費 × 年齡係數",
               factors: {
-                age: { multiplier: 0.01, range: { min: 0, max: 80 } }
+                age: { multiplier: 0.01, range: { min: 0, max: 80 } },
               },
-              requiredFields: ['age'] as ('age' | 'weight' | 'height' | 'gender' | 'medicalConditions')[]
+              requiredFields: ["age"] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
             },
             vehicle: {
               description: "基本保費 × 年齡係數",
               factors: {
-                age: { multiplier: -0.03, range: { min: 18, max: 70 } }
+                age: { multiplier: -0.03, range: { min: 18, max: 70 } },
               },
-              requiredFields: ['age'] as ('age' | 'weight' | 'height' | 'gender' | 'medicalConditions')[]
+              requiredFields: ["age"] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
             },
             property: {
               description: "固定費率",
               factors: {},
-              requiredFields: [] as ('age' | 'weight' | 'height' | 'gender' | 'medicalConditions')[]
-            }
+              requiredFields: [] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
+            },
           };
 
-          const config = calculationsByType[insuranceType as keyof typeof calculationsByType];
+          const config =
+            calculationsByType[
+              insuranceType as keyof typeof calculationsByType
+            ];
           return {
             baseMonthly,
             baseAnnually: Math.floor(baseMonthly * 11.5),
             formula: {
               description: config.description,
-              factors: config.factors
+              factors: config.factors,
             },
-            requiredFields: config.requiredFields
+            requiredFields: config.requiredFields,
           };
         };
 

@@ -1,4 +1,5 @@
-import { InsuranceProduct, PremiumCalculation } from "@/types/insurance";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { InsuranceProduct } from "@/types/insurance";
 
 export interface UserProfile {
   age?: number;
@@ -30,24 +31,28 @@ export function calculateBMI(weight: number, height: number): number {
 export function calculatePremiumEstimate(
   product: InsuranceProduct,
   userProfile: UserProfile,
-  locale: "zh-TW" | "en" = "zh-TW"
+  locale: "zh-TW" | "en" = "zh-TW",
 ): PremiumEstimate {
   const { premiumCalculation } = product;
-  const { requiredFields, formula, baseMonthly, baseAnnually } = premiumCalculation;
+  const { requiredFields, formula, baseMonthly, baseAnnually } =
+    premiumCalculation;
 
   // Check which required fields are missing
-  const missingFields = requiredFields.filter(field => {
+  const missingFields = requiredFields.filter((field) => {
     switch (field) {
-      case 'age':
+      case "age":
         return !userProfile.age || userProfile.age <= 0;
-      case 'weight':
+      case "weight":
         return !userProfile.weight || userProfile.weight <= 0;
-      case 'height':
+      case "height":
         return !userProfile.height || userProfile.height <= 0;
-      case 'gender':
+      case "gender":
         return !userProfile.gender;
-      case 'medicalConditions':
-        return !userProfile.medicalConditions || userProfile.medicalConditions.length === 0;
+      case "medicalConditions":
+        return (
+          !userProfile.medicalConditions ||
+          userProfile.medicalConditions.length === 0
+        );
       default:
         return false;
     }
@@ -60,16 +65,16 @@ export function calculatePremiumEstimate(
     return {
       canCalculate: false,
       formulaDisplay: formula.description,
-      missingFields: missingFields.map(field => {
+      missingFields: missingFields.map((field) => {
         const fieldNames = {
           age: locale === "en" ? "Age" : "年齡",
           weight: locale === "en" ? "Weight" : "體重",
           height: locale === "en" ? "Height" : "身高",
           gender: locale === "en" ? "Gender" : "性別",
-          medicalConditions: locale === "en" ? "Medical History" : "病史"
+          medicalConditions: locale === "en" ? "Medical History" : "病史",
         };
         return fieldNames[field as keyof typeof fieldNames] || field;
-      })
+      }),
     };
   }
 
@@ -82,9 +87,10 @@ export function calculatePremiumEstimate(
     const ageConfig = formula.factors.age;
     const ageInRange = Math.max(
       ageConfig.range?.min || 0,
-      Math.min(ageConfig.range?.max || 100, userProfile.age)
+      Math.min(ageConfig.range?.max || 100, userProfile.age),
     );
-    const ageFactor = 1 + (ageInRange - (ageConfig.range?.min || 20)) * ageConfig.multiplier;
+    const ageFactor =
+      1 + (ageInRange - (ageConfig.range?.min || 20)) * ageConfig.multiplier;
     factors.age = ageFactor;
     totalMultiplier *= ageFactor;
   }
@@ -95,7 +101,7 @@ export function calculatePremiumEstimate(
     const bmiConfig = formula.factors.bmi;
     const bmiInRange = Math.max(
       bmiConfig.range?.min || 18.5,
-      Math.min(bmiConfig.range?.max || 35, bmi)
+      Math.min(bmiConfig.range?.max || 35, bmi),
     );
     const bmiFactor = 1 + (bmiInRange - 22) * bmiConfig.multiplier; // 22 is ideal BMI
     factors.bmi = bmiFactor;
@@ -113,8 +119,9 @@ export function calculatePremiumEstimate(
   // Medical conditions factor
   if (formula.factors.medicalConditions && userProfile.medicalConditions) {
     let medicalMultiplier = 1;
-    userProfile.medicalConditions.forEach(condition => {
-      const conditionMultiplier = formula.factors.medicalConditions?.[condition];
+    userProfile.medicalConditions.forEach((condition) => {
+      const conditionMultiplier =
+        formula.factors.medicalConditions?.[condition];
       if (conditionMultiplier && conditionMultiplier > medicalMultiplier) {
         medicalMultiplier = conditionMultiplier; // Use the highest risk factor
       }
@@ -134,11 +141,14 @@ export function calculatePremiumEstimate(
     annualPremium: calculatedAnnually,
     formulaDisplay: formula.description,
     missingFields: [],
-    factors
+    factors,
   };
 }
 
-export function formatCurrency(amount: number, locale: "zh-TW" | "en" = "zh-TW"): string {
+export function formatCurrency(
+  amount: number,
+  locale: "zh-TW" | "en" = "zh-TW",
+): string {
   if (locale === "en") {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -158,7 +168,7 @@ export function getPremiumDisplayStatus(
   product: InsuranceProduct,
   userProfile: UserProfile,
   isLoggedIn: boolean,
-  locale: "zh-TW" | "en" = "zh-TW"
+  locale: "zh-TW" | "en" = "zh-TW",
 ): {
   type: "not_logged_in" | "missing_data" | "calculated";
   content: string;
@@ -179,13 +189,13 @@ export function getPremiumDisplayStatus(
     return {
       type: "missing_data",
       content: estimate.formulaDisplay,
-      estimate
+      estimate,
     };
   }
 
   return {
     type: "calculated",
     content: `${formatCurrency(estimate.monthlyPremium!, locale)} ${locale === "en" ? "/ month" : "/ 月"}`,
-    estimate
+    estimate,
   };
 }

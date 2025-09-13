@@ -18,7 +18,13 @@ export interface PremiumCalculation {
       medicalConditions?: { [condition: string]: number };
     };
   };
-  requiredFields: ('age' | 'weight' | 'height' | 'gender' | 'medicalConditions')[];
+  requiredFields: (
+    | "age"
+    | "weight"
+    | "height"
+    | "gender"
+    | "medicalConditions"
+  )[];
 }
 
 export interface InsuranceProduct {

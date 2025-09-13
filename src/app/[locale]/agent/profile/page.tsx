@@ -4,7 +4,13 @@ import { useState, useEffect, use } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/auth-context";
@@ -44,12 +50,30 @@ const INSURANCE_COMPANIES = [
 ];
 
 const SPECIALTIES = [
-  { id: "retirement_planning", label: { "zh-TW": "退休規劃", en: "Retirement Planning" } },
-  { id: "family_protection", label: { "zh-TW": "家庭保障", en: "Family Protection" } },
-  { id: "investment_insurance", label: { "zh-TW": "投資型保險", en: "Investment Insurance" } },
-  { id: "business_insurance", label: { "zh-TW": "企業保險", en: "Business Insurance" } },
-  { id: "medical_insurance", label: { "zh-TW": "醫療保險", en: "Medical Insurance" } },
-  { id: "disability_insurance", label: { "zh-TW": "失能保險", en: "Disability Insurance" } },
+  {
+    id: "retirement_planning",
+    label: { "zh-TW": "退休規劃", en: "Retirement Planning" },
+  },
+  {
+    id: "family_protection",
+    label: { "zh-TW": "家庭保障", en: "Family Protection" },
+  },
+  {
+    id: "investment_insurance",
+    label: { "zh-TW": "投資型保險", en: "Investment Insurance" },
+  },
+  {
+    id: "business_insurance",
+    label: { "zh-TW": "企業保險", en: "Business Insurance" },
+  },
+  {
+    id: "medical_insurance",
+    label: { "zh-TW": "醫療保險", en: "Medical Insurance" },
+  },
+  {
+    id: "disability_insurance",
+    label: { "zh-TW": "失能保險", en: "Disability Insurance" },
+  },
 ];
 
 export default function AgentProfilePage({ params }: AgentProfileProps) {
@@ -81,12 +105,19 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
     setIsSaving(true);
     try {
       // Save to localStorage (mock implementation)
-      localStorage.setItem(`agent_profile_${user?.id}`, JSON.stringify(profile));
+      localStorage.setItem(
+        `agent_profile_${user?.id}`,
+        JSON.stringify(profile),
+      );
 
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      alert(locale === "en" ? "Profile saved successfully!" : "個人資料已成功儲存！");
+      alert(
+        locale === "en"
+          ? "Profile saved successfully!"
+          : "個人資料已成功儲存！",
+      );
     } catch (error) {
       alert(locale === "en" ? "Failed to save profile" : "儲存失敗");
     } finally {
@@ -94,12 +125,19 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
     }
   };
 
-  const handleArrayFieldChange = (field: keyof Pick<AgentProfile, 'serviceCategories' | 'insuranceCompanies' | 'specialties'>, itemId: string, checked: boolean) => {
-    setProfile(prev => ({
+  const handleArrayFieldChange = (
+    field: keyof Pick<
+      AgentProfile,
+      "serviceCategories" | "insuranceCompanies" | "specialties"
+    >,
+    itemId: string,
+    checked: boolean,
+  ) => {
+    setProfile((prev) => ({
       ...prev,
       [field]: checked
         ? [...prev[field], itemId]
-        : prev[field].filter(id => id !== itemId)
+        : prev[field].filter((id) => id !== itemId),
     }));
   };
 
@@ -140,11 +178,15 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                   <Input
                     id="license"
                     value={profile.licenseNumber}
-                    onChange={(e) => setProfile(prev => ({
-                      ...prev,
-                      licenseNumber: e.target.value
-                    }))}
-                    placeholder={locale === "en" ? "Enter license number" : "輸入執照號碼"}
+                    onChange={(e) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        licenseNumber: e.target.value,
+                      }))
+                    }
+                    placeholder={
+                      locale === "en" ? "Enter license number" : "輸入執照號碼"
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -157,10 +199,12 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                     min="0"
                     max="50"
                     value={profile.experience || ""}
-                    onChange={(e) => setProfile(prev => ({
-                      ...prev,
-                      experience: parseInt(e.target.value) || 0
-                    }))}
+                    onChange={(e) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        experience: parseInt(e.target.value) || 0,
+                      }))
+                    }
                     placeholder={locale === "en" ? "Years" : "年"}
                   />
                 </div>
@@ -174,10 +218,12 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                   <Input
                     id="phone"
                     value={profile.contactPhone}
-                    onChange={(e) => setProfile(prev => ({
-                      ...prev,
-                      contactPhone: e.target.value
-                    }))}
+                    onChange={(e) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        contactPhone: e.target.value,
+                      }))
+                    }
                     placeholder={locale === "en" ? "Phone number" : "電話號碼"}
                   />
                 </div>
@@ -188,11 +234,15 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                   <Input
                     id="address"
                     value={profile.officeAddress}
-                    onChange={(e) => setProfile(prev => ({
-                      ...prev,
-                      officeAddress: e.target.value
-                    }))}
-                    placeholder={locale === "en" ? "Office address" : "辦公室地址"}
+                    onChange={(e) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        officeAddress: e.target.value,
+                      }))
+                    }
+                    placeholder={
+                      locale === "en" ? "Office address" : "辦公室地址"
+                    }
                   />
                 </div>
               </div>
@@ -204,13 +254,17 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                 <Textarea
                   id="bio"
                   value={profile.bio}
-                  onChange={(e) => setProfile(prev => ({
-                    ...prev,
-                    bio: e.target.value
-                  }))}
-                  placeholder={locale === "en"
-                    ? "Tell clients about your experience and approach..."
-                    : "向客戶介紹您的經驗和專業方針..."}
+                  onChange={(e) =>
+                    setProfile((prev) => ({
+                      ...prev,
+                      bio: e.target.value,
+                    }))
+                  }
+                  placeholder={
+                    locale === "en"
+                      ? "Tell clients about your experience and approach..."
+                      : "向客戶介紹您的經驗和專業方針..."
+                  }
                   rows={4}
                 />
               </div>
@@ -233,12 +287,19 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {SERVICE_CATEGORIES.map((category) => (
-                  <div key={category.id} className="flex items-center space-x-2">
+                  <div
+                    key={category.id}
+                    className="flex items-center space-x-2"
+                  >
                     <Checkbox
                       id={category.id}
                       checked={profile.serviceCategories.includes(category.id)}
                       onCheckedChange={(checked) =>
-                        handleArrayFieldChange('serviceCategories', category.id, !!checked)
+                        handleArrayFieldChange(
+                          "serviceCategories",
+                          category.id,
+                          !!checked,
+                        )
                       }
                     />
                     <Label htmlFor={category.id} className="text-sm">
@@ -271,7 +332,11 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                       id={company.id}
                       checked={profile.insuranceCompanies.includes(company.id)}
                       onCheckedChange={(checked) =>
-                        handleArrayFieldChange('insuranceCompanies', company.id, !!checked)
+                        handleArrayFieldChange(
+                          "insuranceCompanies",
+                          company.id,
+                          !!checked,
+                        )
                       }
                     />
                     <Label htmlFor={company.id} className="text-sm">
@@ -298,12 +363,19 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {SPECIALTIES.map((specialty) => (
-                  <div key={specialty.id} className="flex items-center space-x-2">
+                  <div
+                    key={specialty.id}
+                    className="flex items-center space-x-2"
+                  >
                     <Checkbox
                       id={specialty.id}
                       checked={profile.specialties.includes(specialty.id)}
                       onCheckedChange={(checked) =>
-                        handleArrayFieldChange('specialties', specialty.id, !!checked)
+                        handleArrayFieldChange(
+                          "specialties",
+                          specialty.id,
+                          !!checked,
+                        )
                       }
                     />
                     <Label htmlFor={specialty.id} className="text-sm">
@@ -320,9 +392,12 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
             <Button onClick={handleSave} disabled={isSaving}>
               <Save className="h-4 w-4 mr-2" />
               {isSaving
-                ? (locale === "en" ? "Saving..." : "儲存中...")
-                : (locale === "en" ? "Save Profile" : "儲存資料")
-              }
+                ? locale === "en"
+                  ? "Saving..."
+                  : "儲存中..."
+                : locale === "en"
+                  ? "Save Profile"
+                  : "儲存資料"}
             </Button>
           </div>
         </div>

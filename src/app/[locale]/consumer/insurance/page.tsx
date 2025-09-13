@@ -3,7 +3,14 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Search, Star, Building2, X, Calculator, ArrowRight } from "lucide-react";
+import {
+  Search,
+  Star,
+  Building2,
+  X,
+  Calculator,
+  ArrowRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +38,10 @@ import {
 } from "@/types/insurance";
 import { ProductDetailModal } from "@/components/insurance/product-detail-modal";
 import { useAuth } from "@/contexts/auth-context";
-import { getPremiumDisplayStatus, UserProfile } from "@/utils/premium-calculator";
+import {
+  getPremiumDisplayStatus,
+  UserProfile,
+} from "@/utils/premium-calculator";
 
 interface InsurancePageProps {
   params: Promise<{ locale: string }>;
@@ -78,7 +88,7 @@ export default function InsurancePage({
             age: profile.age,
             weight: profile.weight,
             height: profile.height,
-            medicalConditions: profile.medicalConditions
+            medicalConditions: profile.medicalConditions,
           });
         } catch (error) {
           console.error("Error loading user profile:", error);
@@ -362,7 +372,7 @@ export default function InsurancePage({
                     product,
                     userProfile,
                     !!user,
-                    locale as "zh-TW" | "en"
+                    locale as "zh-TW" | "en",
                   );
 
                   if (premiumStatus.type === "calculated") {
@@ -373,11 +383,17 @@ export default function InsurancePage({
                         </div>
                         <div className="text-sm text-muted-foreground">
                           {locale === "en" ? "Annual" : "年繳"}{" "}
-                          {formatCurrency(premiumStatus.estimate?.annualPremium!, locale as "zh-TW" | "en")}
+                          {premiumStatus.estimate?.annualPremium &&
+                            formatCurrency(
+                              premiumStatus.estimate?.annualPremium,
+                              locale as "zh-TW" | "en",
+                            )}
                         </div>
                         <div className="text-xs text-green-600 mt-1">
                           <Calculator className="h-3 w-3 inline mr-1" />
-                          {locale === "en" ? "Personalized estimate" : "個人化預估"}
+                          {locale === "en"
+                            ? "Personalized estimate"
+                            : "個人化預估"}
                         </div>
                       </>
                     );
@@ -387,9 +403,13 @@ export default function InsurancePage({
                         <Button
                           variant="outline"
                           className="w-full"
-                          onClick={() => router.push(`/${locale}/consumer/profile`)}
+                          onClick={() =>
+                            router.push(`/${locale}/consumer/profile`)
+                          }
                         >
-                          {locale === "en" ? "Complete Profile for Premium Estimate" : "完善個人資料以取得專屬保費預估"}
+                          {locale === "en"
+                            ? "Complete Profile for Premium Estimate"
+                            : "完善個人資料以取得專屬保費預估"}
                           <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                       </div>
@@ -402,7 +422,9 @@ export default function InsurancePage({
                           className="w-full"
                           onClick={() => router.push(`/${locale}/login`)}
                         >
-                          {locale === "en" ? "Login for Premium Estimate" : "登入以取得專屬保費預估"}
+                          {locale === "en"
+                            ? "Login for Premium Estimate"
+                            : "登入以取得專屬保費預估"}
                           <ArrowRight className="h-4 w-4 ml-2" />
                         </Button>
                       </div>

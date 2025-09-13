@@ -2,8 +2,8 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { Search, Star, Building2, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Search, Star, Building2, X, Calculator, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,6 +30,8 @@ import {
   InsuranceProduct,
 } from "@/types/insurance";
 import { ProductDetailModal } from "@/components/insurance/product-detail-modal";
+import { useAuth } from "@/contexts/auth-context";
+import { getPremiumDisplayStatus, UserProfile } from "@/utils/premium-calculator";
 
 interface InsurancePageProps {
   params: Promise<{ locale: string }>;
@@ -41,12 +43,15 @@ export default function InsurancePage({
   searchParams,
 }: InsurancePageProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const localeFromPath = pathname.split("/")[1] || "zh-TW";
   const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState<InsuranceFilter>({});
   const [selectedProduct, setSelectedProduct] =
     useState<InsuranceProduct | null>(null);
+  const { user } = useAuth();
+  const [userProfile, setUserProfile] = useState<UserProfile>({});
 
   useEffect(() => {
     params.then(({ locale: paramLocale }) => {
@@ -61,6 +66,26 @@ export default function InsurancePage({
       }
     });
   }, [searchParams]);
+
+  // Load user profile for premium calculation
+  useEffect(() => {
+    if (user?.id) {
+      const savedProfile = localStorage.getItem(`consumer_profile_${user.id}`);
+      if (savedProfile) {
+        try {
+          const profile = JSON.parse(savedProfile);
+          setUserProfile({
+            age: profile.age,
+            weight: profile.weight,
+            height: profile.height,
+            medicalConditions: profile.medicalConditions
+          });
+        } catch (error) {
+          console.error("Error loading user profile:", error);
+        }
+      }
+    }
+  }, [user?.id]);
 
   const filteredProducts = useMemo(
     () =>
@@ -110,12 +135,21 @@ export default function InsurancePage({
     setFilter({});
   };
 
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat("zh-TW", {
+  const formatCurrency = (amount: number, locale: "zh-TW" | "en" = "zh-TW") => {
+    if (locale === "en") {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+      }).format(amount);
+    }
+
+    return new Intl.NumberFormat("zh-TW", {
       style: "currency",
       currency: "TWD",
       minimumFractionDigits: 0,
     }).format(amount);
+  };
 
   return (
     <div className="container py-8">
@@ -323,16 +357,58 @@ export default function InsurancePage({
 
             <CardContent className="flex-1">
               <div className="mb-4">
-                <div className="text-2xl font-bold text-primary">
-                  {formatCurrency(product.premium.monthly)}
-                  <span className="text-sm font-normal text-muted-foreground">
-                    {locale === "en" ? "/month" : "/月"}
-                  </span>
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {locale === "en" ? "Annual" : "年繳"}{" "}
-                  {formatCurrency(product.premium.annually)}
-                </div>
+                {(() => {
+                  const premiumStatus = getPremiumDisplayStatus(
+                    product,
+                    userProfile,
+                    !!user,
+                    locale as "zh-TW" | "en"
+                  );
+
+                  if (premiumStatus.type === "calculated") {
+                    return (
+                      <>
+                        <div className="text-2xl font-bold text-primary">
+                          {premiumStatus.content}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {locale === "en" ? "Annual" : "年繳"}{" "}
+                          {formatCurrency(premiumStatus.estimate?.annualPremium!, locale as "zh-TW" | "en")}
+                        </div>
+                        <div className="text-xs text-green-600 mt-1">
+                          <Calculator className="h-3 w-3 inline mr-1" />
+                          {locale === "en" ? "Personalized estimate" : "個人化預估"}
+                        </div>
+                      </>
+                    );
+                  } else if (premiumStatus.type === "missing_data") {
+                    return (
+                      <div className="text-center">
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => router.push(`/${locale}/consumer/profile`)}
+                        >
+                          {locale === "en" ? "Complete Profile for Premium Estimate" : "完善個人資料以取得專屬保費預估"}
+                          <ArrowRight className="h-4 w-4 ml-2" />
+                        </Button>
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <div className="text-center">
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => router.push(`/${locale}/login`)}
+                        >
+                          {locale === "en" ? "Login for Premium Estimate" : "登入以取得專屬保費預估"}
+                          <ArrowRight className="h-4 w-4 ml-2" />
+                        </Button>
+                      </div>
+                    );
+                  }
+                })()}
               </div>
 
               <div className="mb-4">

@@ -1,4 +1,4 @@
-import { Star, Building2, X, Shield, CheckCircle } from "lucide-react";
+import { Star, Building2, X, Shield, CheckCircle, Calculator, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +10,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InsuranceProduct } from "@/types/insurance";
+import { useAuth } from "@/contexts/auth-context";
+import { getPremiumDisplayStatus, UserProfile } from "@/utils/premium-calculator";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface ProductDetailModalProps {
   product: InsuranceProduct | null;
@@ -22,14 +26,47 @@ export function ProductDetailModal({
   locale,
   onClose,
 }: ProductDetailModalProps) {
+  const { user } = useAuth();
+  const router = useRouter();
+  const [userProfile, setUserProfile] = useState<UserProfile>({});
+
+  useEffect(() => {
+    if (user?.id) {
+      const savedProfile = localStorage.getItem(`consumer_profile_${user.id}`);
+      if (savedProfile) {
+        try {
+          const profile = JSON.parse(savedProfile);
+          setUserProfile({
+            age: profile.age,
+            weight: profile.weight,
+            height: profile.height,
+            gender: profile.gender,
+            medicalConditions: profile.medicalConditions
+          });
+        } catch (error) {
+          console.error("Error loading user profile:", error);
+        }
+      }
+    }
+  }, [user?.id]);
+
   if (!product) return null;
 
-  const formatCurrency = (amount: number) =>
-    new Intl.NumberFormat("zh-TW", {
+  const formatCurrency = (amount: number, locale: "zh-TW" | "en" = "zh-TW") => {
+    if (locale === "en") {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: 0,
+      }).format(amount);
+    }
+
+    return new Intl.NumberFormat("zh-TW", {
       style: "currency",
       currency: "TWD",
       minimumFractionDigits: 0,
     }).format(amount);
+  };
 
   const getInsuranceTypeLabel = (type: string) => {
     const labels = {
@@ -101,16 +138,85 @@ export function ProductDetailModal({
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <div className="text-3xl font-bold text-primary">
-                    {formatCurrency(product.premium.monthly)}
-                    <span className="text-base font-normal text-muted-foreground">
-                      {locale === "en" ? "/month" : "/月"}
-                    </span>
-                  </div>
-                  <div className="text-sm text-muted-foreground mt-1">
-                    {locale === "en" ? "Annual Premium" : "年繳保費"}:{" "}
-                    {formatCurrency(product.premium.annually)}
-                  </div>
+                  {(() => {
+                    const premiumStatus = getPremiumDisplayStatus(
+                      product,
+                      userProfile,
+                      !!user,
+                      locale as "zh-TW" | "en"
+                    );
+
+                    if (premiumStatus.type === "calculated") {
+                      return (
+                        <>
+                          <div className="text-3xl font-bold text-primary">
+                            {premiumStatus.content}
+                          </div>
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {locale === "en" ? "Annual Premium" : "年繳保費"}:{" "}
+                            {premiumStatus.estimate?.annualPremium && formatCurrency(premiumStatus.estimate.annualPremium, locale as "zh-TW" | "en")}
+                          </div>
+                          <div className="text-sm text-green-600 mt-2 flex items-center">
+                            <Calculator className="h-4 w-4 mr-1" />
+                            {locale === "en" ? "Personalized estimate based on your profile" : "基於您的個人資料計算的預估保費"}
+                          </div>
+                          {premiumStatus.estimate?.factors && (
+                            <div className="mt-3 p-3 bg-muted rounded-lg text-sm">
+                              <div className="font-semibold mb-2">
+                                {locale === "en" ? "Calculation Breakdown" : "計算明細"}
+                              </div>
+                              <div className="space-y-1 text-xs">
+                                {premiumStatus.estimate.factors.age && (
+                                  <div>
+                                    {locale === "en" ? "Age factor" : "年齡係數"}: {premiumStatus.estimate.factors.age.toFixed(2)}
+                                  </div>
+                                )}
+                                {premiumStatus.estimate.factors.bmi && (
+                                  <div>
+                                    {locale === "en" ? "BMI factor" : "BMI係數"}: {premiumStatus.estimate.factors.bmi.toFixed(2)}
+                                  </div>
+                                )}
+                                {premiumStatus.estimate.factors.medicalConditions && (
+                                  <div>
+                                    {locale === "en" ? "Medical conditions factor" : "疾病史係數"}: {premiumStatus.estimate.factors.medicalConditions.toFixed(2)}
+                                  </div>
+                                )}
+                                <div className="font-semibold border-t pt-1 mt-1">
+                                  {locale === "en" ? "Total multiplier" : "總係數"}: {premiumStatus.estimate.factors.total?.toFixed(2)}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    } else if (premiumStatus.type === "missing_data") {
+                      return (
+                        <div className="text-center">
+                          <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => router.push(`/${locale}/consumer/profile`)}
+                          >
+                            {locale === "en" ? "Complete Profile for Premium Estimate" : "完善個人資料以取得專屬保費預估"}
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                          </Button>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="text-center">
+                          <Button
+                            variant="outline"
+                            className="w-full"
+                            onClick={() => router.push(`/${locale}/login`)}
+                          >
+                            {locale === "en" ? "Login for Premium Estimate" : "登入以取得專屬保費預估"}
+                            <ArrowRight className="h-4 w-4 ml-2" />
+                          </Button>
+                        </div>
+                      );
+                    }
+                  })()}
                 </div>
 
                 <div className="space-y-3 pt-4 border-t">

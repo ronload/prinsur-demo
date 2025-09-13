@@ -245,22 +245,24 @@ export function Header() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  {user.type === "agent" && (
+                    <DropdownMenuItem asChild>
+                      <Link href={`/${currentLocale}/agent/dashboard`}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        {currentLocale === "en" ? "Dashboard" : "工作台"}
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem asChild>
                     <Link
                       href={
                         user.type === "consumer"
-                          ? `/${currentLocale}/consumer/dashboard`
-                          : `/${currentLocale}/agent/dashboard`
+                          ? `/${currentLocale}/consumer/profile`
+                          : `/${currentLocale}/agent/profile`
                       }
                     >
-                      <Settings className="mr-2 h-4 w-4" />
-                      {user.type === "consumer"
-                        ? currentLocale === "en"
-                          ? "Dashboard"
-                          : "個人中心"
-                        : currentLocale === "en"
-                          ? "Dashboard"
-                          : "工作台"}
+                      <User className="mr-2 h-4 w-4" />
+                      {currentLocale === "en" ? "Profile" : "個人資料"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

@@ -1,4 +1,12 @@
-import { Star, Building2, X, Shield, CheckCircle, Calculator, ArrowRight } from "lucide-react";
+import {
+  Star,
+  Building2,
+  X,
+  Shield,
+  CheckCircle,
+  Calculator,
+  ArrowRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,7 +19,10 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InsuranceProduct } from "@/types/insurance";
 import { useAuth } from "@/contexts/auth-context";
-import { getPremiumDisplayStatus, UserProfile } from "@/utils/premium-calculator";
+import {
+  getPremiumDisplayStatus,
+  UserProfile,
+} from "@/utils/premium-calculator";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
@@ -41,7 +52,7 @@ export function ProductDetailModal({
             weight: profile.weight,
             height: profile.height,
             gender: profile.gender,
-            medicalConditions: profile.medicalConditions
+            medicalConditions: profile.medicalConditions,
           });
         } catch (error) {
           console.error("Error loading user profile:", error);
@@ -143,7 +154,7 @@ export function ProductDetailModal({
                       product,
                       userProfile,
                       !!user,
-                      locale as "zh-TW" | "en"
+                      locale as "zh-TW" | "en",
                     );
 
                     if (premiumStatus.type === "calculated") {
@@ -154,35 +165,66 @@ export function ProductDetailModal({
                           </div>
                           <div className="text-sm text-muted-foreground mt-1">
                             {locale === "en" ? "Annual Premium" : "年繳保費"}:{" "}
-                            {premiumStatus.estimate?.annualPremium && formatCurrency(premiumStatus.estimate.annualPremium, locale as "zh-TW" | "en")}
+                            {premiumStatus.estimate?.annualPremium &&
+                              formatCurrency(
+                                premiumStatus.estimate.annualPremium,
+                                locale as "zh-TW" | "en",
+                              )}
                           </div>
                           <div className="text-sm text-green-600 mt-2 flex items-center">
                             <Calculator className="h-4 w-4 mr-1" />
-                            {locale === "en" ? "Personalized estimate based on your profile" : "基於您的個人資料計算的預估保費"}
+                            {locale === "en"
+                              ? "Personalized estimate based on your profile"
+                              : "基於您的個人資料計算的預估保費"}
                           </div>
                           {premiumStatus.estimate?.factors && (
                             <div className="mt-3 p-3 bg-muted rounded-lg text-sm">
                               <div className="font-semibold mb-2">
-                                {locale === "en" ? "Calculation Breakdown" : "計算明細"}
+                                {locale === "en"
+                                  ? "Calculation Breakdown"
+                                  : "計算明細"}
                               </div>
                               <div className="space-y-1 text-xs">
                                 {premiumStatus.estimate.factors.age && (
                                   <div>
-                                    {locale === "en" ? "Age factor" : "年齡係數"}: {premiumStatus.estimate.factors.age.toFixed(2)}
+                                    {locale === "en"
+                                      ? "Age factor"
+                                      : "年齡係數"}
+                                    :{" "}
+                                    {premiumStatus.estimate.factors.age.toFixed(
+                                      2,
+                                    )}
                                   </div>
                                 )}
                                 {premiumStatus.estimate.factors.bmi && (
                                   <div>
-                                    {locale === "en" ? "BMI factor" : "BMI係數"}: {premiumStatus.estimate.factors.bmi.toFixed(2)}
+                                    {locale === "en" ? "BMI factor" : "BMI係數"}
+                                    :{" "}
+                                    {premiumStatus.estimate.factors.bmi.toFixed(
+                                      2,
+                                    )}
                                   </div>
                                 )}
-                                {premiumStatus.estimate.factors.medicalConditions && (
+                                {premiumStatus.estimate.factors
+                                  .medicalConditions && (
                                   <div>
-                                    {locale === "en" ? "Medical conditions factor" : "疾病史係數"}: {premiumStatus.estimate.factors.medicalConditions.toFixed(2)}
+                                    {locale === "en"
+                                      ? "Medical conditions factor"
+                                      : "疾病史係數"}
+                                    :{" "}
+                                    {premiumStatus.estimate.factors.medicalConditions.toFixed(
+                                      2,
+                                    )}
                                   </div>
                                 )}
                                 <div className="font-semibold border-t pt-1 mt-1">
-                                  {locale === "en" ? "Total multiplier" : "總係數"}: {premiumStatus.estimate.factors.total?.toFixed(2)}
+                                  {locale === "en"
+                                    ? "Total multiplier"
+                                    : "總係數"}
+                                  :{" "}
+                                  {premiumStatus.estimate.factors.total?.toFixed(
+                                    2,
+                                  )}
                                 </div>
                               </div>
                             </div>
@@ -195,9 +237,13 @@ export function ProductDetailModal({
                           <Button
                             variant="outline"
                             className="w-full"
-                            onClick={() => router.push(`/${locale}/consumer/profile`)}
+                            onClick={() =>
+                              router.push(`/${locale}/consumer/profile`)
+                            }
                           >
-                            {locale === "en" ? "Complete Profile for Premium Estimate" : "完善個人資料以取得專屬保費預估"}
+                            {locale === "en"
+                              ? "Complete Profile for Premium Estimate"
+                              : "完善個人資料以取得專屬保費預估"}
                             <ArrowRight className="h-4 w-4 ml-2" />
                           </Button>
                         </div>
@@ -210,7 +256,9 @@ export function ProductDetailModal({
                             className="w-full"
                             onClick={() => router.push(`/${locale}/login`)}
                           >
-                            {locale === "en" ? "Login for Premium Estimate" : "登入以取得專屬保費預估"}
+                            {locale === "en"
+                              ? "Login for Premium Estimate"
+                              : "登入以取得專屬保費預估"}
                             <ArrowRight className="h-4 w-4 ml-2" />
                           </Button>
                         </div>

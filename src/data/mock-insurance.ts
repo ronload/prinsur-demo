@@ -231,6 +231,125 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
         );
         const coverage = monthlyPremium * getCoverageMultiplier(type);
 
+        // Generate premium calculation data based on insurance type
+        const generatePremiumCalculation = (
+          insuranceType: string,
+          baseMonthly: number,
+        ) => {
+          const calculationsByType = {
+            life: {
+              description: "基本保費 × 年齡係數 × BMI係數 × 疾病係數",
+              factors: {
+                age: { multiplier: 0.05, range: { min: 20, max: 65 } },
+                bmi: { multiplier: 0.02, range: { min: 18.5, max: 30 } },
+                medicalConditions: {
+                  diabetes: 1.3,
+                  hypertension: 1.2,
+                  heart_disease: 1.5,
+                  cancer: 2.0,
+                },
+              },
+              requiredFields: ["age", "weight", "height"] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
+            },
+            health: {
+              description: "基本保費 × 年齡係數 × BMI係數 × 疾病史係數",
+              factors: {
+                age: { multiplier: 0.08, range: { min: 18, max: 75 } },
+                bmi: { multiplier: 0.03, range: { min: 18.5, max: 35 } },
+                medicalConditions: {
+                  diabetes: 1.4,
+                  hypertension: 1.25,
+                  heart_disease: 1.6,
+                  asthma: 1.2,
+                  cancer: 2.5,
+                },
+              },
+              requiredFields: [
+                "age",
+                "weight",
+                "height",
+                "medicalConditions",
+              ] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
+            },
+            accident: {
+              description: "基本保費 × 年齡係數",
+              factors: {
+                age: { multiplier: 0.02, range: { min: 16, max: 80 } },
+              },
+              requiredFields: ["age"] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
+            },
+            travel: {
+              description: "基本保費 × 年齡係數",
+              factors: {
+                age: { multiplier: 0.01, range: { min: 0, max: 80 } },
+              },
+              requiredFields: ["age"] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
+            },
+            vehicle: {
+              description: "基本保費 × 年齡係數",
+              factors: {
+                age: { multiplier: -0.03, range: { min: 18, max: 70 } },
+              },
+              requiredFields: ["age"] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
+            },
+            property: {
+              description: "固定費率",
+              factors: {},
+              requiredFields: [] as (
+                | "age"
+                | "weight"
+                | "height"
+                | "gender"
+                | "medicalConditions"
+              )[],
+            },
+          };
+
+          const config =
+            calculationsByType[
+              insuranceType as keyof typeof calculationsByType
+            ];
+          return {
+            baseMonthly,
+            baseAnnually: Math.floor(baseMonthly * 11.5),
+            formula: {
+              description: config.description,
+              factors: config.factors,
+            },
+            requiredFields: config.requiredFields,
+          };
+        };
+
         products.push({
           id: id.toString(),
           name: `${company} ${name}`,
@@ -240,6 +359,7 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
             monthly: monthlyPremium,
             annually: Math.floor(monthlyPremium * 11.5), // Usually 10-12 month discount
           },
+          premiumCalculation: generatePremiumCalculation(type, monthlyPremium),
           coverage: {
             amount: coverage,
             description: generateCoverageDescription(type as any, coverage),

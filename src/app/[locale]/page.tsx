@@ -119,7 +119,7 @@ export default function Home({ params }: HomeProps) {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(
-        `/${locale}/insurance?search=${encodeURIComponent(searchQuery.trim())}`,
+        `/${locale}/consumer/insurance?search=${encodeURIComponent(searchQuery.trim())}`,
       );
     }
   };

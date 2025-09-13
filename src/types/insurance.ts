@@ -6,6 +6,21 @@ export type InsuranceType =
   | "vehicle"
   | "property";
 
+export interface PremiumCalculation {
+  baseMonthly: number;
+  baseAnnually: number;
+  formula: {
+    description: string;
+    factors: {
+      age?: { multiplier: number; range?: { min: number; max: number } };
+      bmi?: { multiplier: number; range?: { min: number; max: number } };
+      gender?: { male: number; female: number };
+      medicalConditions?: { [condition: string]: number };
+    };
+  };
+  requiredFields: ('age' | 'weight' | 'height' | 'gender' | 'medicalConditions')[];
+}
+
 export interface InsuranceProduct {
   id: string;
   name: string;
@@ -15,6 +30,7 @@ export interface InsuranceProduct {
     monthly: number;
     annually: number;
   };
+  premiumCalculation: PremiumCalculation;
   coverage: {
     amount: number;
     description: string[];

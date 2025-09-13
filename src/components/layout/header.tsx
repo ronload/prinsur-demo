@@ -89,11 +89,11 @@ export function Header() {
       // 未登录用户显示公共页面
       return [
         {
-          href: `/${currentLocale}/insurance`,
+          href: `/${currentLocale}/consumer/insurance`,
           label: currentLocale === "en" ? "Insurance" : "保險商品",
         },
         {
-          href: `/${currentLocale}/agents`,
+          href: `/${currentLocale}/consumer/agents`,
           label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
         },
       ];

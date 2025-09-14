@@ -6,6 +6,14 @@ export type CustomerStatus =
   | "closed"
   | "lost";
 
+export interface Policy {
+  id: string;
+  productName: string;
+  premium: number;
+  expirationDate: string;
+  status: "active" | "expired" | "cancelled";
+}
+
 export interface Customer {
   id: string;
   name: string;
@@ -22,6 +30,7 @@ export interface Customer {
   assignedDate: string;
   lastContact: string;
   notes: string;
+  policies?: Policy[];
 }
 
 export type AppointmentStatus =

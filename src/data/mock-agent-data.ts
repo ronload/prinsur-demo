@@ -22,6 +22,22 @@ export const mockCustomers: Customer[] = [
     assignedDate: "2024-08-15",
     lastContact: "2024-09-01",
     notes: "對健康險很有興趣，希望了解實支實付方案",
+    policies: [
+      {
+        id: "p1",
+        productName: "意外險保單",
+        premium: 8000,
+        expirationDate: "2025-10-15",
+        status: "active",
+      },
+      {
+        id: "p2",
+        productName: "旅遊險保單",
+        premium: 3000,
+        expirationDate: "2025-11-20",
+        status: "active",
+      },
+    ],
   },
   {
     id: "2",
@@ -39,6 +55,15 @@ export const mockCustomers: Customer[] = [
     assignedDate: "2024-08-20",
     lastContact: "2024-09-02",
     notes: "家庭經濟支柱，需要高額壽險保障",
+    policies: [
+      {
+        id: "p3",
+        productName: "定期壽險",
+        premium: 25000,
+        expirationDate: "2025-12-30",
+        status: "active",
+      },
+    ],
   },
   {
     id: "3",
@@ -73,6 +98,29 @@ export const mockCustomers: Customer[] = [
     assignedDate: "2024-08-25",
     lastContact: "2024-08-30",
     notes: "剛買新車，需要完整的車險保障",
+    policies: [
+      {
+        id: "p4",
+        productName: "車險保單",
+        premium: 15000,
+        expirationDate: "2025-11-10",
+        status: "active",
+      },
+      {
+        id: "p5",
+        productName: "住宅火險",
+        premium: 12000,
+        expirationDate: "2025-10-15",
+        status: "active",
+      },
+      {
+        id: "p6",
+        productName: "健康險保單",
+        premium: 18000,
+        expirationDate: "2026-03-20",
+        status: "active",
+      },
+    ],
   },
 ];
 

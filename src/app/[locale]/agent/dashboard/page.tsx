@@ -14,6 +14,7 @@ import {
   AlertCircle,
   Target,
   Plus,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +32,7 @@ import {
   mockPerformance,
   mockDeals,
 } from "@/data/mock-agent-data";
-import { CustomerStatus, AppointmentStatus } from "@/types/agent-dashboard";
+import { CustomerStatus, AppointmentStatus, Policy } from "@/types/agent-dashboard";
 
 export default function DashboardPage({
   params,
@@ -167,6 +168,22 @@ export default function DashboardPage({
     const aptDate = new Date(apt.date);
     return aptDate > today;
   });
+
+  // Helper function to get policies expiring within 3 months
+  const getPoliciesExpiringWithinThreeMonths = (policies?: Policy[]): Policy[] => {
+    if (!policies) return [];
+
+    const today = new Date();
+    const threeMonthsFromNow = new Date();
+    threeMonthsFromNow.setMonth(today.getMonth() + 3);
+
+    return policies.filter(policy => {
+      const expirationDate = new Date(policy.expirationDate);
+      return policy.status === "active" &&
+             expirationDate >= today &&
+             expirationDate <= threeMonthsFromNow;
+    });
+  };
 
   return (
     <AgentGuard>
@@ -357,30 +374,64 @@ export default function DashboardPage({
               </div>
 
               <div className="space-y-3">
-                {customers.map((customer) => (
-                  <Card key={customer.id} className="w-full overflow-hidden">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                            <Users className="h-5 w-5 text-primary" />
+                {customers.map((customer) => {
+                  const expiringPolicies = getPoliciesExpiringWithinThreeMonths(customer.policies);
+                  const hasExpiringPolicies = expiringPolicies.length > 0;
+
+                  return (
+                    <Card key={customer.id} className={`w-full overflow-hidden ${hasExpiringPolicies ? 'border-orange-200 bg-orange-50/50' : ''}`}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                              <Users className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <CardTitle className="truncate mb-1">
+                                {customer.name}
+                              </CardTitle>
+                              <CardDescription>
+                                {customer.age}
+                                {locale === "en" ? "yrs" : "歲"} •{" "}
+                                {customer.location.city}
+                              </CardDescription>
+                            </div>
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <CardTitle className="truncate mb-1">
-                              {customer.name}
-                            </CardTitle>
-                            <CardDescription>
-                              {customer.age}
-                              {locale === "en" ? "yrs" : "歲"} •{" "}
-                              {customer.location.city}
-                            </CardDescription>
+                          <div className="flex-shrink-0 flex items-center gap-2">
+                            {hasExpiringPolicies && (
+                              <Badge variant="destructive" className="text-xs flex items-center gap-1">
+                                <AlertTriangle className="h-3 w-3" />
+                                {expiringPolicies.length}
+                                {locale === "en" ? " expiring" : " 即將到期"}
+                              </Badge>
+                            )}
+                            {getCustomerStatusBadge(customer.status)}
                           </div>
                         </div>
-                        <div className="flex-shrink-0">
-                          {getCustomerStatusBadge(customer.status)}
-                        </div>
-                      </div>
-                    </CardHeader>
+
+                        {/* Display expiring policies */}
+                        {hasExpiringPolicies && (
+                          <div className="mt-3 p-3 bg-orange-100 rounded-lg border border-orange-200">
+                            <div className="flex items-center gap-2 mb-2">
+                              <AlertTriangle className="h-4 w-4 text-orange-600" />
+                              <span className="text-sm font-medium text-orange-800">
+                                {locale === "en"
+                                  ? `${expiringPolicies.length} policy${expiringPolicies.length > 1 ? 'ies' : ''} expiring within 3 months`
+                                  : `${expiringPolicies.length} 份保單將於三個月內到期`
+                                }
+                              </span>
+                            </div>
+                            <div className="space-y-1">
+                              {expiringPolicies.map(policy => (
+                                <div key={policy.id} className="text-xs text-orange-700 flex justify-between">
+                                  <span>{policy.productName}</span>
+                                  <span>{formatDate(policy.expirationDate)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </CardHeader>
 
                     <CardContent>
                       <div className="mb-3">
@@ -438,7 +489,8 @@ export default function DashboardPage({
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                  );
+                })}
               </div>
             </TabsContent>
 

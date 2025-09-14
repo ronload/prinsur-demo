@@ -180,7 +180,6 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
     }));
   };
 
-
   const calculateBMI = () => {
     if (profile.weight > 0 && profile.height > 0) {
       const heightInMeters = profile.height / 100;
@@ -290,7 +289,9 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                   >
                     <SelectTrigger>
                       <SelectValue
-                        placeholder={locale === "en" ? "Select gender" : "選擇性別"}
+                        placeholder={
+                          locale === "en" ? "Select gender" : "選擇性別"
+                        }
                       />
                     </SelectTrigger>
                     <SelectContent>

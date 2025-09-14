@@ -683,36 +683,80 @@ const generateAgents = (): Agent[] => {
     // Generate 1-3 service areas for each agent
     const numServiceAreas = Math.floor(seededRandom() * 3) + 1;
     const agentServiceAreas: string[] = [];
-    const availableAreas = ["taipei", "new-taipei", "taoyuan", "taichung", "tainan", "kaohsiung", "keelung", "hsinchu-city", "chiayi-city", "hsinchu", "miaoli", "changhua", "nantou", "yunlin", "chiayi", "pingtung", "yilan", "hualien", "taitung"];
+    const availableAreas = [
+      "taipei",
+      "new-taipei",
+      "taoyuan",
+      "taichung",
+      "tainan",
+      "kaohsiung",
+      "keelung",
+      "hsinchu-city",
+      "chiayi-city",
+      "hsinchu",
+      "miaoli",
+      "changhua",
+      "nantou",
+      "yunlin",
+      "chiayi",
+      "pingtung",
+      "yilan",
+      "hualien",
+      "taitung",
+    ];
 
     // Add agent's current location as first service area
-    const locationAreaId = location.city === "台北市" ? "taipei" :
-                          location.city === "新北市" ? "new-taipei" :
-                          location.city === "桃園市" ? "taoyuan" :
-                          location.city === "台中市" ? "taichung" :
-                          location.city === "台南市" ? "tainan" :
-                          location.city === "高雄市" ? "kaohsiung" :
-                          location.city === "基隆市" ? "keelung" :
-                          location.city === "新竹市" ? "hsinchu-city" :
-                          location.city === "嘉義市" ? "chiayi-city" :
-                          location.city === "新竹縣" ? "hsinchu" :
-                          location.city === "苗栗縣" ? "miaoli" :
-                          location.city === "彰化縣" ? "changhua" :
-                          location.city === "南投縣" ? "nantou" :
-                          location.city === "雲林縣" ? "yunlin" :
-                          location.city === "嘉義縣" ? "chiayi" :
-                          location.city === "屏東縣" ? "pingtung" :
-                          location.city === "宜蘭縣" ? "yilan" :
-                          location.city === "花蓮縣" ? "hualien" :
-                          location.city === "台東縣" ? "taitung" : "taipei";
+    const locationAreaId =
+      location.city === "台北市"
+        ? "taipei"
+        : location.city === "新北市"
+          ? "new-taipei"
+          : location.city === "桃園市"
+            ? "taoyuan"
+            : location.city === "台中市"
+              ? "taichung"
+              : location.city === "台南市"
+                ? "tainan"
+                : location.city === "高雄市"
+                  ? "kaohsiung"
+                  : location.city === "基隆市"
+                    ? "keelung"
+                    : location.city === "新竹市"
+                      ? "hsinchu-city"
+                      : location.city === "嘉義市"
+                        ? "chiayi-city"
+                        : location.city === "新竹縣"
+                          ? "hsinchu"
+                          : location.city === "苗栗縣"
+                            ? "miaoli"
+                            : location.city === "彰化縣"
+                              ? "changhua"
+                              : location.city === "南投縣"
+                                ? "nantou"
+                                : location.city === "雲林縣"
+                                  ? "yunlin"
+                                  : location.city === "嘉義縣"
+                                    ? "chiayi"
+                                    : location.city === "屏東縣"
+                                      ? "pingtung"
+                                      : location.city === "宜蘭縣"
+                                        ? "yilan"
+                                        : location.city === "花蓮縣"
+                                          ? "hualien"
+                                          : location.city === "台東縣"
+                                            ? "taitung"
+                                            : "taipei";
 
     agentServiceAreas.push(locationAreaId);
 
     // Add additional random service areas
     for (let j = 1; j < numServiceAreas; j++) {
-      const remainingAreas = availableAreas.filter(area => !agentServiceAreas.includes(area));
+      const remainingAreas = availableAreas.filter(
+        (area) => !agentServiceAreas.includes(area),
+      );
       if (remainingAreas.length > 0) {
-        const randomArea = remainingAreas[Math.floor(seededRandom() * remainingAreas.length)];
+        const randomArea =
+          remainingAreas[Math.floor(seededRandom() * remainingAreas.length)];
         agentServiceAreas.push(randomArea);
       }
     }

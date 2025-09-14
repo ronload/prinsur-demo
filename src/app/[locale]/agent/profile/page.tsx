@@ -173,7 +173,10 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
   };
 
   const handleServiceAreaAdd = (areaId: string) => {
-    if (profile.serviceAreas.length < 3 && !profile.serviceAreas.includes(areaId)) {
+    if (
+      profile.serviceAreas.length < 3 &&
+      !profile.serviceAreas.includes(areaId)
+    ) {
       setProfile((prev) => ({
         ...prev,
         serviceAreas: [...prev.serviceAreas, areaId],
@@ -355,7 +358,7 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                   </SelectTrigger>
                   <SelectContent>
                     {TAIWAN_AREAS.filter(
-                      (area) => !profile.serviceAreas.includes(area.id)
+                      (area) => !profile.serviceAreas.includes(area.id),
                     ).map((area) => (
                       <SelectItem key={area.id} value={area.id}>
                         {area.label[locale as keyof typeof area.label]}

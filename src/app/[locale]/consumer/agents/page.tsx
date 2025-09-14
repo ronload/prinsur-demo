@@ -163,34 +163,36 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                 <div className="flex flex-wrap gap-1">
                   {agent.serviceAreas.map((areaId) => {
                     const areaNames = {
-                      "taipei": { "zh-TW": "台北市", "en": "Taipei City" },
-                      "new-taipei": { "zh-TW": "新北市", "en": "New Taipei City" },
-                      "taoyuan": { "zh-TW": "桃園市", "en": "Taoyuan City" },
-                      "taichung": { "zh-TW": "台中市", "en": "Taichung City" },
-                      "tainan": { "zh-TW": "台南市", "en": "Tainan City" },
-                      "kaohsiung": { "zh-TW": "高雄市", "en": "Kaohsiung City" },
-                      "keelung": { "zh-TW": "基隆市", "en": "Keelung City" },
-                      "hsinchu-city": { "zh-TW": "新竹市", "en": "Hsinchu City" },
-                      "chiayi-city": { "zh-TW": "嘉義市", "en": "Chiayi City" },
-                      "hsinchu": { "zh-TW": "新竹縣", "en": "Hsinchu County" },
-                      "miaoli": { "zh-TW": "苗栗縣", "en": "Miaoli County" },
-                      "changhua": { "zh-TW": "彰化縣", "en": "Changhua County" },
-                      "nantou": { "zh-TW": "南投縣", "en": "Nantou County" },
-                      "yunlin": { "zh-TW": "雲林縣", "en": "Yunlin County" },
-                      "chiayi": { "zh-TW": "嘉義縣", "en": "Chiayi County" },
-                      "pingtung": { "zh-TW": "屏東縣", "en": "Pingtung County" },
-                      "yilan": { "zh-TW": "宜蘭縣", "en": "Yilan County" },
-                      "hualien": { "zh-TW": "花蓮縣", "en": "Hualien County" },
-                      "taitung": { "zh-TW": "台東縣", "en": "Taitung County" },
+                      taipei: { "zh-TW": "台北市", en: "Taipei City" },
+                      "new-taipei": {
+                        "zh-TW": "新北市",
+                        en: "New Taipei City",
+                      },
+                      taoyuan: { "zh-TW": "桃園市", en: "Taoyuan City" },
+                      taichung: { "zh-TW": "台中市", en: "Taichung City" },
+                      tainan: { "zh-TW": "台南市", en: "Tainan City" },
+                      kaohsiung: { "zh-TW": "高雄市", en: "Kaohsiung City" },
+                      keelung: { "zh-TW": "基隆市", en: "Keelung City" },
+                      "hsinchu-city": { "zh-TW": "新竹市", en: "Hsinchu City" },
+                      "chiayi-city": { "zh-TW": "嘉義市", en: "Chiayi City" },
+                      hsinchu: { "zh-TW": "新竹縣", en: "Hsinchu County" },
+                      miaoli: { "zh-TW": "苗栗縣", en: "Miaoli County" },
+                      changhua: { "zh-TW": "彰化縣", en: "Changhua County" },
+                      nantou: { "zh-TW": "南投縣", en: "Nantou County" },
+                      yunlin: { "zh-TW": "雲林縣", en: "Yunlin County" },
+                      chiayi: { "zh-TW": "嘉義縣", en: "Chiayi County" },
+                      pingtung: { "zh-TW": "屏東縣", en: "Pingtung County" },
+                      yilan: { "zh-TW": "宜蘭縣", en: "Yilan County" },
+                      hualien: { "zh-TW": "花蓮縣", en: "Hualien County" },
+                      taitung: { "zh-TW": "台東縣", en: "Taitung County" },
                     };
-                    const areaName = areaNames[areaId as keyof typeof areaNames];
+                    const areaName =
+                      areaNames[areaId as keyof typeof areaNames];
                     return (
-                      <Badge
-                        key={areaId}
-                        variant="outline"
-                        className="text-xs"
-                      >
-                        {areaName ? areaName[locale as keyof typeof areaName] : areaId}
+                      <Badge key={areaId} variant="outline" className="text-xs">
+                        {areaName
+                          ? areaName[locale as keyof typeof areaName]
+                          : areaId}
                       </Badge>
                     );
                   })}

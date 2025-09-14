@@ -61,7 +61,7 @@ export default function Home({ params }: HomeProps) {
             weight: profile.weight,
             height: profile.height,
             gender: profile.gender,
-            medicalConditions: profile.medicalConditions
+            medicalConditions: profile.medicalConditions,
           });
         } catch (error) {
           console.error("Error loading user profile:", error);
@@ -143,7 +143,11 @@ export default function Home({ params }: HomeProps) {
     if (!user) return false;
 
     // Check if basic profile fields are missing
-    const basicFieldsMissing = !userProfile.age || !userProfile.weight || !userProfile.height || !userProfile.gender;
+    const basicFieldsMissing =
+      !userProfile.age ||
+      !userProfile.weight ||
+      !userProfile.height ||
+      !userProfile.gender;
 
     return basicFieldsMissing;
   };

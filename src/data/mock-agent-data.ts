@@ -3,7 +3,6 @@ import {
   Appointment,
   AgentPerformance,
   Deal,
-  Policy,
 } from "@/types/agent-dashboard";
 
 export const mockCustomers: Customer[] = [

@@ -3,147 +3,150 @@ import { Agent, InsuranceProduct } from "@/types/insurance";
 // Taiwan area adjacency map for location-based sorting
 // Areas closer to each other get higher priority scores
 const AREA_ADJACENCY: Record<string, Record<string, number>> = {
-  "taipei": {
-    "taipei": 5,
+  taipei: {
+    taipei: 5,
     "new-taipei": 4,
-    "keelung": 3,
-    "taoyuan": 3,
-    "hsinchu": 2,
+    keelung: 3,
+    taoyuan: 3,
+    hsinchu: 2,
     "hsinchu-city": 2,
-    "yilan": 2,
+    yilan: 2,
   },
   "new-taipei": {
     "new-taipei": 5,
-    "taipei": 4,
-    "taoyuan": 3,
-    "keelung": 3,
-    "yilan": 2,
-    "hsinchu": 2,
+    taipei: 4,
+    taoyuan: 3,
+    keelung: 3,
+    yilan: 2,
+    hsinchu: 2,
   },
-  "taoyuan": {
-    "taoyuan": 5,
-    "taipei": 3,
+  taoyuan: {
+    taoyuan: 5,
+    taipei: 3,
     "new-taipei": 3,
-    "hsinchu": 4,
+    hsinchu: 4,
     "hsinchu-city": 4,
-    "miaoli": 3,
+    miaoli: 3,
   },
-  "taichung": {
-    "taichung": 5,
-    "changhua": 4,
-    "nantou": 4,
-    "miaoli": 3,
-    "yunlin": 3,
-    "hsinchu": 2,
+  taichung: {
+    taichung: 5,
+    changhua: 4,
+    nantou: 4,
+    miaoli: 3,
+    yunlin: 3,
+    hsinchu: 2,
   },
-  "tainan": {
-    "tainan": 5,
-    "kaohsiung": 4,
-    "chiayi": 4,
+  tainan: {
+    tainan: 5,
+    kaohsiung: 4,
+    chiayi: 4,
     "chiayi-city": 4,
-    "yunlin": 3,
-    "pingtung": 3,
+    yunlin: 3,
+    pingtung: 3,
   },
-  "kaohsiung": {
-    "kaohsiung": 5,
-    "tainan": 4,
-    "pingtung": 4,
-    "chiayi": 3,
+  kaohsiung: {
+    kaohsiung: 5,
+    tainan: 4,
+    pingtung: 4,
+    chiayi: 3,
     "chiayi-city": 3,
   },
-  "keelung": {
-    "keelung": 5,
-    "taipei": 3,
+  keelung: {
+    keelung: 5,
+    taipei: 3,
     "new-taipei": 3,
-    "yilan": 2,
+    yilan: 2,
   },
   "hsinchu-city": {
     "hsinchu-city": 5,
-    "hsinchu": 4,
-    "taoyuan": 4,
-    "miaoli": 3,
-    "taipei": 2,
+    hsinchu: 4,
+    taoyuan: 4,
+    miaoli: 3,
+    taipei: 2,
   },
   "chiayi-city": {
     "chiayi-city": 5,
-    "chiayi": 4,
-    "tainan": 4,
-    "yunlin": 3,
-    "kaohsiung": 3,
+    chiayi: 4,
+    tainan: 4,
+    yunlin: 3,
+    kaohsiung: 3,
   },
-  "hsinchu": {
-    "hsinchu": 5,
+  hsinchu: {
+    hsinchu: 5,
     "hsinchu-city": 4,
-    "miaoli": 4,
-    "taoyuan": 4,
-    "taichung": 2,
+    miaoli: 4,
+    taoyuan: 4,
+    taichung: 2,
   },
-  "miaoli": {
-    "miaoli": 5,
-    "hsinchu": 4,
+  miaoli: {
+    miaoli: 5,
+    hsinchu: 4,
     "hsinchu-city": 3,
-    "taichung": 3,
-    "changhua": 2,
+    taichung: 3,
+    changhua: 2,
   },
-  "changhua": {
-    "changhua": 5,
-    "taichung": 4,
-    "yunlin": 4,
-    "nantou": 3,
-    "miaoli": 2,
+  changhua: {
+    changhua: 5,
+    taichung: 4,
+    yunlin: 4,
+    nantou: 3,
+    miaoli: 2,
   },
-  "nantou": {
-    "nantou": 5,
-    "taichung": 4,
-    "changhua": 3,
-    "yunlin": 2,
-    "chiayi": 2,
+  nantou: {
+    nantou: 5,
+    taichung: 4,
+    changhua: 3,
+    yunlin: 2,
+    chiayi: 2,
   },
-  "yunlin": {
-    "yunlin": 5,
-    "changhua": 4,
-    "chiayi": 4,
+  yunlin: {
+    yunlin: 5,
+    changhua: 4,
+    chiayi: 4,
     "chiayi-city": 3,
-    "tainan": 3,
-    "taichung": 3,
+    tainan: 3,
+    taichung: 3,
   },
-  "chiayi": {
-    "chiayi": 5,
+  chiayi: {
+    chiayi: 5,
     "chiayi-city": 4,
-    "yunlin": 4,
-    "tainan": 4,
-    "nantou": 2,
+    yunlin: 4,
+    tainan: 4,
+    nantou: 2,
   },
-  "pingtung": {
-    "pingtung": 5,
-    "kaohsiung": 4,
-    "tainan": 3,
-    "taitung": 2,
+  pingtung: {
+    pingtung: 5,
+    kaohsiung: 4,
+    tainan: 3,
+    taitung: 2,
   },
-  "yilan": {
-    "yilan": 5,
-    "taipei": 2,
+  yilan: {
+    yilan: 5,
+    taipei: 2,
     "new-taipei": 2,
-    "keelung": 2,
-    "hualien": 3,
+    keelung: 2,
+    hualien: 3,
   },
-  "hualien": {
-    "hualien": 5,
-    "taitung": 4,
-    "yilan": 3,
-    "nantou": 2,
+  hualien: {
+    hualien: 5,
+    taitung: 4,
+    yilan: 3,
+    nantou: 2,
   },
-  "taitung": {
-    "taitung": 5,
-    "hualien": 4,
-    "pingtung": 2,
+  taitung: {
+    taitung: 5,
+    hualien: 4,
+    pingtung: 2,
   },
 };
 
 /**
  * Calculate location score between user location and agent service areas
  */
-export function calculateLocationScore(userLocation: string, agentServiceAreas: string[]): number {
+export function calculateLocationScore(
+  userLocation: string,
+  agentServiceAreas: string[],
+): number {
   if (!userLocation || agentServiceAreas.length === 0) return 0;
 
   let maxScore = 0;
@@ -168,7 +171,10 @@ export function calculateLocationScore(userLocation: string, agentServiceAreas: 
 /**
  * Sort agents by location proximity to user
  */
-export function sortAgentsByLocation(agents: Agent[], userLocation: string): Agent[] {
+export function sortAgentsByLocation(
+  agents: Agent[],
+  userLocation: string,
+): Agent[] {
   if (!userLocation) return agents;
 
   return [...agents].sort((a, b) => {
@@ -213,7 +219,7 @@ function calculateBMI(weight: number, height: number): number {
  */
 export function calculateProductRecommendationScore(
   product: InsuranceProduct,
-  userProfile: UserProfile
+  userProfile: UserProfile,
 ): number {
   let score = 0;
   const maxScore = 100;
@@ -221,37 +227,48 @@ export function calculateProductRecommendationScore(
   // Base score from product rating (0-25 points)
   score += (product.rating / 5) * 25;
 
-  if (!userProfile.age && !userProfile.weight && !userProfile.height && !userProfile.gender) {
+  if (
+    !userProfile.age &&
+    !userProfile.weight &&
+    !userProfile.height &&
+    !userProfile.gender
+  ) {
     return score; // Only rating-based if no profile data
   }
 
   // Age compatibility (0-20 points)
   if (userProfile.age && product.ageRange) {
-    if (userProfile.age >= product.ageRange.min && userProfile.age <= product.ageRange.max) {
+    if (
+      userProfile.age >= product.ageRange.min &&
+      userProfile.age <= product.ageRange.max
+    ) {
       score += 20;
     } else {
       // Penalty for age outside range
       const ageDistance = Math.min(
         Math.abs(userProfile.age - product.ageRange.min),
-        Math.abs(userProfile.age - product.ageRange.max)
+        Math.abs(userProfile.age - product.ageRange.max),
       );
-      score += Math.max(0, 20 - (ageDistance * 2));
+      score += Math.max(0, 20 - ageDistance * 2);
     }
   }
 
   // Health risk assessment (0-25 points)
-  if (userProfile.medicalConditions && userProfile.medicalConditions.length > 0) {
+  if (
+    userProfile.medicalConditions &&
+    userProfile.medicalConditions.length > 0
+  ) {
     // Higher medical conditions = prefer health/medical insurance
-    if (product.type === 'health' || product.type === 'accident') {
-      score += 25 - (userProfile.medicalConditions.length * 3); // Max 25, min 10 for health products
+    if (product.type === "health" || product.type === "accident") {
+      score += 25 - userProfile.medicalConditions.length * 3; // Max 25, min 10 for health products
     } else {
-      score += Math.max(5, 15 - (userProfile.medicalConditions.length * 2)); // Lower score for other products
+      score += Math.max(5, 15 - userProfile.medicalConditions.length * 2); // Lower score for other products
     }
   } else {
     // No medical conditions = slight preference for investment/life products
-    if (product.type === 'life') {
+    if (product.type === "life") {
       score += 20;
-    } else if (product.type === 'health') {
+    } else if (product.type === "health") {
       score += 15; // Still good but less priority
     } else {
       score += 18;
@@ -264,7 +281,7 @@ export function calculateProductRecommendationScore(
 
     if (bmi < 18.5 || bmi > 30) {
       // Underweight or obese - prioritize health insurance
-      if (product.type === 'health' || product.type === 'accident') {
+      if (product.type === "health" || product.type === "accident") {
         score += 15;
       } else {
         score += 8;
@@ -274,7 +291,7 @@ export function calculateProductRecommendationScore(
       score += 12;
     } else {
       // Overweight - moderate health focus
-      if (product.type === 'health') {
+      if (product.type === "health") {
         score += 13;
       } else {
         score += 10;
@@ -284,9 +301,9 @@ export function calculateProductRecommendationScore(
 
   // Gender-based adjustments (0-10 points)
   if (userProfile.gender) {
-    if (userProfile.gender === 'female' && product.type === 'health') {
+    if (userProfile.gender === "female" && product.type === "health") {
       score += 8; // Women generally more health-conscious
-    } else if (userProfile.gender === 'male' && product.type === 'accident') {
+    } else if (userProfile.gender === "male" && product.type === "accident") {
       score += 8; // Men statistically higher accident risk
     } else {
       score += 5; // Base gender consideration
@@ -295,20 +312,22 @@ export function calculateProductRecommendationScore(
 
   // Occupation level risk assessment (0-5 points)
   if (userProfile.occupationLevel) {
-    const riskLevel = parseInt(userProfile.occupationLevel.replace('level', ''));
+    const riskLevel = parseInt(
+      userProfile.occupationLevel.replace("level", ""),
+    );
 
     if (riskLevel >= 4) {
       // High-risk occupation - prioritize accident insurance
-      if (product.type === 'accident') {
+      if (product.type === "accident") {
         score += 5;
-      } else if (product.type === 'health') {
+      } else if (product.type === "health") {
         score += 3;
       } else {
         score += 1;
       }
     } else if (riskLevel <= 2) {
       // Low-risk occupation - balanced approach, slight life insurance preference
-      if (product.type === 'life') {
+      if (product.type === "life") {
         score += 4;
       } else {
         score += 3;
@@ -327,7 +346,7 @@ export function calculateProductRecommendationScore(
  */
 export function sortProductsByRecommendation(
   products: InsuranceProduct[],
-  userProfile: UserProfile
+  userProfile: UserProfile,
 ): InsuranceProduct[] {
   return [...products].sort((a, b) => {
     const scoreA = calculateProductRecommendationScore(a, userProfile);

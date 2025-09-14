@@ -98,59 +98,61 @@ export default function InsurancePage({
     }
   }, [user?.id]);
 
-  const filteredAndSortedProducts = useMemo(
-    () => {
-      // First filter products based on search term and filters
-      const filtered = mockInsuranceProducts.filter((product) => {
-        // Search term filter
-        if (
-          searchTerm &&
-          !product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-          !product.company.toLowerCase().includes(searchTerm.toLowerCase())
-        ) {
-          return false;
-        }
-
-        // Type filter
-        if (filter.type && product.type !== filter.type) {
-          return false;
-        }
-
-        // Age filter
-        if (
-          filter.age &&
-          (product.ageRange.min > filter.age ||
-            product.ageRange.max < filter.age)
-        ) {
-          return false;
-        }
-
-        // Premium filter
-        if (filter.minPremium && product.premium.monthly < filter.minPremium) {
-          return false;
-        }
-        if (filter.maxPremium && product.premium.monthly > filter.maxPremium) {
-          return false;
-        }
-
-        return true;
-      });
-
-      // Then sort by recommendation if user has profile data
-      if (userProfile && (userProfile.age || userProfile.weight || userProfile.height || userProfile.gender)) {
-        return sortProductsByRecommendation(filtered, userProfile);
+  const filteredAndSortedProducts = useMemo(() => {
+    // First filter products based on search term and filters
+    const filtered = mockInsuranceProducts.filter((product) => {
+      // Search term filter
+      if (
+        searchTerm &&
+        !product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !product.company.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return false;
       }
 
-      // Default sort by rating and review count if no user profile
-      return filtered.sort((a, b) => {
-        if (a.rating !== b.rating) {
-          return b.rating - a.rating;
-        }
-        return b.reviewCount - a.reviewCount;
-      });
-    },
-    [searchTerm, filter, userProfile],
-  );
+      // Type filter
+      if (filter.type && product.type !== filter.type) {
+        return false;
+      }
+
+      // Age filter
+      if (
+        filter.age &&
+        (product.ageRange.min > filter.age || product.ageRange.max < filter.age)
+      ) {
+        return false;
+      }
+
+      // Premium filter
+      if (filter.minPremium && product.premium.monthly < filter.minPremium) {
+        return false;
+      }
+      if (filter.maxPremium && product.premium.monthly > filter.maxPremium) {
+        return false;
+      }
+
+      return true;
+    });
+
+    // Then sort by recommendation if user has profile data
+    if (
+      userProfile &&
+      (userProfile.age ||
+        userProfile.weight ||
+        userProfile.height ||
+        userProfile.gender)
+    ) {
+      return sortProductsByRecommendation(filtered, userProfile);
+    }
+
+    // Default sort by rating and review count if no user profile
+    return filtered.sort((a, b) => {
+      if (a.rating !== b.rating) {
+        return b.rating - a.rating;
+      }
+      return b.reviewCount - a.reviewCount;
+    });
+  }, [searchTerm, filter, userProfile]);
 
   const handleFilterChange = (key: keyof InsuranceFilter, value: any) => {
     setFilter((prev) => ({ ...prev, [key]: value }));
@@ -338,11 +340,17 @@ export default function InsurancePage({
           {locale === "en"
             ? `Found ${filteredAndSortedProducts.length} insurance products matching your criteria`
             : `找到 ${filteredAndSortedProducts.length} 個符合條件的保險商品`}
-          {userProfile && (userProfile.age || userProfile.weight || userProfile.height || userProfile.gender) && (
-            <span className="ml-2 text-xs text-primary">
-              {locale === "en" ? "(personalized recommendations)" : "（個人化推薦）"}
-            </span>
-          )}
+          {userProfile &&
+            (userProfile.age ||
+              userProfile.weight ||
+              userProfile.height ||
+              userProfile.gender) && (
+              <span className="ml-2 text-xs text-primary">
+                {locale === "en"
+                  ? "(personalized recommendations)"
+                  : "（個人化推薦）"}
+              </span>
+            )}
         </p>
       </div>
 

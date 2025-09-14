@@ -379,7 +379,7 @@ export default function DashboardPage({
                   const hasExpiringPolicies = expiringPolicies.length > 0;
 
                   return (
-                    <Card key={customer.id} className={`w-full overflow-hidden ${hasExpiringPolicies ? 'border-orange-200 bg-orange-50/50' : ''}`}>
+                    <Card key={customer.id} className={`w-full overflow-hidden ${hasExpiringPolicies ? 'border-orange-200 bg-orange-50/50 dark:border-orange-800 dark:bg-orange-950/20' : ''}`}>
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -411,10 +411,10 @@ export default function DashboardPage({
 
                         {/* Display expiring policies */}
                         {hasExpiringPolicies && (
-                          <div className="mt-3 p-3 bg-orange-100 rounded-lg border border-orange-200">
+                          <div className="mt-3 p-3 bg-orange-100 dark:bg-orange-900/30 rounded-lg border border-orange-200 dark:border-orange-700">
                             <div className="flex items-center gap-2 mb-2">
-                              <AlertTriangle className="h-4 w-4 text-orange-600" />
-                              <span className="text-sm font-medium text-orange-800">
+                              <AlertTriangle className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                              <span className="text-sm font-medium text-orange-800 dark:text-orange-200">
                                 {locale === "en"
                                   ? `${expiringPolicies.length} policy${expiringPolicies.length > 1 ? 'ies' : ''} expiring within 3 months`
                                   : `${expiringPolicies.length} 份保單將於三個月內到期`
@@ -423,7 +423,7 @@ export default function DashboardPage({
                             </div>
                             <div className="space-y-1">
                               {expiringPolicies.map(policy => (
-                                <div key={policy.id} className="text-xs text-orange-700 flex justify-between">
+                                <div key={policy.id} className="text-xs text-orange-700 dark:text-orange-300 flex justify-between">
                                   <span>{policy.productName}</span>
                                   <span>{formatDate(policy.expirationDate)}</span>
                                 </div>

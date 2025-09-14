@@ -259,7 +259,7 @@ export default function Home({ params }: HomeProps) {
                   <div className="flex flex-row items-center justify-center gap-1">
                     <span className="text-muted-foreground text-sm">
                       {locale === "en"
-                        ? "Complete profile for personalized results - "
+                        ? "Complete profile for better results - "
                         : "完善個人資料以獲得更佳結果 - "}
                     </span>
                     <Button

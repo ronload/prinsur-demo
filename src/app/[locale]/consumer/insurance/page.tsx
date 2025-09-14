@@ -42,6 +42,7 @@ import {
   getPremiumDisplayStatus,
   UserProfile,
 } from "@/utils/premium-calculator";
+import { sortProductsByRecommendation } from "@/utils/recommendations";
 
 interface InsurancePageProps {
   params: Promise<{ locale: string }>;
@@ -97,44 +98,61 @@ export default function InsurancePage({
     }
   }, [user?.id]);
 
-  const filteredProducts = useMemo(
-    () =>
-      mockInsuranceProducts.filter((product) => {
-        // Search term filter
-        if (
-          searchTerm &&
-          !product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-          !product.company.toLowerCase().includes(searchTerm.toLowerCase())
-        ) {
-          return false;
-        }
+  const filteredAndSortedProducts = useMemo(() => {
+    // First filter products based on search term and filters
+    const filtered = mockInsuranceProducts.filter((product) => {
+      // Search term filter
+      if (
+        searchTerm &&
+        !product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !product.company.toLowerCase().includes(searchTerm.toLowerCase())
+      ) {
+        return false;
+      }
 
-        // Type filter
-        if (filter.type && product.type !== filter.type) {
-          return false;
-        }
+      // Type filter
+      if (filter.type && product.type !== filter.type) {
+        return false;
+      }
 
-        // Age filter
-        if (
-          filter.age &&
-          (product.ageRange.min > filter.age ||
-            product.ageRange.max < filter.age)
-        ) {
-          return false;
-        }
+      // Age filter
+      if (
+        filter.age &&
+        (product.ageRange.min > filter.age || product.ageRange.max < filter.age)
+      ) {
+        return false;
+      }
 
-        // Premium filter
-        if (filter.minPremium && product.premium.monthly < filter.minPremium) {
-          return false;
-        }
-        if (filter.maxPremium && product.premium.monthly > filter.maxPremium) {
-          return false;
-        }
+      // Premium filter
+      if (filter.minPremium && product.premium.monthly < filter.minPremium) {
+        return false;
+      }
+      if (filter.maxPremium && product.premium.monthly > filter.maxPremium) {
+        return false;
+      }
 
-        return true;
-      }),
-    [searchTerm, filter],
-  );
+      return true;
+    });
+
+    // Then sort by recommendation if user has profile data
+    if (
+      userProfile &&
+      (userProfile.age ||
+        userProfile.weight ||
+        userProfile.height ||
+        userProfile.gender)
+    ) {
+      return sortProductsByRecommendation(filtered, userProfile);
+    }
+
+    // Default sort by rating and review count if no user profile
+    return filtered.sort((a, b) => {
+      if (a.rating !== b.rating) {
+        return b.rating - a.rating;
+      }
+      return b.reviewCount - a.reviewCount;
+    });
+  }, [searchTerm, filter, userProfile]);
 
   const handleFilterChange = (key: keyof InsuranceFilter, value: any) => {
     setFilter((prev) => ({ ...prev, [key]: value }));
@@ -320,14 +338,25 @@ export default function InsurancePage({
       <div className="mb-4">
         <p className="text-sm text-muted-foreground">
           {locale === "en"
-            ? `Found ${filteredProducts.length} insurance products matching your criteria`
-            : `找到 ${filteredProducts.length} 個符合條件的保險商品`}
+            ? `Found ${filteredAndSortedProducts.length} insurance products matching your criteria`
+            : `找到 ${filteredAndSortedProducts.length} 個符合條件的保險商品`}
+          {userProfile &&
+            (userProfile.age ||
+              userProfile.weight ||
+              userProfile.height ||
+              userProfile.gender) && (
+              <span className="ml-2 text-xs text-primary">
+                {locale === "en"
+                  ? "(personalized recommendations)"
+                  : "（個人化推薦）"}
+              </span>
+            )}
         </p>
       </div>
 
       {/* Product Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProducts.map((product) => (
+        {filteredAndSortedProducts.map((product) => (
           <Card key={product.id} className="flex flex-col">
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -480,7 +509,7 @@ export default function InsurancePage({
         ))}
       </div>
 
-      {filteredProducts.length === 0 && (
+      {filteredAndSortedProducts.length === 0 && (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-lg font-semibold mb-2">

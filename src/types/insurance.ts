@@ -73,6 +73,7 @@ export interface Agent {
     city: string;
     district: string;
   };
+  serviceAreas: string[];
   avatar?: string;
   experience: number;
   languages: string[];

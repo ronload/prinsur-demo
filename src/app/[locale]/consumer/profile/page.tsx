@@ -12,8 +12,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAuth } from "@/contexts/auth-context";
-import { Save, User, Activity, Heart } from "lucide-react";
+import { Save, User, Activity, Heart, MapPin, Briefcase } from "lucide-react";
 
 interface ConsumerProfileProps {
   params: Promise<{ locale: string }>;
@@ -23,7 +30,10 @@ interface ConsumerProfile {
   age: number;
   weight: number;
   height: number;
+  gender: string;
   medicalConditions: string[];
+  location: string;
+  occupationLevel: string;
 }
 
 const MEDICAL_CONDITIONS = [
@@ -43,6 +53,73 @@ const MEDICAL_CONDITIONS = [
   { id: "liver_disease", label: { "zh-TW": "肝臟疾病", en: "Liver Disease" } },
 ];
 
+const OCCUPATION_LEVELS = [
+  {
+    id: "level1",
+    label: {
+      "zh-TW": "職等一：內勤人員、教師、家庭主婦等",
+      en: "Level 1: Office workers, teachers, homemakers, etc.",
+    },
+  },
+  {
+    id: "level2",
+    label: {
+      "zh-TW": "職等二：外勤人員、廚師、工程或技師等",
+      en: "Level 2: Field workers, chefs, engineers or technicians, etc.",
+    },
+  },
+  {
+    id: "level3",
+    label: {
+      "zh-TW": "職等三：一般軍警、遊覽車司機等",
+      en: "Level 3: General military/police, tour bus drivers, etc.",
+    },
+  },
+  {
+    id: "level4",
+    label: {
+      "zh-TW": "職等四：模板工、水電工、計程車司機等",
+      en: "Level 4: Concrete workers, plumbers, taxi drivers, etc.",
+    },
+  },
+  {
+    id: "level5",
+    label: {
+      "zh-TW": "職等五：刑警、焊接工、高樓外部清潔工等",
+      en: "Level 5: Detectives, welders, high-rise exterior cleaners, etc.",
+    },
+  },
+  {
+    id: "level6",
+    label: {
+      "zh-TW": "職等六：機上服務員、消防隊隊員等",
+      en: "Level 6: Flight attendants, firefighters, etc.",
+    },
+  },
+];
+
+const TAIWAN_AREAS = [
+  { id: "taipei", label: { "zh-TW": "台北市", en: "Taipei City" } },
+  { id: "new-taipei", label: { "zh-TW": "新北市", en: "New Taipei City" } },
+  { id: "taoyuan", label: { "zh-TW": "桃園市", en: "Taoyuan City" } },
+  { id: "taichung", label: { "zh-TW": "台中市", en: "Taichung City" } },
+  { id: "tainan", label: { "zh-TW": "台南市", en: "Tainan City" } },
+  { id: "kaohsiung", label: { "zh-TW": "高雄市", en: "Kaohsiung City" } },
+  { id: "keelung", label: { "zh-TW": "基隆市", en: "Keelung City" } },
+  { id: "hsinchu-city", label: { "zh-TW": "新竹市", en: "Hsinchu City" } },
+  { id: "chiayi-city", label: { "zh-TW": "嘉義市", en: "Chiayi City" } },
+  { id: "hsinchu", label: { "zh-TW": "新竹縣", en: "Hsinchu County" } },
+  { id: "miaoli", label: { "zh-TW": "苗栗縣", en: "Miaoli County" } },
+  { id: "changhua", label: { "zh-TW": "彰化縣", en: "Changhua County" } },
+  { id: "nantou", label: { "zh-TW": "南投縣", en: "Nantou County" } },
+  { id: "yunlin", label: { "zh-TW": "雲林縣", en: "Yunlin County" } },
+  { id: "chiayi", label: { "zh-TW": "嘉義縣", en: "Chiayi County" } },
+  { id: "pingtung", label: { "zh-TW": "屏東縣", en: "Pingtung County" } },
+  { id: "yilan", label: { "zh-TW": "宜蘭縣", en: "Yilan County" } },
+  { id: "hualien", label: { "zh-TW": "花蓮縣", en: "Hualien County" } },
+  { id: "taitung", label: { "zh-TW": "台東縣", en: "Taitung County" } },
+];
+
 export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
   const { locale } = use(params);
   const { user } = useAuth();
@@ -51,7 +128,10 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
     age: 0,
     weight: 0,
     height: 0,
+    gender: "",
     medicalConditions: [],
+    location: "",
+    occupationLevel: "",
   });
 
   // Load existing profile data (mock implementation)
@@ -100,6 +180,7 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
     }));
   };
 
+
   const calculateBMI = () => {
     if (profile.weight > 0 && profile.height > 0) {
       const heightInMeters = profile.height / 100;
@@ -117,8 +198,8 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
           </h1>
           <p className="text-sm md:text-base text-muted-foreground">
             {locale === "en"
-              ? "Manage your personal information for better insurance recommendations"
-              : "管理您的個人資料以獲得更好的保險推薦"}
+              ? "Complete your personal profile for more accurate premium estimates"
+              : "完善個人資料以供更精準的保費預估"}
           </p>
         </div>
 
@@ -137,7 +218,7 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="age">
                     {locale === "en" ? "Age" : "年齡"}
@@ -197,6 +278,31 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                     placeholder={locale === "en" ? "Enter height" : "輸入身高"}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="gender">
+                    {locale === "en" ? "Gender" : "性別"}
+                  </Label>
+                  <Select
+                    value={profile.gender}
+                    onValueChange={(value) =>
+                      setProfile((prev) => ({ ...prev, gender: value }))
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={locale === "en" ? "Select gender" : "選擇性別"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">
+                        {locale === "en" ? "Male" : "男性"}
+                      </SelectItem>
+                      <SelectItem value="female">
+                        {locale === "en" ? "Female" : "女性"}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               {calculateBMI() && (
@@ -207,6 +313,96 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                   </p>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* User Location */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                {locale === "en" ? "Location" : "所在地區"}
+              </CardTitle>
+              <CardDescription>
+                {locale === "en"
+                  ? "Your location helps us find the nearest insurance agents"
+                  : "您的所在地區可幫助我們為您尋找最近的保險業務員"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label htmlFor="location">
+                  {locale === "en" ? "Current Location" : "目前所在地區"}
+                </Label>
+                <Select
+                  value={profile.location}
+                  onValueChange={(value) =>
+                    setProfile((prev) => ({ ...prev, location: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={
+                        locale === "en"
+                          ? "Select your location"
+                          : "選擇您的所在地區"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TAIWAN_AREAS.map((area) => (
+                      <SelectItem key={area.id} value={area.id}>
+                        {area.label[locale as keyof typeof area.label]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Occupation Level */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Briefcase className="h-5 w-5" />
+                {locale === "en" ? "Occupation Level" : "職等"}
+              </CardTitle>
+              <CardDescription>
+                {locale === "en"
+                  ? "Select your occupation risk level for insurance assessment"
+                  : "選擇您的職業風險等級以進行保險評估"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Label htmlFor="occupationLevel">
+                  {locale === "en" ? "Occupation Level" : "職業等級"}
+                </Label>
+                <Select
+                  value={profile.occupationLevel}
+                  onValueChange={(value) =>
+                    setProfile((prev) => ({ ...prev, occupationLevel: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={
+                        locale === "en"
+                          ? "Select occupation level"
+                          : "選擇職業等級"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {OCCUPATION_LEVELS.map((level) => (
+                      <SelectItem key={level.id} value={level.id}>
+                        {level.label[locale as keyof typeof level.label]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </CardContent>
           </Card>
 

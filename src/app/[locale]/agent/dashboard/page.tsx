@@ -386,18 +386,18 @@ export default function DashboardPage({
                             <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                               <Users className="h-5 w-5 text-primary" />
                             </div>
-                            <div className="min-w-0 flex-1">
-                              <CardTitle className="truncate mb-1">
+                            <div className="min-w-0 flex-1 py-1">
+                              <CardTitle className="truncate mb-2">
                                 {customer.name}
                               </CardTitle>
-                              <CardDescription>
+                              <CardDescription className="leading-relaxed">
                                 {customer.age}
                                 {locale === "en" ? "yrs" : "歲"} •{" "}
                                 {customer.location.city}
                               </CardDescription>
                             </div>
                           </div>
-                          <div className="flex-shrink-0 flex items-center gap-2">
+                          <div className="flex-shrink-0 flex flex-col gap-2 items-end">
                             {hasExpiringPolicies && (
                               <Badge variant="destructive" className="text-xs flex items-center gap-1">
                                 <AlertTriangle className="h-3 w-3" />

@@ -13,8 +13,15 @@ import {
 } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAuth } from "@/contexts/auth-context";
-import { Save, User, Briefcase, Building } from "lucide-react";
+import { Save, User, Briefcase, Building, MapPin, X } from "lucide-react";
 
 interface AgentProfileProps {
   params: Promise<{ locale: string }>;
@@ -26,6 +33,7 @@ interface AgentProfile {
   serviceCategories: string[];
   insuranceCompanies: string[];
   specialties: string[];
+  serviceAreas: string[];
   bio: string;
   contactPhone: string;
   officeAddress: string;
@@ -76,6 +84,28 @@ const SPECIALTIES = [
   },
 ];
 
+const TAIWAN_AREAS = [
+  { id: "taipei", label: { "zh-TW": "台北市", en: "Taipei City" } },
+  { id: "new-taipei", label: { "zh-TW": "新北市", en: "New Taipei City" } },
+  { id: "taoyuan", label: { "zh-TW": "桃園市", en: "Taoyuan City" } },
+  { id: "taichung", label: { "zh-TW": "台中市", en: "Taichung City" } },
+  { id: "tainan", label: { "zh-TW": "台南市", en: "Tainan City" } },
+  { id: "kaohsiung", label: { "zh-TW": "高雄市", en: "Kaohsiung City" } },
+  { id: "keelung", label: { "zh-TW": "基隆市", en: "Keelung City" } },
+  { id: "hsinchu-city", label: { "zh-TW": "新竹市", en: "Hsinchu City" } },
+  { id: "chiayi-city", label: { "zh-TW": "嘉義市", en: "Chiayi City" } },
+  { id: "hsinchu", label: { "zh-TW": "新竹縣", en: "Hsinchu County" } },
+  { id: "miaoli", label: { "zh-TW": "苗栗縣", en: "Miaoli County" } },
+  { id: "changhua", label: { "zh-TW": "彰化縣", en: "Changhua County" } },
+  { id: "nantou", label: { "zh-TW": "南投縣", en: "Nantou County" } },
+  { id: "yunlin", label: { "zh-TW": "雲林縣", en: "Yunlin County" } },
+  { id: "chiayi", label: { "zh-TW": "嘉義縣", en: "Chiayi County" } },
+  { id: "pingtung", label: { "zh-TW": "屏東縣", en: "Pingtung County" } },
+  { id: "yilan", label: { "zh-TW": "宜蘭縣", en: "Yilan County" } },
+  { id: "hualien", label: { "zh-TW": "花蓮縣", en: "Hualien County" } },
+  { id: "taitung", label: { "zh-TW": "台東縣", en: "Taitung County" } },
+];
+
 export default function AgentProfilePage({ params }: AgentProfileProps) {
   const { locale } = use(params);
   const { user } = useAuth();
@@ -86,6 +116,7 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
     serviceCategories: [],
     insuranceCompanies: [],
     specialties: [],
+    serviceAreas: [],
     bio: "",
     contactPhone: "",
     officeAddress: "",
@@ -138,6 +169,22 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
       [field]: checked
         ? [...prev[field], itemId]
         : prev[field].filter((id) => id !== itemId),
+    }));
+  };
+
+  const handleServiceAreaAdd = (areaId: string) => {
+    if (profile.serviceAreas.length < 3 && !profile.serviceAreas.includes(areaId)) {
+      setProfile((prev) => ({
+        ...prev,
+        serviceAreas: [...prev.serviceAreas, areaId],
+      }));
+    }
+  };
+
+  const handleServiceAreaRemove = (areaId: string) => {
+    setProfile((prev) => ({
+      ...prev,
+      serviceAreas: prev.serviceAreas.filter((id) => id !== areaId),
     }));
   };
 
@@ -268,6 +315,85 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                   rows={4}
                 />
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Service Areas */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                {locale === "en" ? "Service Areas" : "服務地區"}
+              </CardTitle>
+              <CardDescription>
+                {locale === "en"
+                  ? "Select up to 3 areas where you provide insurance services"
+                  : "選擇最多 3 個您提供保險服務的地區"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>
+                  {locale === "en" ? "Add Service Area" : "新增服務地區"}
+                </Label>
+                <Select
+                  onValueChange={handleServiceAreaAdd}
+                  disabled={profile.serviceAreas.length >= 3}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={
+                        profile.serviceAreas.length >= 3
+                          ? locale === "en"
+                            ? "Maximum 3 areas selected"
+                            : "已選擇 3 個地區上限"
+                          : locale === "en"
+                            ? "Select an area to add"
+                            : "選擇要新增的地區"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TAIWAN_AREAS.filter(
+                      (area) => !profile.serviceAreas.includes(area.id)
+                    ).map((area) => (
+                      <SelectItem key={area.id} value={area.id}>
+                        {area.label[locale as keyof typeof area.label]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {profile.serviceAreas.length > 0 && (
+                <div className="space-y-2">
+                  <Label>
+                    {locale === "en" ? "Selected Areas" : "已選地區"}
+                  </Label>
+                  <div className="flex flex-wrap gap-2">
+                    {profile.serviceAreas.map((areaId) => {
+                      const area = TAIWAN_AREAS.find((a) => a.id === areaId);
+                      return (
+                        <div
+                          key={areaId}
+                          className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-md text-sm"
+                        >
+                          <span>
+                            {area?.label[locale as keyof typeof area.label]}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleServiceAreaRemove(areaId)}
+                            className="hover:bg-primary/20 rounded-full p-0.5"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 

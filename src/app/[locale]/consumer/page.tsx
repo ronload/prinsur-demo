@@ -14,6 +14,7 @@ import { Search, Users, FileText } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
+import { UserProfile } from "@/utils/premium-calculator";
 
 interface HomeProps {
   params: Promise<{ locale: string }>;
@@ -25,6 +26,7 @@ export default function Home({ params }: HomeProps) {
   const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [mounted, setMounted] = useState(false);
+  const [userProfile, setUserProfile] = useState<UserProfile>({});
   const router = useRouter();
   const { user, isLoading } = useAuth();
 
@@ -46,6 +48,27 @@ export default function Home({ params }: HomeProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Load user profile for checking completeness
+  useEffect(() => {
+    if (user?.id) {
+      const savedProfile = localStorage.getItem(`consumer_profile_${user.id}`);
+      if (savedProfile) {
+        try {
+          const profile = JSON.parse(savedProfile);
+          setUserProfile({
+            age: profile.age,
+            weight: profile.weight,
+            height: profile.height,
+            gender: profile.gender,
+            medicalConditions: profile.medicalConditions
+          });
+        } catch (error) {
+          console.error("Error loading user profile:", error);
+        }
+      }
+    }
+  }, [user?.id]);
 
   // Trigger TextType after other animations complete
   useEffect(() => {
@@ -114,6 +137,16 @@ export default function Home({ params }: HomeProps) {
       };
     }
   }, []);
+
+  // Helper function to check if profile is complete
+  const isProfileIncomplete = () => {
+    if (!user) return false;
+
+    // Check if basic profile fields are missing
+    const basicFieldsMissing = !userProfile.age || !userProfile.weight || !userProfile.height || !userProfile.gender;
+
+    return basicFieldsMissing;
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,6 +246,28 @@ export default function Home({ params }: HomeProps) {
                       onClick={() => router.push(`/${locale}/login`)}
                     >
                       {locale === "en" ? "Go to Login" : "前往登入"}
+                    </Button>
+                  </div>
+                </div>
+              )}
+              {mounted && !isLoading && user && isProfileIncomplete() && (
+                <div
+                  ref={loginSuggestionAnimation.ref}
+                  style={loginSuggestionAnimation.animationStyle}
+                  className="text-center"
+                >
+                  <div className="flex flex-row items-center justify-center gap-1">
+                    <span className="text-muted-foreground text-sm">
+                      {locale === "en"
+                        ? "Complete profile for personalized results - "
+                        : "完善個人資料以獲得更佳結果 - "}
+                    </span>
+                    <Button
+                      variant="link"
+                      className="text-primary p-0 h-auto text-sm underline"
+                      onClick={() => router.push(`/${locale}/consumer/profile`)}
+                    >
+                      {locale === "en" ? "Complete Profile" : "前往完善資料"}
                     </Button>
                   </div>
                 </div>

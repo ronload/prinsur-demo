@@ -370,7 +370,10 @@ export function sortProductsByRecommendation(
 /**
  * Sort products by premium (monthly)
  */
-export function sortByPremium(products: InsuranceProduct[], ascending: boolean = true): InsuranceProduct[] {
+export function sortByPremium(
+  products: InsuranceProduct[],
+  ascending: boolean = true,
+): InsuranceProduct[] {
   return [...products].sort((a, b) => {
     const premiumA = a.premium.monthly;
     const premiumB = b.premium.monthly;
@@ -382,7 +385,10 @@ export function sortByPremium(products: InsuranceProduct[], ascending: boolean =
 /**
  * Sort products by coverage amount
  */
-export function sortByCoverage(products: InsuranceProduct[], ascending: boolean = false): InsuranceProduct[] {
+export function sortByCoverage(
+  products: InsuranceProduct[],
+  ascending: boolean = false,
+): InsuranceProduct[] {
   return [...products].sort((a, b) => {
     const coverageA = a.coverage.amount;
     const coverageB = b.coverage.amount;
@@ -394,7 +400,10 @@ export function sortByCoverage(products: InsuranceProduct[], ascending: boolean 
 /**
  * Sort products by rating
  */
-export function sortByRating(products: InsuranceProduct[], ascending: boolean = false): InsuranceProduct[] {
+export function sortByRating(
+  products: InsuranceProduct[],
+  ascending: boolean = false,
+): InsuranceProduct[] {
   return [...products].sort((a, b) => {
     if (a.rating !== b.rating) {
       return ascending ? a.rating - b.rating : b.rating - a.rating;
@@ -407,7 +416,9 @@ export function sortByRating(products: InsuranceProduct[], ascending: boolean = 
 /**
  * Sort products by popularity (review count)
  */
-export function sortByPopularity(products: InsuranceProduct[]): InsuranceProduct[] {
+export function sortByPopularity(
+  products: InsuranceProduct[],
+): InsuranceProduct[] {
   return [...products].sort((a, b) => {
     if (a.reviewCount !== b.reviewCount) {
       return b.reviewCount - a.reviewCount;
@@ -422,8 +433,8 @@ export function sortByPopularity(products: InsuranceProduct[]): InsuranceProduct
  */
 export function sortByNewest(products: InsuranceProduct[]): InsuranceProduct[] {
   return [...products].sort((a, b) => {
-    const dateA = new Date(a.launchDate || '2020-01-01').getTime();
-    const dateB = new Date(b.launchDate || '2020-01-01').getTime();
+    const dateA = new Date(a.launchDate || "2020-01-01").getTime();
+    const dateB = new Date(b.launchDate || "2020-01-01").getTime();
 
     if (dateA !== dateB) {
       return dateB - dateA; // Newest first
@@ -436,7 +447,10 @@ export function sortByNewest(products: InsuranceProduct[]): InsuranceProduct[] {
 /**
  * Sort products by company name
  */
-export function sortByCompany(products: InsuranceProduct[], locale: string = "zh-TW"): InsuranceProduct[] {
+export function sortByCompany(
+  products: InsuranceProduct[],
+  locale: string = "zh-TW",
+): InsuranceProduct[] {
   return [...products].sort((a, b) => {
     // For Chinese locale, sort by Chinese characters
     // For English locale, sort alphabetically
@@ -444,9 +458,9 @@ export function sortByCompany(products: InsuranceProduct[], locale: string = "zh
     const companyB = b.company;
 
     if (locale === "zh-TW") {
-      return companyA.localeCompare(companyB, 'zh-TW');
+      return companyA.localeCompare(companyB, "zh-TW");
     } else {
-      return companyA.localeCompare(companyB, 'en');
+      return companyA.localeCompare(companyB, "en");
     }
   });
 }
@@ -458,11 +472,17 @@ export function sortProducts(
   products: InsuranceProduct[],
   sortBy: string,
   userProfile?: UserProfile,
-  locale: string = "zh-TW"
+  locale: string = "zh-TW",
 ): InsuranceProduct[] {
   switch (sortBy) {
     case "personalized":
-      if (userProfile && (userProfile.age || userProfile.weight || userProfile.height || userProfile.gender)) {
+      if (
+        userProfile &&
+        (userProfile.age ||
+          userProfile.weight ||
+          userProfile.height ||
+          userProfile.gender)
+      ) {
         return sortProductsByRecommendation(products, userProfile);
       }
       // Fallback to rating if no profile
@@ -499,8 +519,8 @@ export function sortProducts(
       // Default sorting - combination of rating and popularity
       return [...products].sort((a, b) => {
         // Combine rating (70%) and popularity (30%) scores
-        const scoreA = (a.rating * 0.7) + (Math.min(a.reviewCount / 100, 1) * 0.3);
-        const scoreB = (b.rating * 0.7) + (Math.min(b.reviewCount / 100, 1) * 0.3);
+        const scoreA = a.rating * 0.7 + Math.min(a.reviewCount / 100, 1) * 0.3;
+        const scoreB = b.rating * 0.7 + Math.min(b.reviewCount / 100, 1) * 0.3;
 
         if (Math.abs(scoreA - scoreB) > 0.01) {
           return scoreB - scoreA;

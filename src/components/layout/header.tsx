@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, User, LogOut, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -69,6 +69,7 @@ function MobileNav({ items, onItemClick }: MobileNavProps) {
 }
 
 export function Header() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { user, logout } = useAuth();
   const pathname = usePathname();
@@ -82,6 +83,11 @@ export function Header() {
       setCurrentLocale(newLocale);
     }
   }, [pathname, currentLocale]);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
 
   // 根据用户角色生成不同的导航菜单
   const getNavigationItems = () => {
@@ -266,7 +272,7 @@ export function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout}>
+                  <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     {currentLocale === "en" ? "Sign out" : "登出"}
                   </DropdownMenuItem>

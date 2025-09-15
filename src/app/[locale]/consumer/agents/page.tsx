@@ -41,46 +41,46 @@ interface AgentFilter {
 
 interface AgentSortOption {
   id: string;
-  label: { "zh-TW": string; "en": string };
+  label: { "zh-TW": string; en: string };
 }
 
 const AGENT_SORT_OPTIONS: AgentSortOption[] = [
   {
     id: "default",
-    label: { "zh-TW": "預設排序", "en": "Default" }
+    label: { "zh-TW": "預設排序", en: "Default" },
   },
   {
     id: "location",
-    label: { "zh-TW": "地理位置", "en": "Location" }
+    label: { "zh-TW": "地理位置", en: "Location" },
   },
   {
     id: "rating_high_to_low",
-    label: { "zh-TW": "評分：高到低", "en": "Rating: Decrease" }
+    label: { "zh-TW": "評分：高到低", en: "Rating: Decrease" },
   },
   {
     id: "rating_low_to_high",
-    label: { "zh-TW": "評分：低到高", "en": "Rating: Increase" }
+    label: { "zh-TW": "評分：低到高", en: "Rating: Increase" },
   },
   {
     id: "experience_high_to_low",
-    label: { "zh-TW": "年資：高到低", "en": "Experience: Decrease" }
+    label: { "zh-TW": "年資：高到低", en: "Experience: Decrease" },
   },
   {
     id: "experience_low_to_high",
-    label: { "zh-TW": "年資：低到高", "en": "Experience: Increase" }
+    label: { "zh-TW": "年資：低到高", en: "Experience: Increase" },
   },
   {
     id: "reviews_high_to_low",
-    label: { "zh-TW": "評論數：多到少", "en": "Reviews: Decrease" }
+    label: { "zh-TW": "評論數：多到少", en: "Reviews: Decrease" },
   },
   {
     id: "company_az",
-    label: { "zh-TW": "公司名稱 A-Z", "en": "Company A-Z" }
+    label: { "zh-TW": "公司名稱 A-Z", en: "Company A-Z" },
   },
   {
     id: "name_az",
-    label: { "zh-TW": "姓名 A-Z", "en": "Name A-Z" }
-  }
+    label: { "zh-TW": "姓名 A-Z", en: "Name A-Z" },
+  },
 ];
 
 export default function AgentsPage({ params }: AgentsPageProps) {
@@ -97,7 +97,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
   // Handle client-side hydration
   useEffect(() => {
     setIsClient(true);
-    const savedSortPreference = localStorage.getItem('agent_sort_preference');
+    const savedSortPreference = localStorage.getItem("agent_sort_preference");
     if (savedSortPreference) {
       setSortBy(savedSortPreference);
     }
@@ -129,12 +129,15 @@ export default function AgentsPage({ params }: AgentsPageProps) {
   const handleSortChange = (newSortBy: string) => {
     setSortBy(newSortBy);
     // Save to localStorage only on client side
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('agent_sort_preference', newSortBy);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("agent_sort_preference", newSortBy);
     }
   };
 
-  const handleFilterChange = (key: keyof AgentFilter, value: string | number | undefined) => {
+  const handleFilterChange = (
+    key: keyof AgentFilter,
+    value: string | number | undefined,
+  ) => {
     setFilter((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -239,9 +242,9 @@ export default function AgentsPage({ params }: AgentsPageProps) {
           const companyA = a.company;
           const companyB = b.company;
           if (locale === "zh-TW") {
-            return companyA.localeCompare(companyB, 'zh-TW');
+            return companyA.localeCompare(companyB, "zh-TW");
           } else {
-            return companyA.localeCompare(companyB, 'en');
+            return companyA.localeCompare(companyB, "en");
           }
         });
 
@@ -250,9 +253,9 @@ export default function AgentsPage({ params }: AgentsPageProps) {
           const nameA = a.name;
           const nameB = b.name;
           if (locale === "zh-TW") {
-            return nameA.localeCompare(nameB, 'zh-TW');
+            return nameA.localeCompare(nameB, "zh-TW");
           } else {
-            return nameA.localeCompare(nameB, 'en');
+            return nameA.localeCompare(nameB, "en");
           }
         });
 
@@ -330,7 +333,9 @@ export default function AgentsPage({ params }: AgentsPageProps) {
               >
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={locale === "en" ? "Select Specialty" : "選擇專業"}
+                    placeholder={
+                      locale === "en" ? "Select Specialty" : "選擇專業"
+                    }
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -414,7 +419,9 @@ export default function AgentsPage({ params }: AgentsPageProps) {
               >
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={locale === "en" ? "Select Language" : "選擇語言"}
+                    placeholder={
+                      locale === "en" ? "Select Language" : "選擇語言"
+                    }
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -461,15 +468,15 @@ export default function AgentsPage({ params }: AgentsPageProps) {
               </Select>
             </div>
             <div className="md:hidden">
-              <Label className="text-sm font-normal mb-2 text-transparent">.</Label>
+              <Label className="text-sm font-normal mb-2 text-transparent">
+                .
+              </Label>
               <Button
                 variant="default"
                 onClick={clearAllFilters}
                 className="w-full h-9"
               >
-                <span>
-                  {locale === "en" ? "Clear filter" : "清空篩選"}
-                </span>
+                <span>{locale === "en" ? "Clear filter" : "清空篩選"}</span>
               </Button>
             </div>
           </div>
@@ -486,12 +493,20 @@ export default function AgentsPage({ params }: AgentsPageProps) {
             <>
               {sortBy !== "default" && (
                 <span className="ml-2 text-xs text-muted-foreground">
-                  ({AGENT_SORT_OPTIONS.find(opt => opt.id === sortBy)?.label[locale as keyof typeof AGENT_SORT_OPTIONS[0]['label']]})
+                  (
+                  {
+                    AGENT_SORT_OPTIONS.find((opt) => opt.id === sortBy)?.label[
+                      locale as keyof (typeof AGENT_SORT_OPTIONS)[0]["label"]
+                    ]
+                  }
+                  )
                 </span>
               )}
               {sortBy === "location" && userLocation && (
                 <span className="ml-2 text-xs text-primary">
-                  {locale === "en" ? "(personalized by location)" : "（依個人位置排序）"}
+                  {locale === "en"
+                    ? "(personalized by location)"
+                    : "（依個人位置排序）"}
                 </span>
               )}
             </>

@@ -200,13 +200,15 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
       return {
         text: locale === "en" ? "Normal" : "正常",
         variant: "default" as const,
-        color: "text-green-700 bg-green-50 dark:text-green-300 dark:bg-green-950",
+        color:
+          "text-green-700 bg-green-50 dark:text-green-300 dark:bg-green-950",
       };
     } else if (bmi >= 24 && bmi < 27) {
       return {
         text: locale === "en" ? "Overweight" : "過重",
         variant: "outline" as const,
-        color: "text-orange-700 bg-orange-50 dark:text-orange-300 dark:bg-orange-950",
+        color:
+          "text-orange-700 bg-orange-50 dark:text-orange-300 dark:bg-orange-950",
       };
     } else if (bmi >= 27 && bmi < 30) {
       return {
@@ -349,7 +351,9 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                       <span className="font-medium">BMI: {calculateBMI()}</span>
                     </p>
                     <Badge
-                      className={getBMIStatus(parseFloat(calculateBMI()!), locale).color}
+                      className={
+                        getBMIStatus(parseFloat(calculateBMI()!), locale).color
+                      }
                       variant="secondary"
                     >
                       {getBMIStatus(parseFloat(calculateBMI()!), locale).text}

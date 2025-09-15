@@ -444,7 +444,11 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                   </SelectTrigger>
                   <SelectContent className="max-w-xs">
                     {OCCUPATION_LEVELS.map((level) => (
-                      <SelectItem key={level.id} value={level.id} className="whitespace-normal break-words">
+                      <SelectItem
+                        key={level.id}
+                        value={level.id}
+                        className="whitespace-normal break-words"
+                      >
                         {level.label[locale as keyof typeof level.label]}
                       </SelectItem>
                     ))}

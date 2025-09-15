@@ -410,7 +410,7 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
           </Card>
 
           {/* Occupation Level */}
-          <Card>
+          <Card className="min-w-0 w/full">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Briefcase className="h-5 w-5" />
@@ -422,7 +422,7 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                   : "選擇您的職業風險等級以進行保險評估"}
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="min-w-0 w/full">
               <div className="space-y-2">
                 <Label htmlFor="occupationLevel">
                   {locale === "en" ? "Occupation Level" : "職業等級"}

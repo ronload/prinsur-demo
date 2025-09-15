@@ -433,7 +433,7 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                     setProfile((prev) => ({ ...prev, occupationLevel: value }))
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="max-w-xs">
                     <SelectValue
                       placeholder={
                         locale === "en"
@@ -442,9 +442,9 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                       }
                     />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="max-w-xs">
                     {OCCUPATION_LEVELS.map((level) => (
-                      <SelectItem key={level.id} value={level.id}>
+                      <SelectItem key={level.id} value={level.id} className="whitespace-normal break-words">
                         {level.label[locale as keyof typeof level.label]}
                       </SelectItem>
                     ))}

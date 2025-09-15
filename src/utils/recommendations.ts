@@ -366,3 +366,173 @@ export function sortProductsByRecommendation(
     return b.reviewCount - a.reviewCount;
   });
 }
+
+/**
+ * Sort products by premium (monthly)
+ */
+export function sortByPremium(
+  products: InsuranceProduct[],
+  ascending: boolean = true,
+): InsuranceProduct[] {
+  return [...products].sort((a, b) => {
+    const premiumA = a.premium.monthly;
+    const premiumB = b.premium.monthly;
+
+    return ascending ? premiumA - premiumB : premiumB - premiumA;
+  });
+}
+
+/**
+ * Sort products by coverage amount
+ */
+export function sortByCoverage(
+  products: InsuranceProduct[],
+  ascending: boolean = false,
+): InsuranceProduct[] {
+  return [...products].sort((a, b) => {
+    const coverageA = a.coverage.amount;
+    const coverageB = b.coverage.amount;
+
+    return ascending ? coverageA - coverageB : coverageB - coverageA;
+  });
+}
+
+/**
+ * Sort products by rating
+ */
+export function sortByRating(
+  products: InsuranceProduct[],
+  ascending: boolean = false,
+): InsuranceProduct[] {
+  return [...products].sort((a, b) => {
+    if (a.rating !== b.rating) {
+      return ascending ? a.rating - b.rating : b.rating - a.rating;
+    }
+    // Secondary sort by review count
+    return b.reviewCount - a.reviewCount;
+  });
+}
+
+/**
+ * Sort products by popularity (review count)
+ */
+export function sortByPopularity(
+  products: InsuranceProduct[],
+): InsuranceProduct[] {
+  return [...products].sort((a, b) => {
+    if (a.reviewCount !== b.reviewCount) {
+      return b.reviewCount - a.reviewCount;
+    }
+    // Secondary sort by rating
+    return b.rating - a.rating;
+  });
+}
+
+/**
+ * Sort products by launch date (newest first)
+ */
+export function sortByNewest(products: InsuranceProduct[]): InsuranceProduct[] {
+  return [...products].sort((a, b) => {
+    const dateA = new Date(a.launchDate || "2020-01-01").getTime();
+    const dateB = new Date(b.launchDate || "2020-01-01").getTime();
+
+    if (dateA !== dateB) {
+      return dateB - dateA; // Newest first
+    }
+    // Secondary sort by rating
+    return b.rating - a.rating;
+  });
+}
+
+/**
+ * Sort products by company name
+ */
+export function sortByCompany(
+  products: InsuranceProduct[],
+  locale: string = "zh-TW",
+): InsuranceProduct[] {
+  return [...products].sort((a, b) => {
+    // For Chinese locale, sort by Chinese characters
+    // For English locale, sort alphabetically
+    const companyA = a.company;
+    const companyB = b.company;
+
+    if (locale === "zh-TW") {
+      return companyA.localeCompare(companyB, "zh-TW");
+    } else {
+      return companyA.localeCompare(companyB, "en");
+    }
+  });
+}
+
+/**
+ * Combined sorting function - entry point for all sorting operations
+ */
+export function sortProducts(
+  products: InsuranceProduct[],
+  sortBy: string,
+  userProfile?: UserProfile,
+  locale: string = "zh-TW",
+): InsuranceProduct[] {
+  switch (sortBy) {
+    case "personalized":
+      if (
+        userProfile &&
+        (userProfile.age ||
+          userProfile.weight ||
+          userProfile.height ||
+          userProfile.gender)
+      ) {
+        return sortProductsByRecommendation(products, userProfile);
+      }
+      // Fallback to rating if no profile
+      return sortByRating(products);
+
+    case "premium_low_to_high":
+      return sortByPremium(products, true);
+
+    case "premium_high_to_low":
+      return sortByPremium(products, false);
+
+    case "coverage_high_to_low":
+      return sortByCoverage(products, false);
+
+    case "coverage_low_to_high":
+      return sortByCoverage(products, true);
+
+    case "rating_high_to_low":
+      return sortByRating(products, false);
+
+    case "rating_low_to_high":
+      return sortByRating(products, true);
+
+    case "popularity":
+      return sortByPopularity(products);
+
+    case "newest":
+      return sortByNewest(products);
+
+    case "company_az":
+      return sortByCompany(products, locale);
+
+    default:
+      // Default sorting - combination of rating and popularity
+      return [...products].sort((a, b) => {
+        // Combine rating (70%) and popularity (30%) scores
+        const scoreA = a.rating * 0.7 + Math.min(a.reviewCount / 100, 1) * 0.3;
+        const scoreB = b.rating * 0.7 + Math.min(b.reviewCount / 100, 1) * 0.3;
+
+        if (Math.abs(scoreA - scoreB) > 0.01) {
+          return scoreB - scoreA;
+        }
+
+        // Secondary sort by rating
+        if (a.rating !== b.rating) {
+          return b.rating - a.rating;
+        }
+
+        // Tertiary sort by review count
+        return b.reviewCount - a.reviewCount;
+      });
+  }
+}

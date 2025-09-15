@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { Search, MapPin, Star, Phone, Mail, Calendar } from "lucide-react";
+import { Search, MapPin, Star, Phone, Mail, Calendar, X } from "lucide-react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -14,13 +15,73 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { mockAgents } from "@/data/mock-insurance";
 import { useAuth } from "@/contexts/auth-context";
 import { sortAgentsByLocation } from "@/utils/recommendations";
+import type { InsuranceType } from "@/types/insurance";
 
 interface AgentsPageProps {
   params: Promise<{ locale: string }>;
 }
+
+interface AgentFilter {
+  specialty?: InsuranceType;
+  minRating?: number;
+  minExperience?: number;
+  language?: string;
+  location?: string;
+}
+
+interface AgentSortOption {
+  id: string;
+  label: { "zh-TW": string; en: string };
+}
+
+const AGENT_SORT_OPTIONS: AgentSortOption[] = [
+  {
+    id: "default",
+    label: { "zh-TW": "預設排序", en: "Default" },
+  },
+  {
+    id: "location",
+    label: { "zh-TW": "地理位置", en: "Location" },
+  },
+  {
+    id: "rating_high_to_low",
+    label: { "zh-TW": "評分：高到低", en: "Rating: Decrease" },
+  },
+  {
+    id: "rating_low_to_high",
+    label: { "zh-TW": "評分：低到高", en: "Rating: Increase" },
+  },
+  {
+    id: "experience_high_to_low",
+    label: { "zh-TW": "年資：高到低", en: "Experience: Decrease" },
+  },
+  {
+    id: "experience_low_to_high",
+    label: { "zh-TW": "年資：低到高", en: "Experience: Increase" },
+  },
+  {
+    id: "reviews_high_to_low",
+    label: { "zh-TW": "評論數：多到少", en: "Reviews: Decrease" },
+  },
+  {
+    id: "company_az",
+    label: { "zh-TW": "公司名稱 A-Z", en: "Company A-Z" },
+  },
+  {
+    id: "name_az",
+    label: { "zh-TW": "姓名 A-Z", en: "Name A-Z" },
+  },
+];
 
 export default function AgentsPage({ params }: AgentsPageProps) {
   const pathname = usePathname();
@@ -28,7 +89,19 @@ export default function AgentsPage({ params }: AgentsPageProps) {
   const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchTerm, setSearchTerm] = useState("");
   const [userLocation, setUserLocation] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("default");
+  const [isClient, setIsClient] = useState(false);
+  const [filter, setFilter] = useState<AgentFilter>({});
   const { user } = useAuth();
+
+  // Handle client-side hydration
+  useEffect(() => {
+    setIsClient(true);
+    const savedSortPreference = localStorage.getItem("agent_sort_preference");
+    if (savedSortPreference) {
+      setSortBy(savedSortPreference);
+    }
+  }, []);
 
   useEffect(() => {
     params.then(({ locale: paramLocale }) => {
@@ -53,29 +126,152 @@ export default function AgentsPage({ params }: AgentsPageProps) {
     }
   }, [user?.id]);
 
-  const filteredAndSortedAgents = (() => {
-    // First filter agents based on search term
-    const filtered = mockAgents.filter(
-      (agent) =>
-        agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        agent.company.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        agent.location.city.includes(searchTerm) ||
-        agent.location.district.includes(searchTerm),
-    );
-
-    // Then sort by location if user has location data
-    if (userLocation) {
-      return sortAgentsByLocation(filtered, userLocation);
+  const handleSortChange = (newSortBy: string) => {
+    setSortBy(newSortBy);
+    // Save to localStorage only on client side
+    if (typeof window !== "undefined") {
+      localStorage.setItem("agent_sort_preference", newSortBy);
     }
+  };
 
-    // Default sort by rating and experience if no location
-    return filtered.sort((a, b) => {
-      if (a.rating !== b.rating) {
-        return b.rating - a.rating;
+  const handleFilterChange = (
+    key: keyof AgentFilter,
+    value: string | number | undefined,
+  ) => {
+    setFilter((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const clearAllFilters = () => {
+    setSearchTerm("");
+    setFilter({});
+  };
+
+  const filteredAndSortedAgents = useMemo(() => {
+    // First filter agents based on search term and filters
+    const filtered = mockAgents.filter((agent) => {
+      // Search term filter
+      if (
+        searchTerm &&
+        !agent.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !agent.company.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        !agent.location.city.includes(searchTerm) &&
+        !agent.location.district.includes(searchTerm)
+      ) {
+        return false;
       }
-      return b.experience - a.experience;
+
+      // Specialty filter
+      if (filter.specialty && !agent.specialties.includes(filter.specialty)) {
+        return false;
+      }
+
+      // Rating filter
+      if (filter.minRating && agent.rating < filter.minRating) {
+        return false;
+      }
+
+      // Experience filter
+      if (filter.minExperience && agent.experience < filter.minExperience) {
+        return false;
+      }
+
+      // Language filter
+      if (filter.language && !agent.languages.includes(filter.language)) {
+        return false;
+      }
+
+      return true;
     });
-  })();
+
+    // Then sort by selected method
+    switch (sortBy) {
+      case "location":
+        if (userLocation) {
+          return sortAgentsByLocation(filtered, userLocation);
+        }
+        // Fall through to default if no user location
+        return filtered.sort((a, b) => {
+          if (a.rating !== b.rating) {
+            return b.rating - a.rating;
+          }
+          return b.experience - a.experience;
+        });
+
+      case "rating_high_to_low":
+        return filtered.sort((a, b) => {
+          if (a.rating !== b.rating) {
+            return b.rating - a.rating;
+          }
+          return b.reviewCount - a.reviewCount;
+        });
+
+      case "rating_low_to_high":
+        return filtered.sort((a, b) => {
+          if (a.rating !== b.rating) {
+            return a.rating - b.rating;
+          }
+          return a.reviewCount - b.reviewCount;
+        });
+
+      case "experience_high_to_low":
+        return filtered.sort((a, b) => {
+          if (a.experience !== b.experience) {
+            return b.experience - a.experience;
+          }
+          return b.rating - a.rating;
+        });
+
+      case "experience_low_to_high":
+        return filtered.sort((a, b) => {
+          if (a.experience !== b.experience) {
+            return a.experience - b.experience;
+          }
+          return b.rating - a.rating;
+        });
+
+      case "reviews_high_to_low":
+        return filtered.sort((a, b) => {
+          if (a.reviewCount !== b.reviewCount) {
+            return b.reviewCount - a.reviewCount;
+          }
+          return b.rating - a.rating;
+        });
+
+      case "company_az":
+        return filtered.sort((a, b) => {
+          const companyA = a.company;
+          const companyB = b.company;
+          if (locale === "zh-TW") {
+            return companyA.localeCompare(companyB, "zh-TW");
+          } else {
+            return companyA.localeCompare(companyB, "en");
+          }
+        });
+
+      case "name_az":
+        return filtered.sort((a, b) => {
+          const nameA = a.name;
+          const nameB = b.name;
+          if (locale === "zh-TW") {
+            return nameA.localeCompare(nameB, "zh-TW");
+          } else {
+            return nameA.localeCompare(nameB, "en");
+          }
+        });
+
+      default:
+        // Default sort by rating and experience, with location boost if available
+        if (userLocation) {
+          return sortAgentsByLocation(filtered, userLocation);
+        }
+        return filtered.sort((a, b) => {
+          if (a.rating !== b.rating) {
+            return b.rating - a.rating;
+          }
+          return b.experience - a.experience;
+        });
+    }
+  }, [searchTerm, filter, sortBy, userLocation, locale]);
 
   return (
     <div className="container py-8">
@@ -90,20 +286,200 @@ export default function AgentsPage({ params }: AgentsPageProps) {
         </p>
       </div>
 
-      {/* Search */}
-      <div className="mb-8">
-        <div className="relative max-w-md">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder={
-              locale === "en"
-                ? "Search agents or locations..."
-                : "搜尋業務員或地區..."
-            }
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-9"
-          />
+      {/* Search and Filters */}
+      <div className="mb-8 space-y-4">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={
+                    locale === "en"
+                      ? "Search agents or locations..."
+                      : "搜尋業務員或地區..."
+                  }
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearAllFilters}
+              className="hidden md:flex"
+            >
+              <X className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Clear Filters" : "清除篩選"}
+            </Button>
+          </div>
+
+          {/* Filter Controls */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div>
+              <Label htmlFor="specialty" className="text-sm font-normal">
+                {locale === "en" ? "Specialty" : "專業領域"}
+              </Label>
+              <Select
+                value={filter.specialty || "all"}
+                onValueChange={(value) =>
+                  handleFilterChange(
+                    "specialty",
+                    value === "all" ? undefined : (value as InsuranceType),
+                  )
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={
+                      locale === "en" ? "Select Specialty" : "選擇專業"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    {locale === "en" ? "All Specialties" : "全部專業"}
+                  </SelectItem>
+                  <SelectItem value="life">
+                    {locale === "en" ? "Life Insurance" : "壽險"}
+                  </SelectItem>
+                  <SelectItem value="health">
+                    {locale === "en" ? "Health Insurance" : "醫療險"}
+                  </SelectItem>
+                  <SelectItem value="accident">
+                    {locale === "en" ? "Accident Insurance" : "意外險"}
+                  </SelectItem>
+                  <SelectItem value="travel">
+                    {locale === "en" ? "Travel Insurance" : "旅遊險"}
+                  </SelectItem>
+                  <SelectItem value="vehicle">
+                    {locale === "en" ? "Vehicle Insurance" : "車險"}
+                  </SelectItem>
+                  <SelectItem value="property">
+                    {locale === "en" ? "Property Insurance" : "財產險"}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="min-rating" className="text-sm font-normal">
+                {locale === "en" ? "Min Rating" : "最低評分"}
+              </Label>
+              <Input
+                id="min-rating"
+                type="number"
+                min="0"
+                max="5"
+                step="0.1"
+                placeholder={locale === "en" ? "e.g. 4.0" : "如 4.0"}
+                value={filter.minRating || ""}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "minRating",
+                    parseFloat(e.target.value) || undefined,
+                  )
+                }
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="min-experience" className="text-sm font-normal">
+                {locale === "en" ? "Min Experience" : "最低年資"}
+              </Label>
+              <Input
+                id="min-experience"
+                type="number"
+                min="0"
+                placeholder={locale === "en" ? "Years" : "年資"}
+                value={filter.minExperience || ""}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "minExperience",
+                    parseInt(e.target.value, 10) || undefined,
+                  )
+                }
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="language" className="text-sm font-normal">
+                {locale === "en" ? "Language" : "語言"}
+              </Label>
+              <Select
+                value={filter.language || "all"}
+                onValueChange={(value) =>
+                  handleFilterChange(
+                    "language",
+                    value === "all" ? undefined : value,
+                  )
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={
+                      locale === "en" ? "Select Language" : "選擇語言"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">
+                    {locale === "en" ? "All Languages" : "全部語言"}
+                  </SelectItem>
+                  <SelectItem value="中文">
+                    {locale === "en" ? "Chinese" : "中文"}
+                  </SelectItem>
+                  <SelectItem value="English">
+                    {locale === "en" ? "English" : "英文"}
+                  </SelectItem>
+                  <SelectItem value="日本語">
+                    {locale === "en" ? "Japanese" : "日文"}
+                  </SelectItem>
+                  <SelectItem value="台語">
+                    {locale === "en" ? "Taiwanese" : "台語"}
+                  </SelectItem>
+                  <SelectItem value="客家話">
+                    {locale === "en" ? "Hakka" : "客家話"}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Mobile-only sort by and clear filters row */}
+            <div>
+              <Label className="text-sm font-normal mb-2">
+                {locale === "en" ? "Sort by" : "排序方式"}
+              </Label>
+              <Select value={sortBy} onValueChange={handleSortChange}>
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={locale === "en" ? "Select Sort" : "選擇排序"}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {AGENT_SORT_OPTIONS.map((option) => (
+                    <SelectItem key={option.id} value={option.id}>
+                      {option.label[locale as keyof typeof option.label]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="md:hidden">
+              <Label className="text-sm font-normal mb-2 text-transparent">
+                .
+              </Label>
+              <Button
+                variant="default"
+                onClick={clearAllFilters}
+                className="w-full h-9"
+              >
+                <span>{locale === "en" ? "Clear filter" : "清空篩選"}</span>
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -113,10 +489,27 @@ export default function AgentsPage({ params }: AgentsPageProps) {
           {locale === "en"
             ? `Found ${filteredAndSortedAgents.length} agents matching your criteria`
             : `找到 ${filteredAndSortedAgents.length} 位符合條件的業務專員`}
-          {userLocation && (
-            <span className="ml-2 text-xs text-primary">
-              {locale === "en" ? "(sorted by location)" : "（依地區排序）"}
-            </span>
+          {isClient && (
+            <>
+              {sortBy !== "default" && (
+                <span className="ml-2 text-xs text-muted-foreground">
+                  (
+                  {
+                    AGENT_SORT_OPTIONS.find((opt) => opt.id === sortBy)?.label[
+                      locale as keyof (typeof AGENT_SORT_OPTIONS)[0]["label"]
+                    ]
+                  }
+                  )
+                </span>
+              )}
+              {sortBy === "location" && userLocation && (
+                <span className="ml-2 text-xs text-primary">
+                  {locale === "en"
+                    ? "(personalized by location)"
+                    : "（依個人位置排序）"}
+                </span>
+              )}
+            </>
           )}
         </p>
       </div>

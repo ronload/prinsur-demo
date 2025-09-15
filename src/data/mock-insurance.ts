@@ -312,7 +312,7 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
             vehicle: {
               description: "基本保費 × 年齡係數",
               factors: {
-                age: { multiplier: -0.03, range: { min: 18, max: 70 } },
+                age: { multiplier: -0.02, range: { min: 18, max: 70 } },
               },
               requiredFields: ["age"] as (
                 | "age"
@@ -350,6 +350,14 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
           };
         };
 
+        // Generate launch date - randomly distribute between 2020-2024
+        const startDate = new Date("2020-01-01");
+        const endDate = new Date("2024-12-31");
+        const timeDiff = endDate.getTime() - startDate.getTime();
+        const randomTime = Math.floor(seededRandom() * timeDiff);
+        const launchDate = new Date(startDate.getTime() + randomTime);
+        const formattedDate = launchDate.toISOString().split("T")[0]; // YYYY-MM-DD format
+
         products.push({
           id: id.toString(),
           name: `${company} ${name}`,
@@ -372,6 +380,7 @@ const generateInsuranceProducts = (): InsuranceProduct[] => {
             max: getMaxAge(type),
           },
           terms: `https://example.com/terms/${type}-insurance-${id}`,
+          launchDate: formattedDate,
         });
         id++;
       }

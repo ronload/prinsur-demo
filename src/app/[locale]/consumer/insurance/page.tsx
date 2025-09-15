@@ -272,7 +272,7 @@ export default function InsurancePage({
               variant="outline"
               size="sm"
               onClick={clearAllFilters}
-              className="hidden md:flex"
+              className="hidden md:flex h-9"
             >
               <X className="h-4 w-4 mr-2" />
               {locale === "en" ? "Clear Filters" : "清除篩選"}
@@ -280,7 +280,7 @@ export default function InsurancePage({
           </div>
 
           {/* Filter Controls */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div>
               <Label htmlFor="insurance-type" className="text-sm font-normal">
                 {locale === "en" ? "Insurance Type" : "保險類型"}
@@ -377,7 +377,7 @@ export default function InsurancePage({
               />
             </div>
 
-            {/* Mobile-only sort by and clear filters row */}
+            {/* Sort by selector - always visible */}
             <div>
               <Label className="text-sm font-normal mb-2">
                 {locale === "en" ? "Sort by" : "排序方式"}
@@ -397,7 +397,9 @@ export default function InsurancePage({
                 </SelectContent>
               </Select>
             </div>
-            <div>
+
+            {/* Mobile-only clear filter button */}
+            <div className="md:hidden">
               <Label className="text-sm font-normal mb-2 text-transparent">.</Label>
               <Button
                 variant="default"

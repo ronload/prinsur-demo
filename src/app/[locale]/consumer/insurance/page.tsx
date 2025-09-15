@@ -413,29 +413,6 @@ export default function InsurancePage({
         </div>
       </div>
 
-      {/* Desktop Sorting */}
-      <div className="mb-6 hidden md:flex md:items-center md:justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <Label className="text-sm font-medium whitespace-nowrap">
-            {locale === "en" ? "Sort by:" : "排序方式："}
-          </Label>
-          <Select value={sortBy} onValueChange={handleSortChange}>
-            <SelectTrigger className="w-[280px]">
-              <SelectValue
-                placeholder={locale === "en" ? "Select Sort" : "選擇排序"}
-              />
-            </SelectTrigger>
-            <SelectContent>
-              {SORT_OPTIONS.map((option) => (
-                <SelectItem key={option.id} value={option.id}>
-                  {option.label[locale as keyof typeof option.label]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
       {/* Results */}
       <div className="mb-4">
         <p className="text-sm text-muted-foreground">

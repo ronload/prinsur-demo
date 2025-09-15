@@ -49,6 +49,7 @@ export interface InsuranceProduct {
     max: number;
   };
   terms: string;
+  launchDate: string;
   logo?: string;
 }
 

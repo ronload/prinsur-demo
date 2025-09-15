@@ -42,12 +42,66 @@ import {
   getPremiumDisplayStatus,
   UserProfile,
 } from "@/utils/premium-calculator";
-import { sortProductsByRecommendation } from "@/utils/recommendations";
+import { sortProducts } from "@/utils/recommendations";
 
 interface InsurancePageProps {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ search?: string }>;
 }
+
+interface SortOption {
+  id: string;
+  label: { "zh-TW": string; "en": string };
+  description: { "zh-TW": string; "en": string };
+}
+
+const SORT_OPTIONS: SortOption[] = [
+  {
+    id: "default",
+    label: { "zh-TW": "預設排序", "en": "Default" },
+    description: { "zh-TW": "綜合評分與熱度", "en": "Combined rating & popularity" }
+  },
+  {
+    id: "personalized",
+    label: { "zh-TW": "個人化推薦", "en": "Personalized" },
+    description: { "zh-TW": "根據您的個人資料推薦", "en": "Based on your profile" }
+  },
+  {
+    id: "premium_low_to_high",
+    label: { "zh-TW": "保費：低到高", "en": "Premium: Increase" },
+    description: { "zh-TW": "月繳保費由低至高排序", "en": "Monthly premium ascending" }
+  },
+  {
+    id: "premium_high_to_low",
+    label: { "zh-TW": "保費：高到低", "en": "Premium: Decrease" },
+    description: { "zh-TW": "月繳保費由高至低排序", "en": "Monthly premium descending" }
+  },
+  {
+    id: "coverage_high_to_low",
+    label: { "zh-TW": "保障額度：高到低", "en": "Coverage: Decrease" },
+    description: { "zh-TW": "保障金額由高至低排序", "en": "Coverage amount descending" }
+  },
+  {
+    id: "rating_high_to_low",
+    label: { "zh-TW": "評分：高到低", "en": "Rating: Descrease" },
+    description: { "zh-TW": "產品評分由高至低排序", "en": "Product rating descending" }
+  },
+  {
+    id: "popularity",
+    label: { "zh-TW": "最受歡迎", "en": "Most Popular" },
+    description: { "zh-TW": "依評論數量排序", "en": "Based on review count" }
+  },
+  {
+    id: "newest",
+    label: { "zh-TW": "最新上市", "en": "Newest" },
+    description: { "zh-TW": "新上市產品優先", "en": "Recently launched products first" }
+  },
+  {
+    id: "company_az",
+    label: { "zh-TW": "公司名稱 A-Z", "en": "Company A-Z" },
+    description: { "zh-TW": "保險公司名稱排序", "en": "Insurance company name" }
+  }
+];
 
 export default function InsurancePage({
   params,
@@ -61,6 +115,8 @@ export default function InsurancePage({
   const [filter, setFilter] = useState<InsuranceFilter>({});
   const [selectedProduct, setSelectedProduct] =
     useState<InsuranceProduct | null>(null);
+  const [sortBy, setSortBy] = useState<string>('default');
+  const [isClient, setIsClient] = useState(false);
   const { user } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfile>({});
 
@@ -69,6 +125,15 @@ export default function InsurancePage({
       setLocale(paramLocale);
     });
   }, [params]);
+
+  // Handle client-side hydration and localStorage
+  useEffect(() => {
+    setIsClient(true);
+    const savedSortPreference = localStorage.getItem('insurance_sort_preference');
+    if (savedSortPreference) {
+      setSortBy(savedSortPreference);
+    }
+  }, []);
 
   useEffect(() => {
     searchParams.then(({ search }) => {
@@ -134,28 +199,20 @@ export default function InsurancePage({
       return true;
     });
 
-    // Then sort by recommendation if user has profile data
-    if (
-      userProfile &&
-      (userProfile.age ||
-        userProfile.weight ||
-        userProfile.height ||
-        userProfile.gender)
-    ) {
-      return sortProductsByRecommendation(filtered, userProfile);
-    }
-
-    // Default sort by rating and review count if no user profile
-    return filtered.sort((a, b) => {
-      if (a.rating !== b.rating) {
-        return b.rating - a.rating;
-      }
-      return b.reviewCount - a.reviewCount;
-    });
-  }, [searchTerm, filter, userProfile]);
+    // Then sort by selected method
+    return sortProducts(filtered, sortBy, userProfile, locale);
+  }, [searchTerm, filter, sortBy, userProfile, locale]);
 
   const handleFilterChange = (key: keyof InsuranceFilter, value: any) => {
     setFilter((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSortChange = (newSortBy: string) => {
+    setSortBy(newSortBy);
+    // Save to localStorage only on client side
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('insurance_sort_preference', newSortBy);
+    }
   };
 
   const clearAllFilters = () => {
@@ -225,7 +282,7 @@ export default function InsurancePage({
           {/* Filter Controls */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <Label htmlFor="insurance-type">
+              <Label htmlFor="insurance-type" className="text-sm font-normal">
                 {locale === "en" ? "Insurance Type" : "保險類型"}
               </Label>
               <Select
@@ -269,7 +326,7 @@ export default function InsurancePage({
             </div>
 
             <div>
-              <Label htmlFor="age">{locale === "en" ? "Age" : "年齡"}</Label>
+              <Label htmlFor="age" className="text-sm font-normal">{locale === "en" ? "Age" : "年齡"}</Label>
               <Input
                 id="age"
                 type="number"
@@ -285,7 +342,7 @@ export default function InsurancePage({
             </div>
 
             <div>
-              <Label htmlFor="min-premium">
+              <Label htmlFor="min-premium" className="text-sm font-normal">
                 {locale === "en" ? "Min Premium" : "最低保費"}
               </Label>
               <Input
@@ -303,7 +360,7 @@ export default function InsurancePage({
             </div>
 
             <div>
-              <Label htmlFor="max-premium">
+              <Label htmlFor="max-premium" className="text-sm font-normal">
                 {locale === "en" ? "Max Premium" : "最高保費"}
               </Label>
               <Input
@@ -319,18 +376,63 @@ export default function InsurancePage({
                 }
               />
             </div>
-          </div>
 
-          {/* Mobile Clear Filters Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={clearAllFilters}
-            className="md:hidden w-full"
-          >
-            <X className="h-4 w-4 mr-2" />
-            {locale === "en" ? "Clear Filters" : "清除篩選"}
-          </Button>
+            {/* Mobile-only sort by and clear filters row */}
+            <div>
+              <Label className="text-sm font-normal mb-2">
+                {locale === "en" ? "Sort by" : "排序方式"}
+              </Label>
+              <Select value={sortBy} onValueChange={handleSortChange}>
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={locale === "en" ? "Select Sort" : "選擇排序"}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {SORT_OPTIONS.map((option) => (
+                    <SelectItem key={option.id} value={option.id}>
+                      {option.label[locale as keyof typeof option.label]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-sm font-normal mb-2 text-transparent">.</Label>
+              <Button
+                variant="default"
+                onClick={clearAllFilters}
+                className="w-full h-9"
+              >
+                <span>
+                  {locale === "en" ? "Clear filter" : "清空篩選"}
+                </span>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Sorting */}
+      <div className="mb-6 hidden md:flex md:items-center md:justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Label className="text-sm font-medium whitespace-nowrap">
+            {locale === "en" ? "Sort by:" : "排序方式："}
+          </Label>
+          <Select value={sortBy} onValueChange={handleSortChange}>
+            <SelectTrigger className="w-[280px]">
+              <SelectValue
+                placeholder={locale === "en" ? "Select Sort" : "選擇排序"}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {SORT_OPTIONS.map((option) => (
+                <SelectItem key={option.id} value={option.id}>
+                  {option.label[locale as keyof typeof option.label]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -340,7 +442,7 @@ export default function InsurancePage({
           {locale === "en"
             ? `Found ${filteredAndSortedProducts.length} insurance products matching your criteria`
             : `找到 ${filteredAndSortedProducts.length} 個符合條件的保險商品`}
-          {userProfile &&
+          {isClient && sortBy === "personalized" && userProfile &&
             (userProfile.age ||
               userProfile.weight ||
               userProfile.height ||
@@ -351,6 +453,11 @@ export default function InsurancePage({
                   : "（個人化推薦）"}
               </span>
             )}
+          {isClient && sortBy !== "default" && sortBy !== "personalized" && (
+            <span className="ml-2 text-xs text-muted-foreground">
+              ({SORT_OPTIONS.find(opt => opt.id === sortBy)?.label[locale as keyof typeof SORT_OPTIONS[0]['label']]})
+            </span>
+          )}
         </p>
       </div>
 

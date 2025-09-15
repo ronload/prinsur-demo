@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
 import { Save, User, Activity, Heart, MapPin, Briefcase } from "lucide-react";
 
@@ -188,6 +189,40 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
     return null;
   };
 
+  const getBMIStatus = (bmi: number, locale: string) => {
+    if (bmi < 18.5) {
+      return {
+        text: locale === "en" ? "Underweight" : "過輕",
+        variant: "secondary" as const,
+        color: "text-blue-700 bg-blue-50 dark:text-blue-300 dark:bg-blue-950",
+      };
+    } else if (bmi >= 18.5 && bmi < 24) {
+      return {
+        text: locale === "en" ? "Normal" : "正常",
+        variant: "default" as const,
+        color: "text-green-700 bg-green-50 dark:text-green-300 dark:bg-green-950",
+      };
+    } else if (bmi >= 24 && bmi < 27) {
+      return {
+        text: locale === "en" ? "Overweight" : "過重",
+        variant: "outline" as const,
+        color: "text-orange-700 bg-orange-50 dark:text-orange-300 dark:bg-orange-950",
+      };
+    } else if (bmi >= 27 && bmi < 30) {
+      return {
+        text: locale === "en" ? "Mild Obesity" : "輕度肥胖",
+        variant: "destructive" as const,
+        color: "text-red-700 bg-red-50 dark:text-red-300 dark:bg-red-950",
+      };
+    } else {
+      return {
+        text: locale === "en" ? "Obesity" : "肥胖",
+        variant: "destructive" as const,
+        color: "text-red-700 bg-red-50 dark:text-red-300 dark:bg-red-950",
+      };
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="px-4 py-6 md:container md:py-8">
@@ -308,10 +343,18 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
 
               {calculateBMI() && (
                 <div className="p-3 bg-muted rounded-lg">
-                  <p className="text-sm flex items-center gap-2">
-                    <Activity className="h-4 w-4" />
-                    <span className="font-medium">BMI: {calculateBMI()}</span>
-                  </p>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm flex items-center gap-2">
+                      <Activity className="h-4 w-4" />
+                      <span className="font-medium">BMI: {calculateBMI()}</span>
+                    </p>
+                    <Badge
+                      className={getBMIStatus(parseFloat(calculateBMI()!), locale).color}
+                      variant="secondary"
+                    >
+                      {getBMIStatus(parseFloat(calculateBMI()!), locale).text}
+                    </Badge>
+                  </div>
                 </div>
               )}
             </CardContent>

@@ -19,6 +19,24 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Prinsur - Smart Insurance Matching",
   description: "A transparent, efficient, and user-centric insurance ecosystem",
+  icons: {
+    icon: [
+      {
+        url: "/icon.png",
+        sizes: "32x32",
+        type: "image/png",
+      },
+      {
+        url: "/icon.svg",
+        type: "image/svg+xml",
+      },
+    ],
+    apple: {
+      url: "/icon.png",
+      sizes: "180x180",
+      type: "image/png",
+    },
+  },
 };
 
 export function generateStaticParams() {

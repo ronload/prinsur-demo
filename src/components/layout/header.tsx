@@ -156,7 +156,7 @@ export function Header() {
       style={{
         transform: "translateZ(0)",
         minHeight: "56px",
-        height: "56px"
+        height: "56px",
       }}
     >
       <div className="container flex h-14 items-center">

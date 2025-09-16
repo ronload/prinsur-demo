@@ -2,7 +2,17 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { Search, MapPin, Star, Phone, Mail, Calendar, X, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Search,
+  MapPin,
+  Star,
+  Phone,
+  Mail,
+  Calendar,
+  X,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -322,9 +332,12 @@ export default function AgentsPage({ params }: AgentsPageProps) {
             >
               <span>
                 {isFiltersCollapsed
-                  ? (locale === "en" ? "Show Filters" : "展開篩選")
-                  : (locale === "en" ? "Hide Filters" : "隱藏篩選")
-                }
+                  ? locale === "en"
+                    ? "Show Filters"
+                    : "展開篩選"
+                  : locale === "en"
+                    ? "Hide Filters"
+                    : "隱藏篩選"}
               </span>
               {isFiltersCollapsed ? (
                 <ChevronDown className="h-4 w-4" />
@@ -337,168 +350,168 @@ export default function AgentsPage({ params }: AgentsPageProps) {
           {/* Filter Controls */}
           {!isFiltersCollapsed && (
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 animate-in slide-in-from-top-2 duration-200">
-            <div>
-              <Label htmlFor="specialty" className="text-sm font-normal">
-                {locale === "en" ? "Specialty" : "專業領域"}
-              </Label>
-              <Select
-                value={filter.specialty || "all"}
-                onValueChange={(value) =>
-                  handleFilterChange(
-                    "specialty",
-                    value === "all" ? undefined : (value as InsuranceType),
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={
-                      locale === "en" ? "Select Specialty" : "選擇專業"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {locale === "en" ? "All Specialties" : "所有專業"}
-                  </SelectItem>
-                  <SelectItem value="life">
-                    {locale === "en" ? "Life Insurance" : "壽險"}
-                  </SelectItem>
-                  <SelectItem value="health">
-                    {locale === "en" ? "Health Insurance" : "醫療險"}
-                  </SelectItem>
-                  <SelectItem value="accident">
-                    {locale === "en" ? "Accident Insurance" : "意外險"}
-                  </SelectItem>
-                  <SelectItem value="travel">
-                    {locale === "en" ? "Travel Insurance" : "旅遊險"}
-                  </SelectItem>
-                  <SelectItem value="vehicle">
-                    {locale === "en" ? "Vehicle Insurance" : "車險"}
-                  </SelectItem>
-                  <SelectItem value="property">
-                    {locale === "en" ? "Property Insurance" : "財產險"}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="min-rating" className="text-sm font-normal">
-                {locale === "en" ? "Min Rating" : "最低評分"}
-              </Label>
-              <Input
-                id="min-rating"
-                type="number"
-                min="0"
-                max="5"
-                step="0.1"
-                placeholder={locale === "en" ? "e.g. 4.0" : "如 4.0"}
-                value={filter.minRating || ""}
-                onChange={(e) =>
-                  handleFilterChange(
-                    "minRating",
-                    parseFloat(e.target.value) || undefined,
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="min-experience" className="text-sm font-normal">
-                {locale === "en" ? "Min Experience" : "最低年資"}
-              </Label>
-              <Input
-                id="min-experience"
-                type="number"
-                min="0"
-                placeholder={locale === "en" ? "Years" : "年資"}
-                value={filter.minExperience || ""}
-                onChange={(e) =>
-                  handleFilterChange(
-                    "minExperience",
-                    parseInt(e.target.value, 10) || undefined,
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="language" className="text-sm font-normal">
-                {locale === "en" ? "Language" : "語言"}
-              </Label>
-              <Select
-                value={filter.language || "all"}
-                onValueChange={(value) =>
-                  handleFilterChange(
-                    "language",
-                    value === "all" ? undefined : value,
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={
-                      locale === "en" ? "Select Language" : "選擇語言"
-                    }
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {locale === "en" ? "All Languages" : "所有語言"}
-                  </SelectItem>
-                  <SelectItem value="中文">
-                    {locale === "en" ? "Chinese" : "中文"}
-                  </SelectItem>
-                  <SelectItem value="English">
-                    {locale === "en" ? "English" : "英文"}
-                  </SelectItem>
-                  <SelectItem value="日本語">
-                    {locale === "en" ? "Japanese" : "日文"}
-                  </SelectItem>
-                  <SelectItem value="台語">
-                    {locale === "en" ? "Taiwanese" : "台語"}
-                  </SelectItem>
-                  <SelectItem value="客家話">
-                    {locale === "en" ? "Hakka" : "客家話"}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Mobile-only sort by and clear filters row */}
-            <div>
-              <Label className="text-sm font-normal mb-2">
-                {locale === "en" ? "Sort by" : "排序方式"}
-              </Label>
-              <Select value={sortBy} onValueChange={handleSortChange}>
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={locale === "en" ? "Select Sort" : "選擇排序"}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {AGENT_SORT_OPTIONS.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      {option.label[locale as keyof typeof option.label]}
+              <div>
+                <Label htmlFor="specialty" className="text-sm font-normal">
+                  {locale === "en" ? "Specialty" : "專業領域"}
+                </Label>
+                <Select
+                  value={filter.specialty || "all"}
+                  onValueChange={(value) =>
+                    handleFilterChange(
+                      "specialty",
+                      value === "all" ? undefined : (value as InsuranceType),
+                    )
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={
+                        locale === "en" ? "Select Specialty" : "選擇專業"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">
+                      {locale === "en" ? "All Specialties" : "所有專業"}
                     </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                    <SelectItem value="life">
+                      {locale === "en" ? "Life Insurance" : "壽險"}
+                    </SelectItem>
+                    <SelectItem value="health">
+                      {locale === "en" ? "Health Insurance" : "醫療險"}
+                    </SelectItem>
+                    <SelectItem value="accident">
+                      {locale === "en" ? "Accident Insurance" : "意外險"}
+                    </SelectItem>
+                    <SelectItem value="travel">
+                      {locale === "en" ? "Travel Insurance" : "旅遊險"}
+                    </SelectItem>
+                    <SelectItem value="vehicle">
+                      {locale === "en" ? "Vehicle Insurance" : "車險"}
+                    </SelectItem>
+                    <SelectItem value="property">
+                      {locale === "en" ? "Property Insurance" : "財產險"}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="min-rating" className="text-sm font-normal">
+                  {locale === "en" ? "Min Rating" : "最低評分"}
+                </Label>
+                <Input
+                  id="min-rating"
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  placeholder={locale === "en" ? "e.g. 4.0" : "如 4.0"}
+                  value={filter.minRating || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "minRating",
+                      parseFloat(e.target.value) || undefined,
+                    )
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="min-experience" className="text-sm font-normal">
+                  {locale === "en" ? "Min Experience" : "最低年資"}
+                </Label>
+                <Input
+                  id="min-experience"
+                  type="number"
+                  min="0"
+                  placeholder={locale === "en" ? "Years" : "年資"}
+                  value={filter.minExperience || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "minExperience",
+                      parseInt(e.target.value, 10) || undefined,
+                    )
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="language" className="text-sm font-normal">
+                  {locale === "en" ? "Language" : "語言"}
+                </Label>
+                <Select
+                  value={filter.language || "all"}
+                  onValueChange={(value) =>
+                    handleFilterChange(
+                      "language",
+                      value === "all" ? undefined : value,
+                    )
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={
+                        locale === "en" ? "Select Language" : "選擇語言"
+                      }
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">
+                      {locale === "en" ? "All Languages" : "所有語言"}
+                    </SelectItem>
+                    <SelectItem value="中文">
+                      {locale === "en" ? "Chinese" : "中文"}
+                    </SelectItem>
+                    <SelectItem value="English">
+                      {locale === "en" ? "English" : "英文"}
+                    </SelectItem>
+                    <SelectItem value="日本語">
+                      {locale === "en" ? "Japanese" : "日文"}
+                    </SelectItem>
+                    <SelectItem value="台語">
+                      {locale === "en" ? "Taiwanese" : "台語"}
+                    </SelectItem>
+                    <SelectItem value="客家話">
+                      {locale === "en" ? "Hakka" : "客家話"}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Mobile-only sort by and clear filters row */}
+              <div>
+                <Label className="text-sm font-normal mb-2">
+                  {locale === "en" ? "Sort by" : "排序方式"}
+                </Label>
+                <Select value={sortBy} onValueChange={handleSortChange}>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={locale === "en" ? "Select Sort" : "選擇排序"}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {AGENT_SORT_OPTIONS.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.label[locale as keyof typeof option.label]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="md:hidden">
+                <Label className="text-sm font-normal mb-2 text-transparent">
+                  .
+                </Label>
+                <Button
+                  variant="default"
+                  onClick={clearAllFilters}
+                  className="w-full h-9"
+                >
+                  <span>{locale === "en" ? "Clear filter" : "清空篩選"}</span>
+                </Button>
+              </div>
             </div>
-            <div className="md:hidden">
-              <Label className="text-sm font-normal mb-2 text-transparent">
-                .
-              </Label>
-              <Button
-                variant="default"
-                onClick={clearAllFilters}
-                className="w-full h-9"
-              >
-                <span>{locale === "en" ? "Clear filter" : "清空篩選"}</span>
-              </Button>
-            </div>
-          </div>
           )}
         </div>
       </div>

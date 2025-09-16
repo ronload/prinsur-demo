@@ -281,9 +281,9 @@ export default function Home({ params }: HomeProps) {
           <div
             ref={descriptionAnimation.ref}
             style={descriptionAnimation.animationStyle}
-            className="max-w-4xl mx-auto mt-16"
+            className="w-full max-w-4xl mx-auto mt-16 px-2 sm:px-8"
           >
-            <div className="grid grid-cols-3 gap-2 sm:gap-6 md:gap-12">
+            <div className="grid grid-cols-3 gap-4 sm:gap-6 md:gap-12">
               <div className="text-center">
                 <p className="text-xs sm:text-sm lg:text-base text-muted-foreground">
                   {locale === "en" ? "Success Rate" : "成交率提升"}

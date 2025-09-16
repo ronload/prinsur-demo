@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Phone, Mail, User, Calendar, Plus } from "lucide-react";
+import { Search, Phone, Mail, User, Plus } from "lucide-react";
 
 export default function AgentClientsPage() {
   const pathname = usePathname();
@@ -110,7 +110,9 @@ export default function AgentClientsPage() {
                       <User className="h-6 w-6 text-primary-foreground" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <h3 className="font-semibold text-lg truncate">{client.name}</h3>
+                      <h3 className="font-semibold text-lg truncate">
+                        {client.name}
+                      </h3>
                       <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-sm text-muted-foreground">
                         <div className="flex items-center min-w-0">
                           <Mail className="h-4 w-4 mr-1 flex-shrink-0" />

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { Search, MapPin, Star, Phone, Mail, Calendar, X } from "lucide-react";
+import { Search, MapPin, Star, Phone, Mail, Calendar, X, ChevronDown, ChevronUp } from "lucide-react";
 import { HiOutlineUserGroup } from "react-icons/hi2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,6 +92,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
   const [sortBy, setSortBy] = useState<string>("default");
   const [isClient, setIsClient] = useState(false);
   const [filter, setFilter] = useState<AgentFilter>({});
+  const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
   const { user } = useAuth();
 
   // Handle client-side hydration
@@ -314,10 +315,28 @@ export default function AgentsPage({ params }: AgentsPageProps) {
               <X className="h-4 w-4 mr-2" />
               {locale === "en" ? "Clear Filters" : "清除篩選"}
             </Button>
+            <Button
+              variant="link"
+              onClick={() => setIsFiltersCollapsed(!isFiltersCollapsed)}
+              className="flex items-center gap-1 h-auto p-0 text-left justify-start"
+            >
+              <span>
+                {isFiltersCollapsed
+                  ? (locale === "en" ? "Show Filters" : "展開篩選")
+                  : (locale === "en" ? "Hide Filters" : "隱藏篩選")
+                }
+              </span>
+              {isFiltersCollapsed ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronUp className="h-4 w-4" />
+              )}
+            </Button>
           </div>
 
           {/* Filter Controls */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {!isFiltersCollapsed && (
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 animate-in slide-in-from-top-2 duration-200">
             <div>
               <Label htmlFor="specialty" className="text-sm font-normal">
                 {locale === "en" ? "Specialty" : "專業領域"}
@@ -480,6 +499,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
               </Button>
             </div>
           </div>
+          )}
         </div>
       </div>
 

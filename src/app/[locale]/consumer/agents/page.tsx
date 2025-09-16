@@ -277,7 +277,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
   return (
     <div className="container py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">
+        <h1 className="text-3xl font-bold tracking-tight mb-4">
           {locale === "en" ? "Find Agent" : "尋找業務員"}
         </h1>
         <p className="text-muted-foreground">

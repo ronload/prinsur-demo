@@ -265,7 +265,7 @@ export default function InsurancePage({
   return (
     <div className="container py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">
+        <h1 className="text-3xl font-bold tracking-tight mb-4">
           {locale === "en" ? "Compare Insurance" : "比較保險"}
         </h1>
         <p className="text-muted-foreground">

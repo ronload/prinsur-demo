@@ -97,7 +97,7 @@ export default function PoliciesPage({ params }: PoliciesPageProps) {
   return (
     <div className="container py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-4">
+        <h1 className="text-3xl font-bold tracking-tight mb-4">
           {locale === "en" ? "My Policies" : "我的保單"}
         </h1>
         <p className="text-muted-foreground">
@@ -108,7 +108,7 @@ export default function PoliciesPage({ params }: PoliciesPageProps) {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">

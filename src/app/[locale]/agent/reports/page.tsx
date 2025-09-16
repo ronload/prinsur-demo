@@ -68,37 +68,39 @@ export default function AgentReportsPage() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* 页面标题和期间选择 */}
-      <div className="flex justify-between items-center">
-        <div>
+      <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-start">
+        <div className="flex-1">
           <h1 className="text-3xl font-bold tracking-tight">
             {locale === "en" ? "Performance Reports" : "業績報表"}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mt-2">
             {locale === "en"
               ? "Track your sales performance and achievements"
               : "追蹤您的銷售業績和成就"}
           </p>
         </div>
-        <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-          <SelectTrigger className="w-40">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="month">
-              {locale === "en" ? "This Month" : "本月"}
-            </SelectItem>
-            <SelectItem value="quarter">
-              {locale === "en" ? "This Quarter" : "本季"}
-            </SelectItem>
-            <SelectItem value="year">
-              {locale === "en" ? "This Year" : "本年"}
-            </SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex-shrink-0">
+          <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="month">
+                {locale === "en" ? "This Month" : "本月"}
+              </SelectItem>
+              <SelectItem value="quarter">
+                {locale === "en" ? "This Quarter" : "本季"}
+              </SelectItem>
+              <SelectItem value="year">
+                {locale === "en" ? "This Year" : "本年"}
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       {/* 关键指标卡片 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">

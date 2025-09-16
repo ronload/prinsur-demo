@@ -65,21 +65,23 @@ export default function AgentClientsPage() {
     <AgentGuard>
       <div className="container mx-auto p-6 space-y-6">
         {/* 页面标题和操作 */}
-        <div className="flex justify-between items-center">
-          <div>
+        <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-start">
+          <div className="flex-1">
             <h1 className="text-3xl font-bold tracking-tight">
               {locale === "en" ? "Client Management" : "客戶管理"}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mt-2">
               {locale === "en"
                 ? "Manage your clients and their policies"
                 : "管理您的客戶和保單"}
             </p>
           </div>
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            {locale === "en" ? "Add Client" : "新增客戶"}
-          </Button>
+          <div className="flex-shrink-0">
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Add Client" : "新增客戶"}
+            </Button>
+          </div>
         </div>
 
         {/* 搜索栏 */}

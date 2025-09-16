@@ -198,7 +198,7 @@ export default function DashboardPage({
       <div className="min-h-screen bg-background">
         <div className="px-4 py-6 md:container md:py-8">
           <div className="mb-6">
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">
+            <h1 className="text-3xl font-bold tracking-tight mb-2">
               {locale === "en" ? "Agent Dashboard" : "業務員工作台"}
             </h1>
             <p className="text-sm md:text-base text-muted-foreground">

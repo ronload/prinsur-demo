@@ -133,6 +133,16 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
   }, [user?.id]);
 
   const handleSave = async () => {
+    // Validate required fields
+    if (!profile.licenseNumber.trim()) {
+      alert(
+        locale === "en"
+          ? "License Number is required"
+          : "執照號碼為必填項目"
+      );
+      return;
+    }
+
     setIsSaving(true);
     try {
       // Save to localStorage (mock implementation)
@@ -224,9 +234,11 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                 <div className="space-y-2">
                   <Label htmlFor="license">
                     {locale === "en" ? "License Number" : "執照號碼"}
+                    <span className="text-red-500 ml-1">*</span>
                   </Label>
                   <Input
                     id="license"
+                    required
                     value={profile.licenseNumber}
                     onChange={(e) =>
                       setProfile((prev) => ({

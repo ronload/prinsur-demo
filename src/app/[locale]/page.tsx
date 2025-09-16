@@ -163,7 +163,7 @@ export default function Home({ params }: HomeProps) {
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <section className="min-h-screen flex flex-col items-center justify-center -mt-16 relative overflow-hidden">
+      <section className="min-h-screen flex flex-col items-center justify-center -mt-14 relative overflow-hidden">
         <GridPattern
           x={500}
           y={400}

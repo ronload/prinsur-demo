@@ -152,8 +152,12 @@ export function Header() {
 
   return (
     <header
-      className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform"
-      style={{ transform: "translateZ(0)" }}
+      className="fixed top-0 left-0 right-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform"
+      style={{
+        transform: "translateZ(0)",
+        minHeight: "56px",
+        height: "56px"
+      }}
     >
       <div className="container flex h-14 items-center">
         {/* Logo */}

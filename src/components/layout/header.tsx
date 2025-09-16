@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, User, LogOut, Settings } from "lucide-react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageToggle } from "@/components/ui/language-toggle";
@@ -41,10 +42,13 @@ function MobileNav({ items, onItemClick }: MobileNavProps) {
         onClick={onItemClick}
         className="flex items-center space-x-2 pb-4"
       >
-        <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
-          <span className="text-primary-foreground font-bold text-sm">P</span>
-        </div>
-        <span className="font-bold">Prinsur</span>
+        <Image
+          src="/brand/logo.png"
+          alt="Prinsur"
+          width={120}
+          height={32}
+          className="h-8 w-auto dark:invert"
+        />
       </Link>
       {items.map((item) => {
         const isActive = pathname === item.href;
@@ -154,16 +158,14 @@ export function Header() {
       <div className="container flex h-14 items-center">
         {/* Logo */}
         <div className="mr-6 hidden md:flex">
-          <Link
-            href={`/${currentLocale}`}
-            className="flex items-center space-x-2"
-          >
-            <div className="h-6 w-6 bg-foreground rounded flex items-center justify-center">
-              <span className="text-background font-semibold text-xs">P</span>
-            </div>
-            <span className="font-semibold text-sm tracking-tight">
-              Prinsur
-            </span>
+          <Link href={`/${currentLocale}`} className="flex items-center">
+            <Image
+              src="/brand/logo.png"
+              alt="Prinsur"
+              width={100}
+              height={28}
+              className="h-7 w-auto dark:invert"
+            />
           </Link>
         </div>
 

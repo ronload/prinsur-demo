@@ -136,9 +136,7 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
     // Validate required fields
     if (!profile.licenseNumber.trim()) {
       alert(
-        locale === "en"
-          ? "License Number is required"
-          : "執照號碼為必填項目"
+        locale === "en" ? "License Number is required" : "執照號碼為必填項目",
       );
       return;
     }

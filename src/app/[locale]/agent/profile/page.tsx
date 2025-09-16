@@ -342,8 +342,8 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
               </CardTitle>
               <CardDescription>
                 {locale === "en"
-                  ? "Select up to 3 areas where you provide insurance services"
-                  : "選擇最多 3 個您提供保險服務的地區"}
+                  ? "Select up to 3 areas where you provide insurance services to match customer"
+                  : "選擇最多 3 個您提供保險服務的地區以供客戶媒合"}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">

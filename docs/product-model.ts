@@ -22,11 +22,10 @@ export interface ProductModel {
   name: string; // 產品名稱
   "company-info": CompanyInfo; // 保險公司資訊
   category: string; // 保險分類
-  premium: string; // 保費計算公式
+  premium?: string; // 保費計算公式
   "available-age": string; // 適用年齡
   "payment-period": string; // 繳費年期
-  "is-renewable-when-insured": string; // 保障期間可續保
-  "grace-period": string; // 寬限期（天）
+  "is-renewable-when-insured": string; // 保障期間可續保 [保證續保 | 不保證續保]
   "is-foreign-currency": string; // 是否為外幣保單
   coverage: ProductCoverage; // 保障內容資訊
   "related-files": RelatedFile[]; // 相關檔案

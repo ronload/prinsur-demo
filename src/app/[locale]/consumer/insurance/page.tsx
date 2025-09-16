@@ -310,9 +310,12 @@ export default function InsurancePage({
             >
               <span>
                 {isFiltersCollapsed
-                  ? (locale === "en" ? "Show Filters" : "展開篩選")
-                  : (locale === "en" ? "Hide Filters" : "隱藏篩選")
-                }
+                  ? locale === "en"
+                    ? "Show Filters"
+                    : "展開篩選"
+                  : locale === "en"
+                    ? "Hide Filters"
+                    : "隱藏篩選"}
               </span>
               {isFiltersCollapsed ? (
                 <ChevronDown className="h-4 w-4" />
@@ -325,139 +328,139 @@ export default function InsurancePage({
           {/* Filter Controls */}
           {!isFiltersCollapsed && (
             <div className="grid grid-cols-2 md:grid-cols-5 gap-4 animate-in slide-in-from-top-2 duration-200">
-            <div>
-              <Label htmlFor="insurance-type" className="text-sm font-normal">
-                {locale === "en" ? "Insurance Type" : "保險類型"}
-              </Label>
-              <Select
-                value={filter.type || "all"}
-                onValueChange={(value) =>
-                  handleFilterChange(
-                    "type",
-                    value === "all" ? undefined : (value as InsuranceType),
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={locale === "en" ? "Select Type" : "選擇類型"}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">
-                    {locale === "en" ? "All Types" : "全部類型"}
-                  </SelectItem>
-                  <SelectItem value="life">
-                    {locale === "en" ? "Life Insurance" : "壽險"}
-                  </SelectItem>
-                  <SelectItem value="health">
-                    {locale === "en" ? "Health Insurance" : "醫療險"}
-                  </SelectItem>
-                  <SelectItem value="accident">
-                    {locale === "en" ? "Accident Insurance" : "意外險"}
-                  </SelectItem>
-                  <SelectItem value="travel">
-                    {locale === "en" ? "Travel Insurance" : "旅遊險"}
-                  </SelectItem>
-                  <SelectItem value="vehicle">
-                    {locale === "en" ? "Vehicle Insurance" : "車險"}
-                  </SelectItem>
-                  <SelectItem value="property">
-                    {locale === "en" ? "Property Insurance" : "財產險"}
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="age" className="text-sm font-normal">
-                {locale === "en" ? "Age" : "年齡"}
-              </Label>
-              <Input
-                id="age"
-                type="number"
-                placeholder={locale === "en" ? "Enter age" : "輸入年齡"}
-                value={filter.age || ""}
-                onChange={(e) =>
-                  handleFilterChange(
-                    "age",
-                    parseInt(e.target.value, 10) || undefined,
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="min-premium" className="text-sm font-normal">
-                {locale === "en" ? "Min Premium" : "最低保費"}
-              </Label>
-              <Input
-                id="min-premium"
-                type="number"
-                placeholder={locale === "en" ? "Min amount" : "最低金額"}
-                value={filter.minPremium || ""}
-                onChange={(e) =>
-                  handleFilterChange(
-                    "minPremium",
-                    parseInt(e.target.value, 10) || undefined,
-                  )
-                }
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="max-premium" className="text-sm font-normal">
-                {locale === "en" ? "Max Premium" : "最高保費"}
-              </Label>
-              <Input
-                id="max-premium"
-                type="number"
-                placeholder={locale === "en" ? "Max amount" : "最高金額"}
-                value={filter.maxPremium || ""}
-                onChange={(e) =>
-                  handleFilterChange(
-                    "maxPremium",
-                    parseInt(e.target.value, 10) || undefined,
-                  )
-                }
-              />
-            </div>
-
-            {/* Sort by selector - always visible */}
-            <div>
-              <Label className="text-sm font-normal mb-2">
-                {locale === "en" ? "Sort by" : "排序方式"}
-              </Label>
-              <Select value={sortBy} onValueChange={handleSortChange}>
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={locale === "en" ? "Select Sort" : "選擇排序"}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {SORT_OPTIONS.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      {option.label[locale as keyof typeof option.label]}
+              <div>
+                <Label htmlFor="insurance-type" className="text-sm font-normal">
+                  {locale === "en" ? "Insurance Type" : "保險類型"}
+                </Label>
+                <Select
+                  value={filter.type || "all"}
+                  onValueChange={(value) =>
+                    handleFilterChange(
+                      "type",
+                      value === "all" ? undefined : (value as InsuranceType),
+                    )
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={locale === "en" ? "Select Type" : "選擇類型"}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">
+                      {locale === "en" ? "All Types" : "全部類型"}
                     </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                    <SelectItem value="life">
+                      {locale === "en" ? "Life Insurance" : "壽險"}
+                    </SelectItem>
+                    <SelectItem value="health">
+                      {locale === "en" ? "Health Insurance" : "醫療險"}
+                    </SelectItem>
+                    <SelectItem value="accident">
+                      {locale === "en" ? "Accident Insurance" : "意外險"}
+                    </SelectItem>
+                    <SelectItem value="travel">
+                      {locale === "en" ? "Travel Insurance" : "旅遊險"}
+                    </SelectItem>
+                    <SelectItem value="vehicle">
+                      {locale === "en" ? "Vehicle Insurance" : "車險"}
+                    </SelectItem>
+                    <SelectItem value="property">
+                      {locale === "en" ? "Property Insurance" : "財產險"}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
 
-            {/* Mobile-only clear filter button */}
-            <div className="md:hidden">
-              <Label className="text-sm font-normal mb-2 text-transparent">
-                .
-              </Label>
-              <Button
-                variant="default"
-                onClick={clearAllFilters}
-                className="w-full h-9"
-              >
-                <span>{locale === "en" ? "Clear filter" : "清空篩選"}</span>
-              </Button>
+              <div>
+                <Label htmlFor="age" className="text-sm font-normal">
+                  {locale === "en" ? "Age" : "年齡"}
+                </Label>
+                <Input
+                  id="age"
+                  type="number"
+                  placeholder={locale === "en" ? "Enter age" : "輸入年齡"}
+                  value={filter.age || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "age",
+                      parseInt(e.target.value, 10) || undefined,
+                    )
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="min-premium" className="text-sm font-normal">
+                  {locale === "en" ? "Min Premium" : "最低保費"}
+                </Label>
+                <Input
+                  id="min-premium"
+                  type="number"
+                  placeholder={locale === "en" ? "Min amount" : "最低金額"}
+                  value={filter.minPremium || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "minPremium",
+                      parseInt(e.target.value, 10) || undefined,
+                    )
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="max-premium" className="text-sm font-normal">
+                  {locale === "en" ? "Max Premium" : "最高保費"}
+                </Label>
+                <Input
+                  id="max-premium"
+                  type="number"
+                  placeholder={locale === "en" ? "Max amount" : "最高金額"}
+                  value={filter.maxPremium || ""}
+                  onChange={(e) =>
+                    handleFilterChange(
+                      "maxPremium",
+                      parseInt(e.target.value, 10) || undefined,
+                    )
+                  }
+                />
+              </div>
+
+              {/* Sort by selector - always visible */}
+              <div>
+                <Label className="text-sm font-normal mb-2">
+                  {locale === "en" ? "Sort by" : "排序方式"}
+                </Label>
+                <Select value={sortBy} onValueChange={handleSortChange}>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={locale === "en" ? "Select Sort" : "選擇排序"}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SORT_OPTIONS.map((option) => (
+                      <SelectItem key={option.id} value={option.id}>
+                        {option.label[locale as keyof typeof option.label]}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Mobile-only clear filter button */}
+              <div className="md:hidden">
+                <Label className="text-sm font-normal mb-2 text-transparent">
+                  .
+                </Label>
+                <Button
+                  variant="default"
+                  onClick={clearAllFilters}
+                  className="w-full h-9"
+                >
+                  <span>{locale === "en" ? "Clear filter" : "清空篩選"}</span>
+                </Button>
+              </div>
             </div>
-          </div>
           )}
         </div>
       </div>

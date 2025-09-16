@@ -340,7 +340,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
-                    {locale === "en" ? "All Specialties" : "全部專業"}
+                    {locale === "en" ? "All Specialties" : "所有專業"}
                   </SelectItem>
                   <SelectItem value="life">
                     {locale === "en" ? "Life Insurance" : "壽險"}
@@ -426,7 +426,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">
-                    {locale === "en" ? "All Languages" : "全部語言"}
+                    {locale === "en" ? "All Languages" : "所有語言"}
                   </SelectItem>
                   <SelectItem value="中文">
                     {locale === "en" ? "Chinese" : "中文"}

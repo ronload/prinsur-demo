@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, Phone, Mail, User, Calendar, Plus } from "lucide-react";
+import { Search, Phone, Mail, User, Plus } from "lucide-react";
 
 export default function AgentClientsPage() {
   const pathname = usePathname();
@@ -104,34 +104,31 @@ export default function AgentClientsPage() {
           {clients.map((client) => (
             <Card key={client.id} className="hover:shadow-md transition-shadow">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                   <div className="flex items-center space-x-4">
-                    <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center">
+                    <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                       <User className="h-6 w-6 text-primary-foreground" />
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">{client.name}</h3>
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <div className="flex items-center">
-                          <Mail className="h-4 w-4 mr-1" />
-                          {client.email}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-lg truncate">
+                        {client.name}
+                      </h3>
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-sm text-muted-foreground">
+                        <div className="flex items-center min-w-0">
+                          <Mail className="h-4 w-4 mr-1 flex-shrink-0" />
+                          <span className="truncate">{client.email}</span>
                         </div>
-                        <div className="flex items-center">
-                          <Phone className="h-4 w-4 mr-1" />
-                          {client.phone}
+                        <div className="flex items-center min-w-0">
+                          <Phone className="h-4 w-4 mr-1 flex-shrink-0" />
+                          <span className="truncate">{client.phone}</span>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="text-right space-y-2">
+                  <div className="flex flex-row md:flex-col items-start justify-between md:justify-start space-y-0 md:space-y-2">
                     {getStatusBadge(client.status)}
-                    <div className="text-sm text-muted-foreground">
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {locale === "en" ? "Joined" : "加入日期"}:{" "}
-                        {client.joinDate}
-                      </div>
-                      <div className="mt-1">
+                    <div className="text-sm text-muted-foreground text-right">
+                      <div>
                         {locale === "en" ? "Policies" : "保單數量"}:{" "}
                         {client.policies}
                       </div>

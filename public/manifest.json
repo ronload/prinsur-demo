@@ -1,0 +1,41 @@
+{
+  "name": "Prinsur - Smart Insurance Matching",
+  "short_name": "Prinsur",
+  "description": "A transparent, efficient, and user-centric insurance ecosystem",
+  "start_url": "/zh-TW",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-light.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any",
+      "media": "(prefers-color-scheme: light)"
+    },
+    {
+      "src": "/icon-dark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any",
+      "media": "(prefers-color-scheme: dark)"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["finance", "business"],
+  "screenshots": [],
+  "prefer_related_applications": false
+}

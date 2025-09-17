@@ -19,23 +19,55 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Prinsur - Smart Insurance Matching",
   description: "A transparent, efficient, and user-centric insurance ecosystem",
+  manifest: "/manifest.json",
   icons: {
     icon: [
       {
         url: "/icon.png",
-        sizes: "32x32",
+        sizes: "512x512",
         type: "image/png",
       },
       {
         url: "/icon.svg",
         type: "image/svg+xml",
       },
+      {
+        url: "/icon-light.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/icon-dark.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: dark)",
+      },
     ],
-    apple: {
-      url: "/icon.png",
-      sizes: "180x180",
-      type: "image/png",
-    },
+    apple: [
+      {
+        url: "/icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+      {
+        url: "/icon-light.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/icon-dark.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+  },
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
   },
 };
 

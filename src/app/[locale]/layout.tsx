@@ -12,6 +12,7 @@ import { LoadingProvider } from "@/components/providers/loading-provider";
 import { AuthProvider } from "@/contexts/auth-context";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { ThemeIcon } from "@/components/theme-icon";
 import "../globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,32 +32,12 @@ export const metadata: Metadata = {
         url: "/icon.svg",
         type: "image/svg+xml",
       },
-      {
-        url: "/icon-light.svg",
-        type: "image/svg+xml",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark.svg",
-        type: "image/svg+xml",
-        media: "(prefers-color-scheme: dark)",
-      },
     ],
     apple: [
       {
-        url: "/icon.png",
+        url: "/icon-light-512.png",
         sizes: "180x180",
         type: "image/png",
-      },
-      {
-        url: "/icon-light.svg",
-        type: "image/svg+xml",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        url: "/icon-dark.svg",
-        type: "image/svg+xml",
-        media: "(prefers-color-scheme: dark)",
       },
     ],
   },
@@ -102,6 +83,7 @@ export default async function LocaleLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <ThemeIcon />
           <LoadingProvider>
             <AuthProvider>
               <NextIntlClientProvider messages={messages}>

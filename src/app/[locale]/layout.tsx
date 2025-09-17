@@ -76,6 +76,10 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} suppressHydrationWarning>
+      <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="Prinsur" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"

@@ -33,6 +33,7 @@ lerna-debug.log*
 /coverage/
 /temp/
 *.log
+tsconfig.tsbuildinfo
 
 # Windows and macOS specific files
 Thumbs.db

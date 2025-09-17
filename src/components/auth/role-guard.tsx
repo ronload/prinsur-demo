@@ -4,9 +4,44 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 
+// Helper function to get default path for each role
+function getDefaultPathForRole(userType: string, locale: string): string | null {
+  switch (userType) {
+    case "consumer":
+      return `/${locale}/consumer`;
+    case "agent":
+    case "manager":
+      return `/${locale}/agent/dashboard`;
+    case "admin":
+      return `/${locale}/agent/dashboard`; // Admin can access agent features
+    default:
+      return null;
+  }
+}
+
+// Simple logging function (preparation for enterprise monitoring)
+function logAccessAttempt(event: {
+  userId?: string;
+  userType?: string;
+  attemptedPath: string;
+  result: "allowed" | "denied" | "redirected";
+  redirectTo?: string;
+}) {
+  // For now, just console log. In production, this would send to monitoring service
+  if (process.env.NODE_ENV === "development") {
+    console.log("[RoleGuard]", event);
+  }
+
+  // TODO: In production, send to monitoring service
+  // await fetch('/api/audit/access-attempt', {
+  //   method: 'POST',
+  //   body: JSON.stringify(event)
+  // });
+}
+
 interface RoleGuardProps {
   children: React.ReactNode;
-  allowedRoles?: ("consumer" | "agent")[];
+  allowedRoles?: ("consumer" | "agent" | "manager" | "admin")[];
   requireAuth?: boolean;
 }
 
@@ -25,6 +60,11 @@ export function RoleGuard({
 
     // 如果需要登录但用户未登录，跳转到登录页
     if (requireAuth && !user) {
+      logAccessAttempt({
+        attemptedPath: pathname,
+        result: "redirected",
+        redirectTo: `/${locale}/login`,
+      });
       router.push(`/${locale}/login`);
       return;
     }
@@ -32,10 +72,16 @@ export function RoleGuard({
     // 如果指定了角色要求，检查用户角色
     if (allowedRoles && user && !allowedRoles.includes(user.type)) {
       // 根据用户角色跳转到对应的默认页面
-      if (user.type === "consumer") {
-        router.push(`/${locale}/consumer/dashboard`);
-      } else if (user.type === "agent") {
-        router.push(`/${locale}/agent/dashboard`);
+      const redirectPath = getDefaultPathForRole(user.type, locale);
+      if (redirectPath) {
+        logAccessAttempt({
+          userId: user.id,
+          userType: user.type,
+          attemptedPath: pathname,
+          result: "denied",
+          redirectTo: redirectPath,
+        });
+        router.push(redirectPath);
       }
       return;
     }
@@ -45,13 +91,21 @@ export function RoleGuard({
       const isConsumerPath = pathname.includes("/consumer/");
       const isAgentPath = pathname.includes("/agent/");
 
-      if (isConsumerPath && user.type !== "consumer") {
-        router.push(`/${locale}/agent/dashboard`);
+      // Consumer trying to access agent paths
+      if (isConsumerPath && !["consumer"].includes(user.type)) {
+        const redirectPath = getDefaultPathForRole(user.type, locale);
+        if (redirectPath) {
+          router.push(redirectPath);
+        }
         return;
       }
 
-      if (isAgentPath && user.type !== "agent") {
-        router.push(`/${locale}/consumer/dashboard`);
+      // Non-agent trying to access agent paths
+      if (isAgentPath && !["agent", "manager", "admin"].includes(user.type)) {
+        const redirectPath = getDefaultPathForRole(user.type, locale);
+        if (redirectPath) {
+          router.push(redirectPath);
+        }
         return;
       }
     }
@@ -74,6 +128,16 @@ export function RoleGuard({
   // 角色不匹配，不渲染内容
   if (allowedRoles && user && !allowedRoles.includes(user.type)) {
     return null;
+  }
+
+  // Log successful access
+  if (user) {
+    logAccessAttempt({
+      userId: user.id,
+      userType: user.type,
+      attemptedPath: pathname,
+      result: "allowed",
+    });
   }
 
   return <>{children}</>;

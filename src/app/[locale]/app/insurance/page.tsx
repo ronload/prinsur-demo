@@ -126,6 +126,8 @@ const SORT_OPTIONS: SortOption[] = [
   },
 ];
 
+export const dynamic = 'force-dynamic';
+
 export default function InsurancePage({
   params,
   searchParams,
@@ -583,7 +585,7 @@ export default function InsurancePage({
                           variant="outline"
                           className="w-full"
                           onClick={() =>
-                            router.push(`/${locale}/consumer/profile`)
+                            router.push(`/${locale}/app/profile`)
                           }
                         >
                           {locale === "en"

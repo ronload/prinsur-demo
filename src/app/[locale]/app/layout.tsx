@@ -1,6 +1,5 @@
 import { requireAuth, hasServerPermission } from '@/lib/auth/server';
 import { redirect } from 'next/navigation';
-import AppNavigation from '@/components/navigation/app-navigation';
 import AppErrorBoundary from '@/components/error-boundary/app-error-boundary';
 
 // Force dynamic rendering for server-side auth
@@ -27,7 +26,6 @@ export default async function AppLayout({
   return (
     <AppErrorBoundary>
       <div className="app-layout">
-        <AppNavigation locale={locale} />
         <main className="app-content">
           {children}
         </main>

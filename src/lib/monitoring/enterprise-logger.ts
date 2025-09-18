@@ -6,7 +6,7 @@
 export interface LogEvent {
   timestamp: string;
   level: 'info' | 'warn' | 'error' | 'debug';
-  category: 'auth' | 'navigation' | 'api' | 'performance' | 'security' | 'business';
+  category: 'auth' | 'navigation' | 'api' | 'performance' | 'security' | 'business' | 'audit';
   event: string;
   userId?: string;
   userRole?: string;

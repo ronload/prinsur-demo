@@ -1,5 +1,4 @@
 import { requireRole } from '@/lib/auth/server';
-import WorkspaceNavigation from '@/components/navigation/workspace-navigation';
 import WorkspaceErrorBoundary from '@/components/error-boundary/workspace-error-boundary';
 
 // Force dynamic rendering for server-side auth
@@ -21,7 +20,6 @@ export default async function WorkspaceLayout({
   return (
     <WorkspaceErrorBoundary>
       <div className="workspace-layout">
-        <WorkspaceNavigation locale={locale} />
         <main className="workspace-content">
           {children}
         </main>

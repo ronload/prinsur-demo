@@ -247,7 +247,7 @@ export default function Home({ params }: HomeProps) {
                     <Button
                       variant="link"
                       className="text-primary p-0 h-auto text-sm underline"
-                      onClick={() => router.push(`/${locale}/login`)}
+                      onClick={() => router.push(`/${locale}/auth/login`)}
                     >
                       {locale === "en" ? "Go to Login" : "前往登入"}
                     </Button>
@@ -269,7 +269,7 @@ export default function Home({ params }: HomeProps) {
                     <Button
                       variant="link"
                       className="text-primary p-0 h-auto text-sm underline"
-                      onClick={() => router.push(`/${locale}/consumer/profile`)}
+                      onClick={() => router.push(`/${locale}/app/profile`)}
                     >
                       {locale === "en" ? "Complete Profile" : "前往完善資料"}
                     </Button>

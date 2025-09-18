@@ -238,7 +238,7 @@ export function ProductDetailModal({
                             variant="outline"
                             className="w-full"
                             onClick={() =>
-                              router.push(`/${locale}/consumer/profile`)
+                              router.push(`/${locale}/app/profile`)
                             }
                           >
                             {locale === "en"
@@ -254,7 +254,7 @@ export function ProductDetailModal({
                           <Button
                             variant="outline"
                             className="w-full"
-                            onClick={() => router.push(`/${locale}/login`)}
+                            onClick={() => router.push(`/${locale}/auth/login`)}
                           >
                             {locale === "en"
                               ? "Login for Premium Estimate"

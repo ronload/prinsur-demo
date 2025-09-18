@@ -99,11 +99,11 @@ export function Header() {
       // 未登录用户显示公共页面
       return [
         {
-          href: `/${currentLocale}/consumer/insurance`,
+          href: `/${currentLocale}/public/products`,
           label: currentLocale === "en" ? "Insurance" : "保險商品",
         },
         {
-          href: `/${currentLocale}/consumer/agents`,
+          href: `/${currentLocale}/public/agents`,
           label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
         },
       ];
@@ -113,36 +113,28 @@ export function Header() {
       // 消费者菜单
       return [
         {
-          href: `/${currentLocale}/consumer/insurance`,
+          href: `/${currentLocale}/public/products`,
           label: currentLocale === "en" ? "Insurance" : "保險商品",
         },
         {
-          href: `/${currentLocale}/consumer/policies`,
-          label: currentLocale === "en" ? "My Policies" : "我的保單",
+          href: `/${currentLocale}/public/agents`,
+          label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
         },
         {
-          href: `/${currentLocale}/consumer/agents`,
-          label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
+          href: `/${currentLocale}/app/policies`,
+          label: currentLocale === "en" ? "My Policies" : "我的保單",
         },
       ];
     } else {
       // 业务员菜单
       return [
         {
-          href: `/${currentLocale}/agent/dashboard`,
+          href: `/${currentLocale}/workspace/dashboard`,
           label: currentLocale === "en" ? "Dashboard" : "工作台",
         },
         {
-          href: `/${currentLocale}/agent/clients`,
+          href: `/${currentLocale}/workspace/clients`,
           label: currentLocale === "en" ? "Clients" : "客戶管理",
-        },
-        {
-          href: `/${currentLocale}/agent/policies`,
-          label: currentLocale === "en" ? "Policies" : "保單管理",
-        },
-        {
-          href: `/${currentLocale}/agent/reports`,
-          label: currentLocale === "en" ? "Reports" : "業績報表",
         },
       ];
     }
@@ -259,7 +251,7 @@ export function Header() {
                   <DropdownMenuSeparator />
                   {user.type === "agent" && (
                     <DropdownMenuItem asChild>
-                      <Link href={`/${currentLocale}/agent/dashboard`}>
+                      <Link href={`/${currentLocale}/app/dashboard`}>
                         <Settings className="mr-2 h-4 w-4" />
                         {currentLocale === "en" ? "Dashboard" : "工作台"}
                       </Link>
@@ -269,8 +261,8 @@ export function Header() {
                     <Link
                       href={
                         user.type === "consumer"
-                          ? `/${currentLocale}/consumer/profile`
-                          : `/${currentLocale}/agent/profile`
+                          ? `/${currentLocale}/app/profile`
+                          : `/${currentLocale}/workspace/profile`
                       }
                     >
                       <User className="mr-2 h-4 w-4" />
@@ -286,7 +278,7 @@ export function Header() {
               </DropdownMenu>
             ) : (
               <Button variant="ghost" size="sm" asChild>
-                <Link href={`/${currentLocale}/login`}>
+                <Link href={`/${currentLocale}/auth/login`}>
                   <User className="h-4 w-4 mr-2" />
                   {currentLocale === "en" ? "Sign in" : "登入"}
                 </Link>

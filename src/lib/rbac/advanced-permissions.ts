@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Advanced Role-Based Access Control (RBAC) System
  * Provides granular permissions, resource-based access, and dynamic permission evaluation
@@ -13,9 +15,18 @@ export interface Permission {
 }
 
 export interface PermissionCondition {
-  type: 'user_property' | 'resource_property' | 'time' | 'location' | 'custom';
+  type: "user_property" | "resource_property" | "time" | "location" | "custom";
   field: string;
-  operator: 'equals' | 'not_equals' | 'in' | 'not_in' | 'gt' | 'lt' | 'gte' | 'lte' | 'contains';
+  operator:
+    | "equals"
+    | "not_equals"
+    | "in"
+    | "not_in"
+    | "gt"
+    | "lt"
+    | "gte"
+    | "lte"
+    | "contains";
   value: any;
   customEvaluator?: (context: PermissionContext) => boolean;
 }
@@ -83,7 +94,7 @@ class AdvancedRBACSystem {
   async hasPermission(
     userId: string,
     permissionId: string,
-    context?: Partial<PermissionContext>
+    context?: Partial<PermissionContext>,
   ): Promise<boolean> {
     const permission = this.permissions.get(permissionId);
     if (!permission) {
@@ -91,7 +102,7 @@ class AdvancedRBACSystem {
     }
 
     const userRoles = await this.getUserRoles(userId);
-    const hasPermissionInRole = userRoles.some(roleId => {
+    const hasPermissionInRole = userRoles.some((roleId) => {
       const role = this.roles.get(roleId);
       return role?.permissions.includes(permissionId);
     });
@@ -118,10 +129,11 @@ class AdvancedRBACSystem {
     userId: string,
     resource: string,
     action: string,
-    context?: Partial<PermissionContext>
+    context?: Partial<PermissionContext>,
   ): Promise<boolean> {
-    const relevantPermissions = Array.from(this.permissions.values())
-      .filter(p => p.resource === resource && p.action === action);
+    const relevantPermissions = Array.from(this.permissions.values()).filter(
+      (p) => p.resource === resource && p.action === action,
+    );
 
     for (const permission of relevantPermissions) {
       if (await this.hasPermission(userId, permission.id, context)) {
@@ -171,60 +183,81 @@ class AdvancedRBACSystem {
   // Evaluate permission conditions
   private evaluateConditions(
     conditions: PermissionCondition[],
-    context: PermissionContext
+    context: PermissionContext,
   ): boolean {
-    return conditions.every(condition => this.evaluateCondition(condition, context));
+    return conditions.every((condition) =>
+      this.evaluateCondition(condition, context),
+    );
   }
 
   private evaluateCondition(
     condition: PermissionCondition,
-    context: PermissionContext
+    context: PermissionContext,
   ): boolean {
     let actualValue: any;
 
     switch (condition.type) {
-      case 'user_property':
-        actualValue = context.user.properties?.[condition.field] ?? context.user[condition.field as keyof typeof context.user];
+      case "user_property":
+        actualValue =
+          context.user.properties?.[condition.field] ??
+          context.user[condition.field as keyof typeof context.user];
         break;
-      case 'resource_property':
+      case "resource_property":
         if (!context.resource) return false;
-        actualValue = context.resource.properties?.[condition.field] ?? context.resource[condition.field as keyof typeof context.resource];
+        actualValue =
+          context.resource.properties?.[condition.field] ??
+          context.resource[condition.field as keyof typeof context.resource];
         break;
-      case 'time':
+      case "time":
         actualValue = context.environment?.timestamp || Date.now();
         break;
-      case 'location':
-        actualValue = context.environment?.location?.[condition.field as keyof NonNullable<NonNullable<typeof context.environment>['location']>];
+      case "location":
+        actualValue =
+          context.environment?.location?.[
+            condition.field as keyof NonNullable<
+              NonNullable<typeof context.environment>["location"]
+            >
+          ];
         break;
-      case 'custom':
-        return condition.customEvaluator ? condition.customEvaluator(context) : false;
+      case "custom":
+        return condition.customEvaluator
+          ? condition.customEvaluator(context)
+          : false;
       default:
         return false;
     }
 
-    return this.evaluateOperator(actualValue, condition.operator, condition.value);
+    return this.evaluateOperator(
+      actualValue,
+      condition.operator,
+      condition.value,
+    );
   }
 
-  private evaluateOperator(actual: any, operator: string, expected: any): boolean {
+  private evaluateOperator(
+    actual: any,
+    operator: string,
+    expected: any,
+  ): boolean {
     switch (operator) {
-      case 'equals':
+      case "equals":
         return actual === expected;
-      case 'not_equals':
+      case "not_equals":
         return actual !== expected;
-      case 'in':
+      case "in":
         return Array.isArray(expected) && expected.includes(actual);
-      case 'not_in':
+      case "not_in":
         return Array.isArray(expected) && !expected.includes(actual);
-      case 'gt':
+      case "gt":
         return actual > expected;
-      case 'lt':
+      case "lt":
         return actual < expected;
-      case 'gte':
+      case "gte":
         return actual >= expected;
-      case 'lte':
+      case "lte":
         return actual <= expected;
-      case 'contains':
-        return typeof actual === 'string' && actual.includes(expected);
+      case "contains":
+        return typeof actual === "string" && actual.includes(expected);
       default:
         return false;
     }
@@ -235,8 +268,8 @@ class AdvancedRBACSystem {
     // In production, this would query your database
     // For demo, we'll use the user type from the stored user data
     try {
-      if (typeof window !== 'undefined') {
-        const userData = localStorage.getItem('prinsur_user');
+      if (typeof window !== "undefined") {
+        const userData = localStorage.getItem("prinsur_user");
         if (userData) {
           const user = JSON.parse(userData);
           if (user.id === userId) {
@@ -248,7 +281,7 @@ class AdvancedRBACSystem {
       // Ignore parsing errors
     }
 
-    return ['role_guest'];
+    return ["role_guest"];
   }
 
   private clearUserRoleCache(): void {
@@ -261,163 +294,168 @@ class AdvancedRBACSystem {
     const permissions: Permission[] = [
       // Consumer permissions
       {
-        id: 'policy.view.own',
-        name: 'View Own Policies',
-        resource: 'policy',
-        action: 'view',
-        conditions: [{
-          type: 'resource_property',
-          field: 'owner',
-          operator: 'equals',
-          value: 'current_user',
-        }],
+        id: "policy.view.own",
+        name: "View Own Policies",
+        resource: "policy",
+        action: "view",
+        conditions: [
+          {
+            type: "resource_property",
+            field: "owner",
+            operator: "equals",
+            value: "current_user",
+          },
+        ],
       },
       {
-        id: 'claim.create.own',
-        name: 'Create Own Claims',
-        resource: 'claim',
-        action: 'create',
+        id: "claim.create.own",
+        name: "Create Own Claims",
+        resource: "claim",
+        action: "create",
       },
       {
-        id: 'profile.edit.own',
-        name: 'Edit Own Profile',
-        resource: 'profile',
-        action: 'edit',
-        conditions: [{
-          type: 'user_property',
-          field: 'id',
-          operator: 'equals',
-          value: 'resource_owner',
-        }],
+        id: "profile.edit.own",
+        name: "Edit Own Profile",
+        resource: "profile",
+        action: "edit",
+        conditions: [
+          {
+            type: "user_property",
+            field: "id",
+            operator: "equals",
+            value: "resource_owner",
+          },
+        ],
       },
 
       // Agent permissions
       {
-        id: 'client.view.assigned',
-        name: 'View Assigned Clients',
-        resource: 'client',
-        action: 'view',
-        conditions: [{
-          type: 'resource_property',
-          field: 'assigned_agent',
-          operator: 'equals',
-          value: 'current_user',
-        }],
+        id: "client.view.assigned",
+        name: "View Assigned Clients",
+        resource: "client",
+        action: "view",
+        conditions: [
+          {
+            type: "resource_property",
+            field: "assigned_agent",
+            operator: "equals",
+            value: "current_user",
+          },
+        ],
       },
       {
-        id: 'policy.manage.assigned',
-        name: 'Manage Assigned Policies',
-        resource: 'policy',
-        action: 'manage',
+        id: "policy.manage.assigned",
+        name: "Manage Assigned Policies",
+        resource: "policy",
+        action: "manage",
       },
       {
-        id: 'claim.process.assigned',
-        name: 'Process Assigned Claims',
-        resource: 'claim',
-        action: 'process',
+        id: "claim.process.assigned",
+        name: "Process Assigned Claims",
+        resource: "claim",
+        action: "process",
       },
 
       // Manager permissions
       {
-        id: 'report.view.team',
-        name: 'View Team Reports',
-        resource: 'report',
-        action: 'view',
-        conditions: [{
-          type: 'user_property',
-          field: 'team',
-          operator: 'equals',
-          value: 'report_team',
-        }],
+        id: "report.view.team",
+        name: "View Team Reports",
+        resource: "report",
+        action: "view",
+        conditions: [
+          {
+            type: "user_property",
+            field: "team",
+            operator: "equals",
+            value: "report_team",
+          },
+        ],
       },
       {
-        id: 'agent.manage.team',
-        name: 'Manage Team Agents',
-        resource: 'agent',
-        action: 'manage',
+        id: "agent.manage.team",
+        name: "Manage Team Agents",
+        resource: "agent",
+        action: "manage",
       },
 
       // Admin permissions
       {
-        id: 'system.configure.all',
-        name: 'Configure System',
-        resource: 'system',
-        action: 'configure',
+        id: "system.configure.all",
+        name: "Configure System",
+        resource: "system",
+        action: "configure",
       },
       {
-        id: 'user.manage.all',
-        name: 'Manage All Users',
-        resource: 'user',
-        action: 'manage',
+        id: "user.manage.all",
+        name: "Manage All Users",
+        resource: "user",
+        action: "manage",
       },
       {
-        id: 'audit.view.all',
-        name: 'View All Audit Logs',
-        resource: 'audit',
-        action: 'view',
+        id: "audit.view.all",
+        name: "View All Audit Logs",
+        resource: "audit",
+        action: "view",
       },
     ];
 
-    permissions.forEach(p => this.createPermission(p));
+    permissions.forEach((p) => this.createPermission(p));
 
     // Define roles
     const roles: Role[] = [
       {
-        id: 'role_consumer',
-        name: 'Consumer',
-        description: 'Regular insurance consumers',
+        id: "role_consumer",
+        name: "Consumer",
+        description: "Regular insurance consumers",
         permissions: [
-          'policy.view.own',
-          'claim.create.own',
-          'profile.edit.own',
+          "policy.view.own",
+          "claim.create.own",
+          "profile.edit.own",
         ],
         isSystem: true,
       },
       {
-        id: 'role_agent',
-        name: 'Insurance Agent',
-        description: 'Insurance sales agents',
+        id: "role_agent",
+        name: "Insurance Agent",
+        description: "Insurance sales agents",
         permissions: [
-          'client.view.assigned',
-          'policy.manage.assigned',
-          'claim.process.assigned',
+          "client.view.assigned",
+          "policy.manage.assigned",
+          "claim.process.assigned",
         ],
-        inheritsFrom: ['role_consumer'], // Agents can also act as consumers
+        inheritsFrom: ["role_consumer"], // Agents can also act as consumers
         isSystem: true,
       },
       {
-        id: 'role_manager',
-        name: 'Team Manager',
-        description: 'Manages teams of agents',
-        permissions: [
-          'report.view.team',
-          'agent.manage.team',
-        ],
-        inheritsFrom: ['role_agent'],
+        id: "role_manager",
+        name: "Team Manager",
+        description: "Manages teams of agents",
+        permissions: ["report.view.team", "agent.manage.team"],
+        inheritsFrom: ["role_agent"],
         isSystem: true,
       },
       {
-        id: 'role_admin',
-        name: 'System Administrator',
-        description: 'Full system access',
+        id: "role_admin",
+        name: "System Administrator",
+        description: "Full system access",
         permissions: [
-          'system.configure.all',
-          'user.manage.all',
-          'audit.view.all',
+          "system.configure.all",
+          "user.manage.all",
+          "audit.view.all",
         ],
-        inheritsFrom: ['role_manager'],
+        inheritsFrom: ["role_manager"],
         isSystem: true,
       },
       {
-        id: 'role_guest',
-        name: 'Guest',
-        description: 'Unauthenticated users',
+        id: "role_guest",
+        name: "Guest",
+        description: "Unauthenticated users",
         permissions: [],
         isSystem: true,
       },
     ];
 
-    roles.forEach(r => this.createRole(r));
+    roles.forEach((r) => this.createRole(r));
   }
 
   // Admin methods
@@ -430,18 +468,18 @@ class AdvancedRBACSystem {
   }
 
   getUserEffectivePermissions(userId: string): Promise<Permission[]> {
-    return this.getUserRoles(userId).then(roleIds => {
+    return this.getUserRoles(userId).then((roleIds) => {
       const permissionIds = new Set<string>();
 
-      roleIds.forEach(roleId => {
+      roleIds.forEach((roleId) => {
         const role = this.roles.get(roleId);
         if (role) {
-          role.permissions.forEach(pId => permissionIds.add(pId));
+          role.permissions.forEach((pId) => permissionIds.add(pId));
         }
       });
 
       return Array.from(permissionIds)
-        .map(id => this.permissions.get(id))
+        .map((id) => this.permissions.get(id))
         .filter(Boolean) as Permission[];
     });
   }
@@ -454,24 +492,37 @@ export const rbac = AdvancedRBACSystem.getInstance();
 export const checkPermission = (
   userId: string,
   permissionId: string,
-  context?: Partial<PermissionContext>
+  context?: Partial<PermissionContext>,
 ) => rbac.hasPermission(userId, permissionId, context);
 
 export const checkResourcePermission = (
   userId: string,
   resource: string,
   action: string,
-  context?: Partial<PermissionContext>
+  context?: Partial<PermissionContext>,
 ) => rbac.hasResourcePermission(userId, resource, action, context);
 
 // React hook for permission checking
 export function usePermissions(userId?: string) {
   return {
-    hasPermission: (permissionId: string, context?: Partial<PermissionContext>) =>
-      userId ? checkPermission(userId, permissionId, context) : Promise.resolve(false),
-    hasResourcePermission: (resource: string, action: string, context?: Partial<PermissionContext>) =>
-      userId ? checkResourcePermission(userId, resource, action, context) : Promise.resolve(false),
-    getUserRoles: () => userId ? rbac.getUserRoles(userId) : Promise.resolve([]),
-    getEffectivePermissions: () => userId ? rbac.getUserEffectivePermissions(userId) : Promise.resolve([]),
+    hasPermission: (
+      permissionId: string,
+      context?: Partial<PermissionContext>,
+    ) =>
+      userId
+        ? checkPermission(userId, permissionId, context)
+        : Promise.resolve(false),
+    hasResourcePermission: (
+      resource: string,
+      action: string,
+      context?: Partial<PermissionContext>,
+    ) =>
+      userId
+        ? checkResourcePermission(userId, resource, action, context)
+        : Promise.resolve(false),
+    getUserRoles: () =>
+      userId ? rbac.getUserRoles(userId) : Promise.resolve([]),
+    getEffectivePermissions: () =>
+      userId ? rbac.getUserEffectivePermissions(userId) : Promise.resolve([]),
   };
 }

@@ -3,7 +3,13 @@
 import { useAuth } from "@/contexts/auth-context";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { ShieldX, Home, LogOut } from "lucide-react";
 
 export default function UnauthorizedPage() {
@@ -53,7 +59,8 @@ export default function UnauthorizedPage() {
                 Logged in as: <span className="font-medium">{user.email}</span>
               </p>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Role: <span className="font-medium capitalize">{user.type}</span>
+                Role:{" "}
+                <span className="font-medium capitalize">{user.type}</span>
               </p>
             </div>
           )}
@@ -65,7 +72,11 @@ export default function UnauthorizedPage() {
             </Button>
 
             {user && (
-              <Button onClick={handleLogout} className="w-full" variant="outline">
+              <Button
+                onClick={handleLogout}
+                className="w-full"
+                variant="outline"
+              >
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out
               </Button>

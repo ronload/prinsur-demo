@@ -15,7 +15,7 @@ import {
   LogOut,
   Menu,
   X,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -30,7 +30,9 @@ interface WorkspaceNavigationProps {
   locale: string;
 }
 
-export default function WorkspaceNavigation({ locale }: WorkspaceNavigationProps) {
+export default function WorkspaceNavigation({
+  locale,
+}: WorkspaceNavigationProps) {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -59,9 +61,7 @@ export default function WorkspaceNavigation({ locale }: WorkspaceNavigationProps
           {/* Logo and Brand */}
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <h1 className="text-xl font-bold">
-                企業工作台
-              </h1>
+              <h1 className="text-xl font-bold">企業工作台</h1>
             </div>
           </div>
 
@@ -108,11 +108,15 @@ export default function WorkspaceNavigation({ locale }: WorkspaceNavigationProps
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuItem onClick={() => handleNavigation(`/${locale}/app/profile`)}>
+                <DropdownMenuItem
+                  onClick={() => handleNavigation(`/${locale}/app/profile`)}
+                >
                   <Settings className="mr-2 h-4 w-4" />
                   個人設定
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleNavigation(`/${locale}/app/dashboard`)}>
+                <DropdownMenuItem
+                  onClick={() => handleNavigation(`/${locale}/app/dashboard`)}
+                >
                   <Users className="mr-2 h-4 w-4" />
                   切換到用戶視圖
                 </DropdownMenuItem>
@@ -197,26 +201,26 @@ function getWorkspaceNavigationItems(user: User, locale: string) {
       path: `/${locale}/workspace/dashboard`,
       label: "工作台總覽",
       icon: BarChart3,
-      roles: ["agent", "manager", "admin"]
+      roles: ["agent", "manager", "admin"],
     },
     {
       path: `/${locale}/workspace/clients`,
       label: "客戶管理",
       icon: Users,
-      roles: ["agent", "manager", "admin"]
+      roles: ["agent", "manager", "admin"],
     },
     {
       path: `/${locale}/workspace/policies`,
       label: "保單管理",
       icon: Shield,
-      roles: ["agent", "manager", "admin"]
+      roles: ["agent", "manager", "admin"],
     },
     {
       path: `/${locale}/workspace/claims`,
       label: "理賠處理",
       icon: FileText,
-      roles: ["agent", "manager", "admin"]
-    }
+      roles: ["agent", "manager", "admin"],
+    },
   ];
 
   const managerItems = [
@@ -224,14 +228,14 @@ function getWorkspaceNavigationItems(user: User, locale: string) {
       path: `/${locale}/workspace/reports`,
       label: "報表分析",
       icon: BarChart3,
-      roles: ["manager", "admin"]
+      roles: ["manager", "admin"],
     },
     {
       path: `/${locale}/workspace/teams`,
       label: "團隊管理",
       icon: Users,
-      roles: ["manager", "admin"]
-    }
+      roles: ["manager", "admin"],
+    },
   ];
 
   const adminItems = [
@@ -239,14 +243,14 @@ function getWorkspaceNavigationItems(user: User, locale: string) {
       path: `/${locale}/workspace/analytics`,
       label: "數據分析",
       icon: Database,
-      roles: ["admin"]
+      roles: ["admin"],
     },
     {
       path: `/${locale}/workspace/settings`,
       label: "系統設定",
       icon: Settings,
-      roles: ["admin"]
-    }
+      roles: ["admin"],
+    },
   ];
 
   let allItems = [...baseItems];
@@ -259,5 +263,5 @@ function getWorkspaceNavigationItems(user: User, locale: string) {
     allItems = [...allItems, ...adminItems];
   }
 
-  return allItems.filter(item => item.roles.includes(user.type));
+  return allItems.filter((item) => item.roles.includes(user.type));
 }

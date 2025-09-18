@@ -308,10 +308,10 @@ export default function InsurancePage({
               onClick={() => setIsFiltersCollapsed(!isFiltersCollapsed)}
               className="flex items-center gap-1 h-auto p-0 text-left justify-start select-none touch-manipulation hover:no-underline"
               style={{
-                WebkitTapHighlightColor: 'transparent',
-                WebkitTouchCallout: 'none',
-                WebkitUserSelect: 'none',
-                userSelect: 'none'
+                WebkitTapHighlightColor: "transparent",
+                WebkitTouchCallout: "none",
+                WebkitUserSelect: "none",
+                userSelect: "none",
               }}
             >
               <span>
@@ -582,9 +582,7 @@ export default function InsurancePage({
                         <Button
                           variant="outline"
                           className="w-full"
-                          onClick={() =>
-                            router.push(`/${locale}/app/profile`)
-                          }
+                          onClick={() => router.push(`/${locale}/app/profile`)}
                         >
                           {locale === "en"
                             ? "Complete Profile for Premium Estimate"

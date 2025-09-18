@@ -33,7 +33,7 @@ import {
 } from "@/data/mock-agent-data";
 import { CustomerStatus, AppointmentStatus } from "@/types/agent-dashboard";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default function DashboardPage({
   params,
@@ -432,9 +432,7 @@ export default function DashboardPage({
                   : "管理與客戶的會面安排"}
               </p>
             </div>
-            <Button>
-              {locale === "en" ? "Add Appointment" : "新增預約"}
-            </Button>
+            <Button>{locale === "en" ? "Add Appointment" : "新增預約"}</Button>
           </div>
 
           <div className="grid gap-4">
@@ -452,9 +450,7 @@ export default function DashboardPage({
                       </div>
                     </div>
                     <Badge
-                      variant={getAppointmentStatusVariant(
-                        appointment.status,
-                      )}
+                      variant={getAppointmentStatusVariant(appointment.status)}
                     >
                       {getAppointmentStatusText(appointment.status)}
                     </Badge>
@@ -477,9 +473,7 @@ export default function DashboardPage({
                     {appointment.productDiscussion && (
                       <div>
                         <div className="text-sm font-medium mb-2">
-                          {locale === "en"
-                            ? "Products to Discuss"
-                            : "討論商品"}
+                          {locale === "en" ? "Products to Discuss" : "討論商品"}
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {appointment.productDiscussion.map((product) => (
@@ -607,9 +601,7 @@ export default function DashboardPage({
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Target className="h-5 w-5" />
-                  {locale === "en"
-                    ? "Monthly Target Progress"
-                    : "月度目標進度"}
+                  {locale === "en" ? "Monthly Target Progress" : "月度目標進度"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -685,9 +677,7 @@ export default function DashboardPage({
                         ? "Monthly Closed Deals"
                         : "本月成交件數"}
                     </span>
-                    <span className="font-bold">
-                      {performance.closedDeals}
-                    </span>
+                    <span className="font-bold">{performance.closedDeals}</span>
                   </div>
                 </div>
               </CardContent>

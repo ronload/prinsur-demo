@@ -1,9 +1,16 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RotateCcw, Home } from "lucide-react";
+import { logger } from "@/lib/monitoring/enterprise-logger";
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -21,7 +28,10 @@ interface ErrorFallbackProps {
   locale?: string;
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -33,12 +43,12 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error to enterprise monitoring system
-    const { logger } = require('@/lib/monitoring/enterprise-logger');
+    // const { logger } = require("@/lib/monitoring/enterprise-logger");
 
-    logger.trackError(error, errorInfo, errorInfo.componentStack);
+    logger.trackError(error, errorInfo, errorInfo.componentStack || "");
     logger.logSecurityEvent({
-      type: 'suspicious_activity',
-      severity: 'medium',
+      type: "suspicious_activity",
+      severity: "medium",
       metadata: {
         error_boundary: true,
         component_stack: errorInfo.componentStack,
@@ -47,7 +57,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     });
 
     // Fallback console log for development
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === "development") {
       console.error("Error Boundary caught an error:", error, errorInfo);
     }
   }
@@ -71,7 +81,11 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   }
 }
 
-function DefaultErrorFallback({ error, resetError, locale = "zh-TW" }: ErrorFallbackProps) {
+function DefaultErrorFallback({
+  error,
+  resetError,
+  locale = "zh-TW",
+}: ErrorFallbackProps) {
   const handleGoHome = () => {
     window.location.href = `/${locale}/`;
   };

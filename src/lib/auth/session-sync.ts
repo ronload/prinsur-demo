@@ -1,4 +1,4 @@
-import { User } from '@/contexts/auth-context';
+import { User } from "@/contexts/auth-context";
 
 /**
  * Server-side session synchronization utilities
@@ -9,25 +9,25 @@ export async function syncClientToServer(user: User | null): Promise<void> {
   try {
     if (user) {
       // Set server-side cookie when user logs in
-      await fetch('/api/auth/sync', {
-        method: 'POST',
+      await fetch("/api/auth/sync", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user, action: 'login' }),
+        body: JSON.stringify({ user, action: "login" }),
       });
     } else {
       // Clear server-side cookie when user logs out
-      await fetch('/api/auth/sync', {
-        method: 'POST',
+      await fetch("/api/auth/sync", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ action: 'logout' }),
+        body: JSON.stringify({ action: "logout" }),
       });
     }
   } catch (error) {
-    console.error('Failed to sync session with server:', error);
+    console.error("Failed to sync session with server:", error);
     // In production, you might want to handle this more gracefully
     // e.g., retry mechanism, error reporting to monitoring service
   }
@@ -35,9 +35,9 @@ export async function syncClientToServer(user: User | null): Promise<void> {
 
 export async function validateServerSession(): Promise<{ user: User } | null> {
   try {
-    const response = await fetch('/api/auth/validate', {
-      method: 'GET',
-      credentials: 'include', // Include cookies
+    const response = await fetch("/api/auth/validate", {
+      method: "GET",
+      credentials: "include", // Include cookies
     });
 
     if (response.ok) {
@@ -46,7 +46,7 @@ export async function validateServerSession(): Promise<{ user: User } | null> {
 
     return null;
   } catch (error) {
-    console.error('Failed to validate server session:', error);
+    console.error("Failed to validate server session:", error);
     return null;
   }
 }

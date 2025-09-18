@@ -5,7 +5,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 
 // Helper function to get default path for each role
-function getDefaultPathForRole(userType: string, locale: string): string | null {
+function getDefaultPathForRole(
+  userType: string,
+  locale: string,
+): string | null {
   switch (userType) {
     case "consumer":
       return `/${locale}/consumer`;

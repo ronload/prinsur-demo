@@ -1,10 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { logger } from '@/lib/monitoring/enterprise-logger';
-import { auditTrail } from '@/lib/audit/audit-trail';
-import { authCache, cacheUserSession, getUserSession, invalidateUserCache } from '@/lib/cache/auth-cache';
-import { rbac } from '@/lib/rbac/advanced-permissions';
+import { logger } from "@/lib/monitoring/enterprise-logger";
+import { auditTrail } from "@/lib/audit/audit-trail";
+import {
+  authCache,
+  cacheUserSession,
+  getUserSession,
+  invalidateUserCache,
+} from "@/lib/cache/auth-cache";
+import { rbac } from "@/lib/rbac/advanced-permissions";
 
 export interface User {
   id: string;
@@ -24,7 +31,11 @@ interface AuthContextType {
   logout: () => Promise<void>;
   isLoading: boolean;
   hasPermission: (permissionId: string, context?: any) => Promise<boolean>;
-  hasResourcePermission: (resource: string, action: string, context?: any) => Promise<boolean>;
+  hasResourcePermission: (
+    resource: string,
+    action: string,
+    context?: any,
+  ) => Promise<boolean>;
   getUserRoles: () => Promise<string[]>;
 }
 
@@ -62,14 +73,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Record session restoration for audit
           await auditTrail.recordAuthentication(
             user,
-            'login',
+            "login",
             undefined,
-            typeof navigator !== 'undefined' ? navigator.userAgent : undefined
+            typeof navigator !== "undefined" ? navigator.userAgent : undefined,
           );
         }
       } catch (error) {
-        logger.error('auth', 'session_restoration_failed', {
-          error: error instanceof Error ? error.message : 'Unknown error'
+        logger.error("auth", "session_restoration_failed", {
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       } finally {
         setIsLoading(false);
@@ -109,28 +120,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logger.setUser(newUser.id, newUser.type);
 
     // 记录登录事件
-    logger.trackAuth('login', {
+    logger.trackAuth("login", {
       user_id: newUser.id,
       user_email: newUser.email,
       user_type: newUser.type,
-      login_method: 'demo_auth',
+      login_method: "demo_auth",
     });
 
     // 同步会话到服务端
     try {
-      await fetch('/api/auth/sync', {
-        method: 'POST',
+      await fetch("/api/auth/sync", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user: newUser, action: 'login' }),
+        body: JSON.stringify({ user: newUser, action: "login" }),
       });
 
-      logger.info('auth', 'server_session_sync_success', { user_id: newUser.id });
-    } catch (error) {
-      logger.warn('auth', 'server_session_sync_failed', {
+      logger.info("auth", "server_session_sync_success", {
         user_id: newUser.id,
-        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } catch (error) {
+      logger.warn("auth", "server_session_sync_failed", {
+        user_id: newUser.id,
+        error: error instanceof Error ? error.message : "Unknown error",
       });
       // Continue with login even if server sync fails
     }
@@ -138,9 +151,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Record audit trail
     await auditTrail.recordAuthentication(
       newUser,
-      'login',
+      "login",
       undefined,
-      typeof navigator !== 'undefined' ? navigator.userAgent : undefined
+      typeof navigator !== "undefined" ? navigator.userAgent : undefined,
     );
 
     // Cache session data
@@ -159,7 +172,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // 记录登出事件
     if (currentUser) {
-      logger.trackAuth('logout', {
+      logger.trackAuth("logout", {
         user_id: currentUser.id,
         user_email: currentUser.email,
         user_type: currentUser.type,
@@ -171,9 +184,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (currentUser) {
       await auditTrail.recordAuthentication(
         currentUser,
-        'logout',
+        "logout",
         undefined,
-        typeof navigator !== 'undefined' ? navigator.userAgent : undefined
+        typeof navigator !== "undefined" ? navigator.userAgent : undefined,
       );
     }
 
@@ -191,25 +204,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // 同步登出状态到服务端
     try {
-      await fetch('/api/auth/sync', {
-        method: 'POST',
+      await fetch("/api/auth/sync", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ action: 'logout' }),
+        body: JSON.stringify({ action: "logout" }),
       });
 
-      logger.info('auth', 'server_session_clear_success');
+      logger.info("auth", "server_session_clear_success");
     } catch (error) {
-      logger.warn('auth', 'server_session_clear_failed', {
-        error: error instanceof Error ? error.message : 'Unknown error'
+      logger.warn("auth", "server_session_clear_failed", {
+        error: error instanceof Error ? error.message : "Unknown error",
       });
       // Continue with logout even if server sync fails
     }
   };
 
   // RBAC 權限檢查方法
-  const hasPermission = async (permissionId: string, context?: any): Promise<boolean> => {
+  const hasPermission = async (
+    permissionId: string,
+    context?: any,
+  ): Promise<boolean> => {
     if (!user) return false;
 
     try {
@@ -223,16 +239,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ...context,
       });
     } catch (error) {
-      logger.error('auth', 'permission_check_failed', {
+      logger.error("auth", "permission_check_failed", {
         user_id: user.id,
         permission_id: permissionId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
       return false;
     }
   };
 
-  const hasResourcePermission = async (resource: string, action: string, context?: any): Promise<boolean> => {
+  const hasResourcePermission = async (
+    resource: string,
+    action: string,
+    context?: any,
+  ): Promise<boolean> => {
     if (!user) return false;
 
     try {
@@ -246,11 +266,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ...context,
       });
     } catch (error) {
-      logger.error('auth', 'resource_permission_check_failed', {
+      logger.error("auth", "resource_permission_check_failed", {
         user_id: user.id,
         resource,
         action,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
       return false;
     }
@@ -262,24 +282,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       return await rbac.getUserRoles(user.id);
     } catch (error) {
-      logger.error('auth', 'get_user_roles_failed', {
+      logger.error("auth", "get_user_roles_failed", {
         user_id: user.id,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
       return [];
     }
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      login,
-      logout,
-      isLoading,
-      hasPermission,
-      hasResourcePermission,
-      getUserRoles
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        isLoading,
+        hasPermission,
+        hasResourcePermission,
+        getUserRoles,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

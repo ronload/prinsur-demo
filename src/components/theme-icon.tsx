@@ -11,11 +11,15 @@ export function ThemeIcon() {
     const currentTheme = theme === "system" ? systemTheme : theme;
 
     // 移除現有的 apple-touch-icon
-    const existingIcons = document.querySelectorAll('link[rel*="apple-touch-icon"]');
-    existingIcons.forEach(icon => icon.remove());
+    const existingIcons = document.querySelectorAll(
+      'link[rel*="apple-touch-icon"]',
+    );
+    existingIcons.forEach((icon) => icon.remove());
 
     // 移除現有的 iOS 狀態列樣式 meta 標籤
-    const existingStatusBarMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    const existingStatusBarMeta = document.querySelector(
+      'meta[name="apple-mobile-web-app-status-bar-style"]',
+    );
     if (existingStatusBarMeta) {
       existingStatusBarMeta.remove();
     }

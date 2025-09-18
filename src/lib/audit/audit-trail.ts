@@ -1,29 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Enterprise Audit Trail System
  * Comprehensive auditing for compliance, security, and operational monitoring
  */
 
-import { logger } from '@/lib/monitoring/enterprise-logger';
-import { User } from '@/contexts/auth-context';
+import { logger } from "@/lib/monitoring/enterprise-logger";
+import { User } from "@/contexts/auth-context";
 
 export interface AuditEvent {
   id: string;
   timestamp: string;
   eventType: AuditEventType;
   category: AuditCategory;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   actor: AuditActor;
   target?: AuditTarget;
   action: string;
-  outcome: 'success' | 'failure' | 'partial';
+  outcome: "success" | "failure" | "partial";
   details: Record<string, any>;
   metadata: AuditMetadata;
   complianceFlags?: string[];
-  retentionPolicy: 'standard' | 'extended' | 'permanent';
+  retentionPolicy: "standard" | "extended" | "permanent";
 }
 
 export interface AuditActor {
-  type: 'user' | 'system' | 'api' | 'service';
+  type: "user" | "system" | "api" | "service";
   id: string;
   name?: string;
   role?: string;
@@ -33,17 +34,17 @@ export interface AuditActor {
 }
 
 export interface AuditTarget {
-  type: 'user' | 'policy' | 'claim' | 'system' | 'document' | 'configuration';
+  type: "user" | "policy" | "claim" | "system" | "document" | "configuration";
   id: string;
   name?: string;
   owner?: string;
-  classification?: 'public' | 'internal' | 'confidential' | 'restricted';
+  classification?: "public" | "internal" | "confidential" | "restricted";
 }
 
 export interface AuditMetadata {
-  source: 'web' | 'mobile' | 'api' | 'system' | 'batch';
+  source: "web" | "mobile" | "api" | "system" | "batch";
   version: string;
-  environment: 'development' | 'staging' | 'production';
+  environment: "development" | "staging" | "production";
   correlation_id?: string;
   request_id?: string;
   geographic_location?: string;
@@ -51,23 +52,23 @@ export interface AuditMetadata {
 }
 
 export type AuditEventType =
-  | 'authentication'
-  | 'authorization'
-  | 'data_access'
-  | 'data_modification'
-  | 'system_configuration'
-  | 'security_incident'
-  | 'business_transaction'
-  | 'compliance_event';
+  | "authentication"
+  | "authorization"
+  | "data_access"
+  | "data_modification"
+  | "system_configuration"
+  | "security_incident"
+  | "business_transaction"
+  | "compliance_event";
 
 export type AuditCategory =
-  | 'security'
-  | 'privacy'
-  | 'financial'
-  | 'operational'
-  | 'compliance'
-  | 'system'
-  | 'business';
+  | "security"
+  | "privacy"
+  | "financial"
+  | "operational"
+  | "compliance"
+  | "system"
+  | "business";
 
 export interface AuditQuery {
   startDate?: string;
@@ -76,8 +77,8 @@ export interface AuditQuery {
   categories?: AuditCategory[];
   actorIds?: string[];
   targetIds?: string[];
-  severity?: Array<'low' | 'medium' | 'high' | 'critical'>;
-  outcomes?: Array<'success' | 'failure' | 'partial'>;
+  severity?: Array<"low" | "medium" | "high" | "critical">;
+  outcomes?: Array<"success" | "failure" | "partial">;
   complianceFlags?: string[];
   limit?: number;
   offset?: number;
@@ -114,7 +115,11 @@ class AuditTrailSystem {
   }
 
   // Record audit event
-  async record(event: Omit<AuditEvent, 'id' | 'timestamp' | 'metadata'> & { metadata?: Partial<AuditMetadata> }): Promise<string> {
+  async record(
+    event: Omit<AuditEvent, "id" | "timestamp" | "metadata"> & {
+      metadata?: Partial<AuditMetadata>;
+    },
+  ): Promise<string> {
     const auditId = this.generateAuditId();
 
     const fullEvent: AuditEvent = {
@@ -122,9 +127,9 @@ class AuditTrailSystem {
       id: auditId,
       timestamp: new Date().toISOString(),
       metadata: {
-        source: 'web',
-        version: '1.0.0',
-        environment: process.env.NODE_ENV as any || 'development',
+        source: "web",
+        version: "1.0.0",
+        environment: (process.env.NODE_ENV as any) || "development",
         ...event.metadata,
       },
     };
@@ -136,7 +141,7 @@ class AuditTrailSystem {
     this.updateIndices(auditId, fullEvent);
 
     // Log to monitoring system
-    logger.info('audit', 'event_recorded', {
+    logger.info("audit", "event_recorded", {
       audit_id: auditId,
       event_type: fullEvent.eventType,
       category: fullEvent.category,
@@ -148,7 +153,7 @@ class AuditTrailSystem {
     });
 
     // Send to external audit storage in production
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === "production") {
       await this.sendToExternalStorage(fullEvent);
     }
 
@@ -164,61 +169,93 @@ class AuditTrailSystem {
 
     // Filter by date range
     if (criteria.startDate || criteria.endDate) {
-      candidateIds = this.filterByDateRange(candidateIds, criteria.startDate, criteria.endDate);
+      candidateIds = this.filterByDateRange(
+        candidateIds,
+        criteria.startDate,
+        criteria.endDate,
+      );
     }
 
     // Filter by event types
     if (criteria.eventTypes && criteria.eventTypes.length > 0) {
-      candidateIds = this.intersectSets(candidateIds,
-        this.unionSets(criteria.eventTypes.map(type => this.indices.byType.get(type) || new Set()))
+      candidateIds = this.intersectSets(
+        candidateIds,
+        this.unionSets(
+          criteria.eventTypes.map(
+            (type) => this.indices.byType.get(type) || new Set(),
+          ),
+        ),
       );
     }
 
     // Filter by actors
     if (criteria.actorIds && criteria.actorIds.length > 0) {
-      candidateIds = this.intersectSets(candidateIds,
-        this.unionSets(criteria.actorIds.map(id => this.indices.byActor.get(id) || new Set()))
+      candidateIds = this.intersectSets(
+        candidateIds,
+        this.unionSets(
+          criteria.actorIds.map(
+            (id) => this.indices.byActor.get(id) || new Set(),
+          ),
+        ),
       );
     }
 
     // Filter by targets
     if (criteria.targetIds && criteria.targetIds.length > 0) {
-      candidateIds = this.intersectSets(candidateIds,
-        this.unionSets(criteria.targetIds.map(id => this.indices.byTarget.get(id) || new Set()))
+      candidateIds = this.intersectSets(
+        candidateIds,
+        this.unionSets(
+          criteria.targetIds.map(
+            (id) => this.indices.byTarget.get(id) || new Set(),
+          ),
+        ),
       );
     }
 
     // Get events and apply additional filters
     const events = Array.from(candidateIds)
-      .map(id => this.events.get(id))
+      .map((id) => this.events.get(id))
       .filter(Boolean) as AuditEvent[];
 
     let filteredEvents = events;
 
     // Filter by categories
     if (criteria.categories && criteria.categories.length > 0) {
-      filteredEvents = filteredEvents.filter(e => criteria.categories!.includes(e.category));
+      filteredEvents = filteredEvents.filter((e) =>
+        criteria.categories!.includes(e.category),
+      );
     }
 
     // Filter by severity
     if (criteria.severity && criteria.severity.length > 0) {
-      filteredEvents = filteredEvents.filter(e => criteria.severity!.includes(e.severity));
+      filteredEvents = filteredEvents.filter((e) =>
+        criteria.severity!.includes(e.severity),
+      );
     }
 
     // Filter by outcomes
     if (criteria.outcomes && criteria.outcomes.length > 0) {
-      filteredEvents = filteredEvents.filter(e => criteria.outcomes!.includes(e.outcome));
+      filteredEvents = filteredEvents.filter((e) =>
+        criteria.outcomes!.includes(e.outcome),
+      );
     }
 
     // Filter by compliance flags
     if (criteria.complianceFlags && criteria.complianceFlags.length > 0) {
-      filteredEvents = filteredEvents.filter(e =>
-        e.complianceFlags && criteria.complianceFlags!.some(flag => e.complianceFlags!.includes(flag))
+      filteredEvents = filteredEvents.filter(
+        (e) =>
+          e.complianceFlags &&
+          criteria.complianceFlags!.some((flag) =>
+            e.complianceFlags!.includes(flag),
+          ),
       );
     }
 
     // Sort by timestamp (newest first)
-    filteredEvents.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    filteredEvents.sort(
+      (a, b) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
 
     // Apply pagination
     const offset = criteria.offset || 0;
@@ -228,13 +265,18 @@ class AuditTrailSystem {
   }
 
   // Convenience methods for common audit scenarios
-  async recordAuthentication(user: User, action: 'login' | 'logout' | 'login_failed', ipAddress?: string, userAgent?: string): Promise<string> {
+  async recordAuthentication(
+    user: User,
+    action: "login" | "logout" | "login_failed",
+    ipAddress?: string,
+    userAgent?: string,
+  ): Promise<string> {
     return this.record({
-      eventType: 'authentication',
-      category: 'security',
-      severity: action === 'login_failed' ? 'medium' : 'low',
+      eventType: "authentication",
+      category: "security",
+      severity: action === "login_failed" ? "medium" : "low",
       actor: {
-        type: 'user',
+        type: "user",
         id: user.id,
         name: user.name,
         role: user.type,
@@ -242,23 +284,28 @@ class AuditTrailSystem {
         userAgent,
       },
       action,
-      outcome: action === 'login_failed' ? 'failure' : 'success',
+      outcome: action === "login_failed" ? "failure" : "success",
       details: {
         email: user.email,
         user_type: user.type,
       },
-      complianceFlags: ['GDPR', 'SOX'],
-      retentionPolicy: 'extended',
+      complianceFlags: ["GDPR", "SOX"],
+      retentionPolicy: "extended",
     });
   }
 
-  async recordDataAccess(user: User, target: AuditTarget, action: string, outcome: 'success' | 'failure' = 'success'): Promise<string> {
+  async recordDataAccess(
+    user: User,
+    target: AuditTarget,
+    action: string,
+    outcome: "success" | "failure" = "success",
+  ): Promise<string> {
     return this.record({
-      eventType: 'data_access',
-      category: 'privacy',
-      severity: outcome === 'failure' ? 'medium' : 'low',
+      eventType: "data_access",
+      category: "privacy",
+      severity: outcome === "failure" ? "medium" : "low",
       actor: {
-        type: 'user',
+        type: "user",
         id: user.id,
         name: user.name,
         role: user.type,
@@ -267,66 +314,70 @@ class AuditTrailSystem {
       action,
       outcome,
       details: {
-        access_method: 'web_interface',
+        access_method: "web_interface",
         data_classification: target.classification,
       },
-      complianceFlags: ['GDPR', 'HIPAA'],
-      retentionPolicy: 'extended',
+      complianceFlags: ["GDPR", "HIPAA"],
+      retentionPolicy: "extended",
     });
   }
 
-  async recordSystemConfiguration(user: User, configType: string, changes: Record<string, any>): Promise<string> {
+  async recordSystemConfiguration(
+    user: User,
+    configType: string,
+    changes: Record<string, any>,
+  ): Promise<string> {
     return this.record({
-      eventType: 'system_configuration',
-      category: 'system',
-      severity: 'high',
+      eventType: "system_configuration",
+      category: "system",
+      severity: "high",
       actor: {
-        type: 'user',
+        type: "user",
         id: user.id,
         name: user.name,
         role: user.type,
       },
       target: {
-        type: 'system',
+        type: "system",
         id: configType,
         name: `System Configuration: ${configType}`,
       },
-      action: 'modify_configuration',
-      outcome: 'success',
+      action: "modify_configuration",
+      outcome: "success",
       details: {
         configuration_type: configType,
         changes,
         change_count: Object.keys(changes).length,
       },
-      complianceFlags: ['SOX', 'COMPLIANCE'],
-      retentionPolicy: 'permanent',
+      complianceFlags: ["SOX", "COMPLIANCE"],
+      retentionPolicy: "permanent",
     });
   }
 
   async recordSecurityIncident(
-    severity: 'low' | 'medium' | 'high' | 'critical',
+    severity: "low" | "medium" | "high" | "critical",
     incidentType: string,
     details: Record<string, any>,
-    actor?: Partial<AuditActor>
+    actor?: Partial<AuditActor>,
   ): Promise<string> {
     return this.record({
-      eventType: 'security_incident',
-      category: 'security',
+      eventType: "security_incident",
+      category: "security",
       severity,
       actor: {
-        type: 'system',
-        id: 'security_monitor',
-        name: 'Security Monitoring System',
+        type: "system",
+        id: "security_monitor",
+        name: "Security Monitoring System",
         ...actor,
       },
       action: `security_incident_${incidentType}`,
-      outcome: 'partial',
+      outcome: "partial",
       details: {
         incident_type: incidentType,
         ...details,
       },
-      complianceFlags: ['SECURITY', 'SOX'],
-      retentionPolicy: 'permanent',
+      complianceFlags: ["SECURITY", "SOX"],
+      retentionPolicy: "permanent",
     });
   }
 
@@ -348,21 +399,26 @@ class AuditTrailSystem {
       security_incidents: 0,
     };
 
-    events.forEach(event => {
+    events.forEach((event) => {
       // Count by type
-      summary.by_type[event.eventType] = (summary.by_type[event.eventType] || 0) + 1;
+      summary.by_type[event.eventType] =
+        (summary.by_type[event.eventType] || 0) + 1;
 
       // Count by category
-      summary.by_category[event.category] = (summary.by_category[event.category] || 0) + 1;
+      summary.by_category[event.category] =
+        (summary.by_category[event.category] || 0) + 1;
 
       // Count by severity
-      summary.by_severity[event.severity] = (summary.by_severity[event.severity] || 0) + 1;
+      summary.by_severity[event.severity] =
+        (summary.by_severity[event.severity] || 0) + 1;
 
       // Count by outcome
-      summary.by_outcome[event.outcome] = (summary.by_outcome[event.outcome] || 0) + 1;
+      summary.by_outcome[event.outcome] =
+        (summary.by_outcome[event.outcome] || 0) + 1;
 
       // Count by actor
-      summary.top_actors[event.actor.id] = (summary.top_actors[event.actor.id] || 0) + 1;
+      summary.top_actors[event.actor.id] =
+        (summary.top_actors[event.actor.id] || 0) + 1;
 
       // Count compliance events
       if (event.complianceFlags && event.complianceFlags.length > 0) {
@@ -370,7 +426,7 @@ class AuditTrailSystem {
       }
 
       // Count security incidents
-      if (event.eventType === 'security_incident') {
+      if (event.eventType === "security_incident") {
         summary.security_incidents++;
       }
     });
@@ -379,7 +435,10 @@ class AuditTrailSystem {
   }
 
   // Compliance reporting
-  generateComplianceReport(regulation: string, timeRange: { start: string; end: string }) {
+  generateComplianceReport(
+    regulation: string,
+    timeRange: { start: string; end: string },
+  ) {
     const events = this.query({
       startDate: timeRange.start,
       endDate: timeRange.end,
@@ -390,13 +449,16 @@ class AuditTrailSystem {
       regulation,
       time_range: timeRange,
       total_events: events.length,
-      events_by_type: events.reduce((acc, event) => {
-        acc[event.eventType] = (acc[event.eventType] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      critical_events: events.filter(e => e.severity === 'critical').length,
-      failed_events: events.filter(e => e.outcome === 'failure').length,
-      events: events.map(event => ({
+      events_by_type: events.reduce(
+        (acc, event) => {
+          acc[event.eventType] = (acc[event.eventType] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
+      critical_events: events.filter((e) => e.severity === "critical").length,
+      failed_events: events.filter((e) => e.outcome === "failure").length,
+      events: events.map((event) => ({
         id: event.id,
         timestamp: event.timestamp,
         type: event.eventType,
@@ -429,7 +491,7 @@ class AuditTrailSystem {
     }
 
     // Index by date
-    const dateKey = event.timestamp.split('T')[0];
+    const dateKey = event.timestamp.split("T")[0];
     if (!this.indices.byDate.has(dateKey)) {
       this.indices.byDate.set(dateKey, new Set());
     }
@@ -442,7 +504,11 @@ class AuditTrailSystem {
     this.indices.byType.get(event.eventType)!.add(id);
   }
 
-  private filterByDateRange(candidateIds: Set<string>, startDate?: string, endDate?: string): Set<string> {
+  private filterByDateRange(
+    candidateIds: Set<string>,
+    startDate?: string,
+    endDate?: string,
+  ): Set<string> {
     if (!startDate && !endDate) return candidateIds;
 
     const filtered = new Set<string>();
@@ -487,18 +553,18 @@ class AuditTrailSystem {
     try {
       // await externalAuditService.store(event);
     } catch (error) {
-      logger.error('audit', 'external_storage_failed', {
+      logger.error("audit", "external_storage_failed", {
         audit_id: event.id,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
 
   private async checkComplianceViolations(event: AuditEvent): Promise<void> {
     // Check for compliance violations and alert if necessary
-    if (event.severity === 'critical' || event.outcome === 'failure') {
+    if (event.severity === "critical" || event.outcome === "failure") {
       logger.logSecurityEvent({
-        type: 'suspicious_activity',
+        type: "suspicious_activity",
         severity: event.severity as any,
         userId: event.actor.id,
         userRole: event.actor.role,
@@ -521,15 +587,18 @@ class AuditTrailSystem {
       let shouldRemove = false;
 
       switch (event.retentionPolicy) {
-        case 'standard':
+        case "standard":
           // Keep for 7 years (regulatory requirement)
-          shouldRemove = now.getTime() - eventDate.getTime() > 7 * 365 * 24 * 60 * 60 * 1000;
+          shouldRemove =
+            now.getTime() - eventDate.getTime() > 7 * 365 * 24 * 60 * 60 * 1000;
           break;
-        case 'extended':
+        case "extended":
           // Keep for 10 years
-          shouldRemove = now.getTime() - eventDate.getTime() > 10 * 365 * 24 * 60 * 60 * 1000;
+          shouldRemove =
+            now.getTime() - eventDate.getTime() >
+            10 * 365 * 24 * 60 * 60 * 1000;
           break;
-        case 'permanent':
+        case "permanent":
           // Never remove
           shouldRemove = false;
           break;
@@ -543,7 +612,7 @@ class AuditTrailSystem {
     }
 
     if (removedCount > 0) {
-      logger.info('audit', 'cleanup_completed', {
+      logger.info("audit", "cleanup_completed", {
         removed_events: removedCount,
         remaining_events: this.events.size,
       });
@@ -555,7 +624,7 @@ class AuditTrailSystem {
     if (event.target) {
       this.indices.byTarget.get(event.target.id)?.delete(id);
     }
-    const dateKey = event.timestamp.split('T')[0];
+    const dateKey = event.timestamp.split("T")[0];
     this.indices.byDate.get(dateKey)?.delete(id);
     this.indices.byType.get(event.eventType)?.delete(id);
   }
@@ -568,11 +637,18 @@ export const auditTrail = AuditTrailSystem.getInstance();
 export const recordAudit = (event: Parameters<typeof auditTrail.record>[0]) =>
   auditTrail.record(event);
 
-export const queryAudit = (criteria: AuditQuery) =>
-  auditTrail.query(criteria);
+export const queryAudit = (criteria: AuditQuery) => auditTrail.query(criteria);
 
-export const recordUserAuthentication = (user: User, action: 'login' | 'logout' | 'login_failed', ipAddress?: string, userAgent?: string) =>
-  auditTrail.recordAuthentication(user, action, ipAddress, userAgent);
+export const recordUserAuthentication = (
+  user: User,
+  action: "login" | "logout" | "login_failed",
+  ipAddress?: string,
+  userAgent?: string,
+) => auditTrail.recordAuthentication(user, action, ipAddress, userAgent);
 
-export const recordUserDataAccess = (user: User, target: AuditTarget, action: string, outcome?: 'success' | 'failure') =>
-  auditTrail.recordDataAccess(user, target, action, outcome);
+export const recordUserDataAccess = (
+  user: User,
+  target: AuditTarget,
+  action: string,
+  outcome?: "success" | "failure",
+) => auditTrail.recordDataAccess(user, target, action, outcome);

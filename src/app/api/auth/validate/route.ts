@@ -1,16 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-import { User } from '@/contexts/auth-context';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { User } from "@/contexts/auth-context";
 
 export async function GET(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-    const userCookie = cookieStore.get('prinsur_user');
+    const userCookie = cookieStore.get("prinsur_user");
 
     if (!userCookie?.value) {
       return NextResponse.json(
-        { success: false, error: 'No session found' },
-        { status: 401 }
+        { success: false, error: "No session found" },
+        { status: 401 },
       );
     }
 
@@ -20,10 +21,10 @@ export async function GET(request: NextRequest) {
     // Basic validation
     if (!user.id || !user.email || !user.type) {
       // Invalid session data, clear cookie
-      cookieStore.delete('prinsur_user');
+      cookieStore.delete("prinsur_user");
       return NextResponse.json(
-        { success: false, error: 'Invalid session data' },
-        { status: 401 }
+        { success: false, error: "Invalid session data" },
+        { status: 401 },
       );
     }
 
@@ -41,15 +42,15 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Session validation error:', error);
+    console.error("Session validation error:", error);
 
     // Clear potentially corrupted cookie
     const cookieStore = await cookies();
-    cookieStore.delete('prinsur_user');
+    cookieStore.delete("prinsur_user");
 
     return NextResponse.json(
-      { success: false, error: 'Session validation failed' },
-      { status: 500 }
+      { success: false, error: "Session validation failed" },
+      { status: 500 },
     );
   }
 }

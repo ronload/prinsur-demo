@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Search, Home, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -33,11 +39,7 @@ export default function NotFound() {
               </Button>
             </Link>
 
-            <Button
-              onClick={handleGoBack}
-              className="w-full"
-              variant="outline"
-            >
+            <Button onClick={handleGoBack} className="w-full" variant="outline">
               <ArrowLeft className="w-4 h-4 mr-2" />
               返回上一頁
             </Button>
@@ -48,9 +50,27 @@ export default function NotFound() {
               您可能在尋找：
             </h3>
             <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-              <li>• <Link href="/zh-TW/auth/login" className="hover:underline">登入頁面</Link></li>
-              <li>• <Link href="/zh-TW/app/dashboard" className="hover:underline">用戶儀表板</Link></li>
-              <li>• <Link href="/zh-TW/workspace/dashboard" className="hover:underline">企業工作台</Link></li>
+              <li>
+                •{" "}
+                <Link href="/zh-TW/auth/login" className="hover:underline">
+                  登入頁面
+                </Link>
+              </li>
+              <li>
+                •{" "}
+                <Link href="/zh-TW/app/dashboard" className="hover:underline">
+                  用戶儀表板
+                </Link>
+              </li>
+              <li>
+                •{" "}
+                <Link
+                  href="/zh-TW/workspace/dashboard"
+                  className="hover:underline"
+                >
+                  企業工作台
+                </Link>
+              </li>
             </ul>
           </div>
 

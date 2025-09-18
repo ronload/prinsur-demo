@@ -31,7 +31,7 @@ interface PoliciesPageProps {
   params: Promise<{ locale: string }>;
 }
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default function PoliciesPage({ params }: PoliciesPageProps) {
   const pathname = usePathname();

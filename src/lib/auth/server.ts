@@ -1,12 +1,13 @@
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import type { User } from '@/contexts/auth-context';
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { getDefaultRedirect } from "./redirect-optimizer";
+import type { User } from "@/contexts/auth-context";
 
 // Server-side session management
 export async function getServerSession(): Promise<{ user: User } | null> {
   try {
     const cookieStore = await cookies();
-    const userCookie = cookieStore.get('prinsur_user');
+    const userCookie = cookieStore.get("prinsur_user");
 
     if (!userCookie?.value) {
       return null;
@@ -22,7 +23,7 @@ export async function getServerSession(): Promise<{ user: User } | null> {
 
     return { user };
   } catch (error) {
-    console.error('Error getting server session:', error);
+    console.error("Error getting server session:", error);
     return null;
   }
 }
@@ -41,7 +42,7 @@ export async function requireAuth(locale: string): Promise<User> {
 // Server-side role guard
 export async function requireRole(
   locale: string,
-  allowedRoles: User['type'][]
+  allowedRoles: User["type"][],
 ): Promise<User> {
   const user = await requireAuth(locale);
 
@@ -55,9 +56,8 @@ export async function requireRole(
 }
 
 // Helper function to get redirect path for role (with optimization)
-function getRoleRedirectPath(userType: User['type'], locale: string): string {
+function getRoleRedirectPath(userType: User["type"], locale: string): string {
   // Use the new redirect optimizer for better UX
-  const { getDefaultRedirect } = require('./redirect-optimizer');
   return getDefaultRedirect(userType, locale);
 }
 
@@ -66,12 +66,12 @@ export function hasServerPermission(user: User, permission: string): boolean {
   // This would integrate with the RBAC system we created earlier
   // For now, basic role-based checks
   switch (permission) {
-    case 'app:access':
-      return ['consumer', 'agent', 'manager', 'admin'].includes(user.type);
-    case 'workspace:access':
-      return ['agent', 'manager', 'admin'].includes(user.type);
-    case 'admin:access':
-      return user.type === 'admin';
+    case "app:access":
+      return ["consumer", "agent", "manager", "admin"].includes(user.type);
+    case "workspace:access":
+      return ["agent", "manager", "admin"].includes(user.type);
+    case "admin:access":
+      return user.type === "admin";
     default:
       return false;
   }

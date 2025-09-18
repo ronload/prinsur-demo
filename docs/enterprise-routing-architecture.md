@@ -1,6 +1,7 @@
 # Prinsur 企業級路由架構設計文檔
 
 ## 目錄
+
 1. [架構概述](#架構概述)
 2. [分層路由結構](#分層路由結構)
 3. [安全驗證架構](#安全驗證架構)
@@ -15,6 +16,7 @@
 ## 架構概述
 
 本文檔定義了 Prinsur 保險平台的企業級路由架構，旨在提供：
+
 - **安全性**: 多層驗證，無法繞過的服務端權限控制
 - **可維護性**: 清晰的職責分離和模組化設計
 - **可擴展性**: 易於添加新角色和權限
@@ -66,9 +68,9 @@
 
 ```typescript
 // src/middleware.ts - 企業級中間件
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { verifyJWT } from '@/lib/auth';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { verifyJWT } from "@/lib/auth";
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -85,7 +87,9 @@ export async function middleware(request: NextRequest) {
   // 3. 角色權限驗證
   const accessControl = await checkRouteAccess(pathname, request);
   if (!accessControl.allowed) {
-    return NextResponse.redirect(new URL(accessControl.redirectTo, request.url));
+    return NextResponse.redirect(
+      new URL(accessControl.redirectTo, request.url),
+    );
   }
 
   // 4. 企業級日誌記錄
@@ -95,9 +99,7 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|manifest.json).*)',
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|manifest.json).*)"],
 };
 ```
 
@@ -126,26 +128,26 @@ export const config = {
 // src/lib/rbac/permissions.ts
 export const PERMISSIONS = {
   // 基礎權限
-  'app:access': ['consumer', 'agent', 'manager', 'admin'],
-  'profile:read': ['consumer', 'agent', 'manager', 'admin'],
-  'profile:write': ['consumer', 'agent', 'manager', 'admin'],
+  "app:access": ["consumer", "agent", "manager", "admin"],
+  "profile:read": ["consumer", "agent", "manager", "admin"],
+  "profile:write": ["consumer", "agent", "manager", "admin"],
 
   // 消費者權限
-  'policies:read_own': ['consumer', 'agent', 'manager', 'admin'],
-  'claims:create': ['consumer', 'agent', 'manager', 'admin'],
-  'claims:read_own': ['consumer', 'agent', 'manager', 'admin'],
+  "policies:read_own": ["consumer", "agent", "manager", "admin"],
+  "claims:create": ["consumer", "agent", "manager", "admin"],
+  "claims:read_own": ["consumer", "agent", "manager", "admin"],
 
   // 代理商權限
-  'workspace:access': ['agent', 'manager', 'admin'],
-  'clients:manage': ['agent', 'manager', 'admin'],
-  'sales:view': ['agent', 'manager', 'admin'],
-  'commissions:view_own': ['agent', 'manager', 'admin'],
+  "workspace:access": ["agent", "manager", "admin"],
+  "clients:manage": ["agent", "manager", "admin"],
+  "sales:view": ["agent", "manager", "admin"],
+  "commissions:view_own": ["agent", "manager", "admin"],
 
   // 管理權限
-  'admin:access': ['admin'],
-  'users:manage': ['admin'],
-  'system:configure': ['admin'],
-  'analytics:view_all': ['manager', 'admin'],
+  "admin:access": ["admin"],
+  "users:manage": ["admin"],
+  "system:configure": ["admin"],
+  "analytics:view_all": ["manager", "admin"],
 } as const;
 ```
 
@@ -154,11 +156,11 @@ export const PERMISSIONS = {
 ```typescript
 // src/lib/rbac/route-guards.ts
 export const ROUTE_PERMISSIONS = {
-  '/app/*': ['app:access'],
-  '/workspace/*': ['workspace:access'],
-  '/admin/*': ['admin:access'],
-  '/app/policies': ['policies:read_own'],
-  '/workspace/clients': ['clients:manage'],
+  "/app/*": ["app:access"],
+  "/workspace/*": ["workspace:access"],
+  "/admin/*": ["admin:access"],
+  "/app/policies": ["policies:read_own"],
+  "/workspace/clients": ["clients:manage"],
 } as const;
 ```
 
@@ -381,48 +383,49 @@ export function AppNavigation({ user }: { user: User }) {
 
 ```typescript
 // src/lib/i18n/routing.ts
-import { createNavigation } from 'next-intl/navigation';
+import { createNavigation } from "next-intl/navigation";
 
-export const locales = ['zh-TW', 'en'] as const;
-export const { Link, redirect, usePathname, useRouter } =
-  createNavigation({ locales });
+export const locales = ["zh-TW", "en"] as const;
+export const { Link, redirect, usePathname, useRouter } = createNavigation({
+  locales,
+});
 
 // 企業級路由配置
 export const ENTERPRISE_ROUTES = {
   // 公開路由
   public: {
-    home: '/',
-    products: '/public/products',
-    agents: '/public/agents',
+    home: "/",
+    products: "/public/products",
+    agents: "/public/agents",
   },
 
   // 認證路由
   auth: {
-    login: '/auth/login',
-    register: '/auth/register',
-    verify: '/auth/verify',
+    login: "/auth/login",
+    register: "/auth/register",
+    verify: "/auth/verify",
   },
 
   // 應用路由
   app: {
-    dashboard: '/app/dashboard',
-    policies: '/app/policies',
-    claims: '/app/claims',
-    profile: '/app/profile',
+    dashboard: "/app/dashboard",
+    policies: "/app/policies",
+    claims: "/app/claims",
+    profile: "/app/profile",
   },
 
   // 工作區路由
   workspace: {
-    clients: '/workspace/clients',
-    sales: '/workspace/sales',
-    commissions: '/workspace/commissions',
+    clients: "/workspace/clients",
+    sales: "/workspace/sales",
+    commissions: "/workspace/commissions",
   },
 
   // 管理路由
   admin: {
-    users: '/admin/users',
-    products: '/admin/products',
-    analytics: '/admin/analytics',
+    users: "/admin/users",
+    products: "/admin/products",
+    analytics: "/admin/analytics",
   },
 } as const;
 ```
@@ -433,26 +436,26 @@ export const ENTERPRISE_ROUTES = {
 // src/lib/i18n/locale-detection.ts
 export function getLocaleFromRequest(request: NextRequest): string {
   // 1. URL 路徑檢查
-  const pathLocale = request.nextUrl.pathname.split('/')[1];
+  const pathLocale = request.nextUrl.pathname.split("/")[1];
   if (locales.includes(pathLocale as any)) {
     return pathLocale;
   }
 
   // 2. Cookie 檢查
-  const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+  const cookieLocale = request.cookies.get("NEXT_LOCALE")?.value;
   if (cookieLocale && locales.includes(cookieLocale as any)) {
     return cookieLocale;
   }
 
   // 3. Accept-Language 標頭檢查
-  const acceptLanguage = request.headers.get('accept-language');
+  const acceptLanguage = request.headers.get("accept-language");
   if (acceptLanguage) {
     const preferredLocale = negotiateLanguage(acceptLanguage, locales);
     if (preferredLocale) return preferredLocale;
   }
 
   // 4. 預設語言
-  return 'zh-TW';
+  return "zh-TW";
 }
 ```
 
@@ -463,18 +466,21 @@ export function getLocaleFromRequest(request: NextRequest): string {
 ```typescript
 // src/lib/monitoring/route-analytics.ts
 export class RouteAnalytics {
-  static async logAccess(request: NextRequest, context: {
-    user?: User;
-    route: string;
-    permissions: string[];
-    duration: number;
-  }) {
-    await fetch('/api/analytics/route-access', {
-      method: 'POST',
+  static async logAccess(
+    request: NextRequest,
+    context: {
+      user?: User;
+      route: string;
+      permissions: string[];
+      duration: number;
+    },
+  ) {
+    await fetch("/api/analytics/route-access", {
+      method: "POST",
       body: JSON.stringify({
         ...context,
         timestamp: new Date().toISOString(),
-        userAgent: request.headers.get('user-agent'),
+        userAgent: request.headers.get("user-agent"),
         ip: request.ip,
       }),
     });
@@ -482,8 +488,8 @@ export class RouteAnalytics {
 
   static async logError(error: RouteError) {
     // 發送到企業級監控服務 (如 DataDog, New Relic)
-    await fetch('/api/analytics/error', {
-      method: 'POST',
+    await fetch("/api/analytics/error", {
+      method: "POST",
       body: JSON.stringify({
         error: error.message,
         stack: error.stack,
@@ -496,8 +502,8 @@ export class RouteAnalytics {
 
   static async logPerformance(metrics: RoutePerformanceMetrics) {
     // 性能指標記錄
-    await fetch('/api/analytics/performance', {
-      method: 'POST',
+    await fetch("/api/analytics/performance", {
+      method: "POST",
       body: JSON.stringify(metrics),
     });
   }
@@ -510,8 +516,8 @@ export class RouteAnalytics {
 // src/lib/audit/audit-logger.ts
 export class AuditLogger {
   static async logUserAction(action: UserAction) {
-    await fetch('/api/audit/user-action', {
-      method: 'POST',
+    await fetch("/api/audit/user-action", {
+      method: "POST",
       body: JSON.stringify({
         userId: action.userId,
         action: action.type,
@@ -526,8 +532,8 @@ export class AuditLogger {
 
   static async logSecurityEvent(event: SecurityEvent) {
     // 安全事件記錄 (登入失敗、權限拒絕等)
-    await fetch('/api/audit/security-event', {
-      method: 'POST',
+    await fetch("/api/audit/security-event", {
+      method: "POST",
       body: JSON.stringify(event),
     });
   }
@@ -606,17 +612,20 @@ export class AuditLogger {
 ## 附錄
 
 ### 相關文件
+
 - [API 設計文檔](./api-design.md)
 - [資料庫架構文檔](./database-erd.md)
 - [安全規範文檔](./security-guidelines.md)
 
 ### 技術依賴
+
 - Next.js 15+ (App Router)
 - next-intl (國際化)
 - TypeScript (類型安全)
 - 企業級監控服務 (DataDog/New Relic)
 
 ### 維護指南
+
 - 定期檢查權限配置
 - 監控路由性能指標
 - 審計日誌分析

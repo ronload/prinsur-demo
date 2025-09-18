@@ -1,9 +1,9 @@
-import { requireAuth, hasServerPermission } from '@/lib/auth/server';
-import { redirect } from 'next/navigation';
-import AppErrorBoundary from '@/components/error-boundary/app-error-boundary';
+import { requireAuth, hasServerPermission } from "@/lib/auth/server";
+import { redirect } from "next/navigation";
+import AppErrorBoundary from "@/components/error-boundary/app-error-boundary";
 
 // Force dynamic rendering for server-side auth
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 // Enterprise-level app layout with server-side authentication
 export default async function AppLayout({
@@ -19,16 +19,14 @@ export default async function AppLayout({
   const user = await requireAuth(locale);
 
   // Check app access permission
-  if (!hasServerPermission(user, 'app:access')) {
+  if (!hasServerPermission(user, "app:access")) {
     redirect(`/${locale}/unauthorized`);
   }
 
   return (
     <AppErrorBoundary>
       <div className="app-layout">
-        <main className="app-content">
-          {children}
-        </main>
+        <main className="app-content">{children}</main>
       </div>
     </AppErrorBoundary>
   );

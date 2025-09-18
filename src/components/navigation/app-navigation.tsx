@@ -11,7 +11,7 @@ import {
   Settings,
   LogOut,
   Menu,
-  X
+  X,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -143,8 +143,8 @@ function getNavigationItems(user: User, locale: string) {
       path: `/${locale}/app/dashboard`,
       label: "主頁",
       icon: Home,
-      roles: ["consumer", "agent", "manager", "admin"]
-    }
+      roles: ["consumer", "agent", "manager", "admin"],
+    },
   ];
 
   const roleSpecificItems = [];
@@ -156,20 +156,20 @@ function getNavigationItems(user: User, locale: string) {
         path: `/${locale}/app/insurance`,
         label: "保險方案",
         icon: Shield,
-        roles: ["consumer"]
+        roles: ["consumer"],
       },
       {
         path: `/${locale}/app/claims`,
         label: "理賠申請",
         icon: FileText,
-        roles: ["consumer"]
+        roles: ["consumer"],
       },
       {
         path: `/${locale}/app/profile`,
         label: "個人資料",
         icon: Settings,
-        roles: ["consumer"]
-      }
+        roles: ["consumer"],
+      },
     );
   }
 
@@ -180,42 +180,38 @@ function getNavigationItems(user: User, locale: string) {
         path: `/${locale}/workspace/clients`,
         label: "客戶管理",
         icon: FileText,
-        roles: ["agent", "manager", "admin"]
+        roles: ["agent", "manager", "admin"],
       },
       {
         path: `/${locale}/workspace/policies`,
         label: "保單管理",
         icon: Shield,
-        roles: ["agent", "manager", "admin"]
-      }
+        roles: ["agent", "manager", "admin"],
+      },
     );
   }
 
   // Manager/Admin navigation
   if (["manager", "admin"].includes(user.type)) {
-    roleSpecificItems.push(
-      {
-        path: `/${locale}/workspace/reports`,
-        label: "報表分析",
-        icon: FileText,
-        roles: ["manager", "admin"]
-      }
-    );
+    roleSpecificItems.push({
+      path: `/${locale}/workspace/reports`,
+      label: "報表分析",
+      icon: FileText,
+      roles: ["manager", "admin"],
+    });
   }
 
   // Admin navigation
   if (user.type === "admin") {
-    roleSpecificItems.push(
-      {
-        path: `/${locale}/workspace/settings`,
-        label: "系統設定",
-        icon: Settings,
-        roles: ["admin"]
-      }
-    );
+    roleSpecificItems.push({
+      path: `/${locale}/workspace/settings`,
+      label: "系統設定",
+      icon: Settings,
+      roles: ["admin"],
+    });
   }
 
-  return [...baseItems, ...roleSpecificItems].filter(item =>
-    item.roles.includes(user.type)
+  return [...baseItems, ...roleSpecificItems].filter((item) =>
+    item.roles.includes(user.type),
   );
 }

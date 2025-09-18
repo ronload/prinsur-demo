@@ -2,7 +2,13 @@
 
 import React from "react";
 import ErrorBoundary, { ErrorFallbackProps } from "../error-boundary";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RotateCcw, BarChart3, Users } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -60,7 +66,11 @@ function WorkspaceErrorFallback({ error, resetError }: ErrorFallbackProps) {
               重試工作台操作
             </Button>
 
-            <Button onClick={handleGoToDashboard} className="w-full" variant="outline">
+            <Button
+              onClick={handleGoToDashboard}
+              className="w-full"
+              variant="outline"
+            >
               <BarChart3 className="w-4 h-4 mr-2" />
               返回工作台主頁
             </Button>
@@ -73,7 +83,8 @@ function WorkspaceErrorFallback({ error, resetError }: ErrorFallbackProps) {
 
           <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
             <p className="text-sm text-amber-800 dark:text-amber-200">
-              <strong>企業提醒：</strong>系統已自動保存您的工作進度，數據完整性不受影響。
+              <strong>企業提醒：</strong>
+              系統已自動保存您的工作進度，數據完整性不受影響。
             </p>
           </div>
 
@@ -87,10 +98,10 @@ function WorkspaceErrorFallback({ error, resetError }: ErrorFallbackProps) {
   );
 }
 
-export default function WorkspaceErrorBoundary({ children }: WorkspaceErrorBoundaryProps) {
+export default function WorkspaceErrorBoundary({
+  children,
+}: WorkspaceErrorBoundaryProps) {
   return (
-    <ErrorBoundary fallback={WorkspaceErrorFallback}>
-      {children}
-    </ErrorBoundary>
+    <ErrorBoundary fallback={WorkspaceErrorFallback}>{children}</ErrorBoundary>
   );
 }

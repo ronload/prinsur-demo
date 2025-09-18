@@ -441,9 +441,7 @@ export default function DashboardPage({
                                 className="text-xs text-orange-700 dark:text-orange-300 flex justify-between"
                               >
                                 <span>{policy.productName}</span>
-                                <span>
-                                  {formatDate(policy.expirationDate)}
-                                </span>
+                                <span>{formatDate(policy.expirationDate)}</span>
                               </div>
                             ))}
                           </div>
@@ -493,27 +491,15 @@ export default function DashboardPage({
                       </div>
 
                       <div className="grid grid-cols-3 gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-xs"
-                        >
+                        <Button variant="outline" size="sm" className="text-xs">
                           <Phone className="h-3 w-3 mr-1" />
                           {locale === "en" ? "Call" : "電話"}
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-xs"
-                        >
+                        <Button variant="outline" size="sm" className="text-xs">
                           <Calendar className="h-3 w-3 mr-1" />
                           {locale === "en" ? "Meet" : "會面"}
                         </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="text-xs"
-                        >
+                        <Button variant="outline" size="sm" className="text-xs">
                           {locale === "en" ? "Edit" : "編輯"}
                         </Button>
                       </div>
@@ -524,10 +510,7 @@ export default function DashboardPage({
             </div>
           </TabsContent>
 
-          <TabsContent
-            value="appointments"
-            className="space-y-4 md:space-y-6"
-          >
+          <TabsContent value="appointments" className="space-y-4 md:space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg md:text-2xl font-bold">

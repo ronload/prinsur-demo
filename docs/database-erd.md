@@ -471,33 +471,39 @@ erDiagram
 ## 主要關係說明
 
 ### 1. 用戶核心關係
+
 - **USERS** 是系統的核心，分為 consumer、agent、admin 三種類型
 - **USER_PROFILES** 儲存基本個人資料
 - **CONSUMER_PROFILES** 儲存消費者特定資料（用於保費計算）
 - **AGENT_PROFILES** 儲存業務員專業資料
 
 ### 2. 產品與公司關係
+
 - **INSURANCE_COMPANIES** 提供多個 **INSURANCE_PRODUCTS**
 - **PRODUCT_CATEGORIES** 對產品進行分類
 - **PRODUCT_PREMIUM_RULES** 定義保費計算規則
 - **PRODUCT_COVERAGE_ITEMS** 定義保障項目
 
 ### 3. 保單與理賠關係
+
 - **POLICIES** 連結消費者、業務員和產品
 - **PREMIUM_PAYMENTS** 記錄保費繳納
 - **CLAIMS** 處理理賠申請
 - **POLICY_DOCUMENTS** 和 **CLAIM_DOCUMENTS** 管理相關文件
 
 ### 4. 業務員管理關係
+
 - **AGENT_CUSTOMERS** 管理業務員與客戶關係
 - **APPOINTMENTS** 安排會面
 - **AGENT_DEALS** 記錄交易和佣金
 
 ### 5. 溝通與通知關係
+
 - **NOTIFICATIONS** 系統通知
 - **COMMUNICATION_LOGS** 溝通記錄
 
 ### 6. 分析與追蹤關係
+
 - **USER_ACTIVITY_LOGS** 用戶行為追蹤
 - **PRODUCT_INTERACTIONS** 產品互動記錄
 

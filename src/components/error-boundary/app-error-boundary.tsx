@@ -2,7 +2,13 @@
 
 import React from "react";
 import ErrorBoundary, { ErrorFallbackProps } from "../error-boundary";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RotateCcw, Shield } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -52,7 +58,11 @@ function AppErrorFallback({ error, resetError }: ErrorFallbackProps) {
               重試操作
             </Button>
 
-            <Button onClick={handleGoToDashboard} className="w-full" variant="outline">
+            <Button
+              onClick={handleGoToDashboard}
+              className="w-full"
+              variant="outline"
+            >
               <Shield className="w-4 h-4 mr-2" />
               返回應用主頁
             </Button>
@@ -64,7 +74,8 @@ function AppErrorFallback({ error, resetError }: ErrorFallbackProps) {
 
           <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
             <p className="text-sm text-blue-800 dark:text-blue-200">
-              <strong>提示：</strong>您的數據是安全的，此錯誤不會影響您的保險信息。
+              <strong>提示：</strong>
+              您的數據是安全的，此錯誤不會影響您的保險信息。
             </p>
           </div>
 
@@ -78,9 +89,5 @@ function AppErrorFallback({ error, resetError }: ErrorFallbackProps) {
 }
 
 export default function AppErrorBoundary({ children }: AppErrorBoundaryProps) {
-  return (
-    <ErrorBoundary fallback={AppErrorFallback}>
-      {children}
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary fallback={AppErrorFallback}>{children}</ErrorBoundary>;
 }

@@ -1,22 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * Enterprise Authentication Caching System
  * Provides intelligent caching for user sessions, permissions, and auth states
  */
 
-import { User } from '@/contexts/auth-context';
-import { logger } from '@/lib/monitoring/enterprise-logger';
+import { User } from "@/contexts/auth-context";
+import { logger } from "@/lib/monitoring/enterprise-logger";
 
 interface CacheEntry<T> {
   data: T;
   timestamp: number;
   ttl: number; // Time to live in milliseconds
   tags?: string[];
-}
-
-interface CacheOptions {
-  ttl: number;
-  tags?: string[];
-  compress?: boolean;
 }
 
 interface SessionCacheData {
@@ -36,17 +32,18 @@ interface PermissionCacheData {
 
 class AuthCacheSystem {
   private sessionCache: Map<string, CacheEntry<SessionCacheData>> = new Map();
-  private permissionCache: Map<string, CacheEntry<PermissionCacheData>> = new Map();
+  private permissionCache: Map<string, CacheEntry<PermissionCacheData>> =
+    new Map();
   private roleCache: Map<string, CacheEntry<string[]>> = new Map();
   private cleanupInterval: NodeJS.Timeout;
   private static instance: AuthCacheSystem;
 
   // Default TTL values (in milliseconds)
   private readonly DEFAULT_TTLS = {
-    session: 15 * 60 * 1000,      // 15 minutes
-    permission: 5 * 60 * 1000,    // 5 minutes
-    role: 30 * 60 * 1000,         // 30 minutes
-    validation: 1 * 60 * 1000,    // 1 minute
+    session: 15 * 60 * 1000, // 15 minutes
+    permission: 5 * 60 * 1000, // 5 minutes
+    role: 30 * 60 * 1000, // 30 minutes
+    validation: 1 * 60 * 1000, // 1 minute
   };
 
   static getInstance(): AuthCacheSystem {
@@ -58,31 +55,38 @@ class AuthCacheSystem {
 
   constructor() {
     // Clean up expired entries every 5 minutes
-    this.cleanupInterval = setInterval(() => {
-      this.cleanup();
-    }, 5 * 60 * 1000);
+    this.cleanupInterval = setInterval(
+      () => {
+        this.cleanup();
+      },
+      5 * 60 * 1000,
+    );
 
     // Clean up when page unloads
-    if (typeof window !== 'undefined') {
-      window.addEventListener('beforeunload', () => {
+    if (typeof window !== "undefined") {
+      window.addEventListener("beforeunload", () => {
         this.destroy();
       });
     }
   }
 
   // Session caching
-  cacheSession(userId: string, sessionData: SessionCacheData, ttl?: number): void {
+  cacheSession(
+    userId: string,
+    sessionData: SessionCacheData,
+    ttl?: number,
+  ): void {
     const cacheKey = `session_${userId}`;
     const entry: CacheEntry<SessionCacheData> = {
       data: sessionData,
       timestamp: Date.now(),
       ttl: ttl || this.DEFAULT_TTLS.session,
-      tags: ['session', `user_${userId}`],
+      tags: ["session", `user_${userId}`],
     };
 
     this.sessionCache.set(cacheKey, entry);
 
-    logger.debug('auth', 'session_cached', {
+    logger.debug("auth", "session_cached", {
       user_id: userId,
       ttl: entry.ttl,
       cache_size: this.sessionCache.size,
@@ -96,7 +100,7 @@ class AuthCacheSystem {
     if (!entry || this.isExpired(entry)) {
       if (entry) {
         this.sessionCache.delete(cacheKey);
-        logger.debug('auth', 'session_cache_expired', { user_id: userId });
+        logger.debug("auth", "session_cache_expired", { user_id: userId });
       }
       return null;
     }
@@ -104,7 +108,7 @@ class AuthCacheSystem {
     // Update last activity
     entry.data.lastActivity = Date.now();
 
-    logger.debug('auth', 'session_cache_hit', {
+    logger.debug("auth", "session_cache_hit", {
       user_id: userId,
       age_ms: Date.now() - entry.timestamp,
     });
@@ -117,7 +121,7 @@ class AuthCacheSystem {
     const deleted = this.sessionCache.delete(cacheKey);
 
     if (deleted) {
-      logger.info('auth', 'session_cache_invalidated', { user_id: userId });
+      logger.info("auth", "session_cache_invalidated", { user_id: userId });
     }
 
     // Also invalidate related permission caches
@@ -131,7 +135,7 @@ class AuthCacheSystem {
     action: string,
     allowed: boolean,
     conditions?: any,
-    ttl?: number
+    ttl?: number,
   ): void {
     const cacheKey = `perm_${userId}_${resource}_${action}`;
     const entry: CacheEntry<PermissionCacheData> = {
@@ -144,12 +148,12 @@ class AuthCacheSystem {
       },
       timestamp: Date.now(),
       ttl: ttl || this.DEFAULT_TTLS.permission,
-      tags: ['permission', `user_${userId}`, `resource_${resource}`],
+      tags: ["permission", `user_${userId}`, `resource_${resource}`],
     };
 
     this.permissionCache.set(cacheKey, entry);
 
-    logger.debug('auth', 'permission_cached', {
+    logger.debug("auth", "permission_cached", {
       user_id: userId,
       resource,
       action,
@@ -157,7 +161,11 @@ class AuthCacheSystem {
     });
   }
 
-  getPermissionFromCache(userId: string, resource: string, action: string): boolean | null {
+  getPermissionFromCache(
+    userId: string,
+    resource: string,
+    action: string,
+  ): boolean | null {
     const cacheKey = `perm_${userId}_${resource}_${action}`;
     const entry = this.permissionCache.get(cacheKey);
 
@@ -168,7 +176,7 @@ class AuthCacheSystem {
       return null;
     }
 
-    logger.debug('auth', 'permission_cache_hit', {
+    logger.debug("auth", "permission_cache_hit", {
       user_id: userId,
       resource,
       action,
@@ -185,12 +193,12 @@ class AuthCacheSystem {
       data: roles,
       timestamp: Date.now(),
       ttl: ttl || this.DEFAULT_TTLS.role,
-      tags: ['role', `user_${userId}`],
+      tags: ["role", `user_${userId}`],
     };
 
     this.roleCache.set(cacheKey, entry);
 
-    logger.debug('auth', 'roles_cached', {
+    logger.debug("auth", "roles_cached", {
       user_id: userId,
       roles: roles.length,
     });
@@ -239,7 +247,7 @@ class AuthCacheSystem {
     }
 
     if (invalidatedCount > 0) {
-      logger.info('auth', 'cache_invalidated_by_tag', {
+      logger.info("auth", "cache_invalidated_by_tag", {
         tag,
         invalidated_count: invalidatedCount,
       });
@@ -298,19 +306,23 @@ class AuthCacheSystem {
       const commonPermissions = this.getCommonPermissionsForRole(user.type);
       for (const perm of commonPermissions) {
         // This would normally query the RBAC system
-        const allowed = await this.evaluatePermission(userId, perm.resource, perm.action);
+        const allowed = await this.evaluatePermission(
+          userId,
+          perm.resource,
+          perm.action,
+        );
         this.cachePermission(userId, perm.resource, perm.action, allowed);
       }
 
-      logger.info('auth', 'cache_warmed', {
+      logger.info("auth", "cache_warmed", {
         user_id: userId,
         role: user.type,
         permissions_cached: commonPermissions.length,
       });
     } catch (error) {
-      logger.error('auth', 'cache_warm_failed', {
+      logger.error("auth", "cache_warm_failed", {
         user_id: userId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     }
   }
@@ -358,7 +370,7 @@ class AuthCacheSystem {
     cleanupCache(this.roleCache);
 
     if (cleanedCount > 0) {
-      logger.info('auth', 'cache_cleanup_completed', {
+      logger.info("auth", "cache_cleanup_completed", {
         cleaned_entries: cleanedCount,
         before_stats: beforeStats,
         after_stats: this.getStats(),
@@ -367,8 +379,9 @@ class AuthCacheSystem {
 
     // Log memory usage if it's getting high
     const memoryUsage = this.estimateMemoryUsage();
-    if (memoryUsage > 1024 * 1024) { // More than 1MB
-      logger.warn('auth', 'high_cache_memory_usage', {
+    if (memoryUsage > 1024 * 1024) {
+      // More than 1MB
+      logger.warn("auth", "high_cache_memory_usage", {
         usage_bytes: memoryUsage,
         usage_mb: Math.round(memoryUsage / 1024 / 1024),
       });
@@ -379,32 +392,41 @@ class AuthCacheSystem {
     return Date.now() - entry.timestamp > entry.ttl;
   }
 
-  private getCommonPermissionsForRole(role: string): Array<{ resource: string; action: string }> {
-    const commonPermissions: Record<string, Array<{ resource: string; action: string }>> = {
+  private getCommonPermissionsForRole(
+    role: string,
+  ): Array<{ resource: string; action: string }> {
+    const commonPermissions: Record<
+      string,
+      Array<{ resource: string; action: string }>
+    > = {
       consumer: [
-        { resource: 'policy', action: 'view' },
-        { resource: 'claim', action: 'create' },
-        { resource: 'profile', action: 'edit' },
+        { resource: "policy", action: "view" },
+        { resource: "claim", action: "create" },
+        { resource: "profile", action: "edit" },
       ],
       agent: [
-        { resource: 'client', action: 'view' },
-        { resource: 'policy', action: 'manage' },
-        { resource: 'claim', action: 'process' },
+        { resource: "client", action: "view" },
+        { resource: "policy", action: "manage" },
+        { resource: "claim", action: "process" },
       ],
       manager: [
-        { resource: 'report', action: 'view' },
-        { resource: 'agent', action: 'manage' },
+        { resource: "report", action: "view" },
+        { resource: "agent", action: "manage" },
       ],
       admin: [
-        { resource: 'system', action: 'configure' },
-        { resource: 'user', action: 'manage' },
+        { resource: "system", action: "configure" },
+        { resource: "user", action: "manage" },
       ],
     };
 
     return commonPermissions[role] || [];
   }
 
-  private async evaluatePermission(userId: string, resource: string, action: string): Promise<boolean> {
+  private async evaluatePermission(
+    userId: string,
+    resource: string,
+    action: string,
+  ): Promise<boolean> {
     // This would integrate with your RBAC system
     // For demo purposes, return true for basic permissions
     return true;
@@ -425,8 +447,10 @@ class AuthCacheSystem {
 export const authCache = AuthCacheSystem.getInstance();
 
 // Convenience functions
-export const cacheUserSession = (userId: string, sessionData: SessionCacheData) =>
-  authCache.cacheSession(userId, sessionData);
+export const cacheUserSession = (
+  userId: string,
+  sessionData: SessionCacheData,
+) => authCache.cacheSession(userId, sessionData);
 
 export const getUserSession = (userId: string) =>
   authCache.getSessionFromCache(userId);
@@ -434,12 +458,15 @@ export const getUserSession = (userId: string) =>
 export const invalidateUserCache = (userId: string) =>
   authCache.invalidateSession(userId);
 
-export const checkCachedPermission = (userId: string, resource: string, action: string) =>
-  authCache.getPermissionFromCache(userId, resource, action);
+export const checkCachedPermission = (
+  userId: string,
+  resource: string,
+  action: string,
+) => authCache.getPermissionFromCache(userId, resource, action);
 
 export const cachePermissionResult = (
   userId: string,
   resource: string,
   action: string,
-  allowed: boolean
+  allowed: boolean,
 ) => authCache.cachePermission(userId, resource, action, allowed);

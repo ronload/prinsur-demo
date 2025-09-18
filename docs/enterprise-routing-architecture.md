@@ -33,7 +33,7 @@
 │   └── /verify
 ├── /public/               ← 公開內容
 │   ├── /products          ← 產品展示
-│   ├── /agents            ← 代理商目錄
+│   ├── /agents            ← 業務員目錄
 │   └── /about
 ├── /app/                  ← 認證後應用區域
 │   ├── /dashboard         ← 角色化儀表板
@@ -43,9 +43,9 @@
 │   └── /settings          ← 應用設定
 ├── /workspace/            ← 專業工作區域 (Agent 專用)
 │   ├── /clients           ← 客戶管理
-│   ├── /sales             ← 銷售管理
-│   ├── /commissions       ← 佣金管理
-│   └── /reports           ← 業務報表
+│   ├── /sales             ← 銷售管理(待移除)
+│   ├── /commissions       ← 佣金管理(待移除)
+│   └── /reports           ← 業務報表(待移除)
 └── /admin/                ← 管理員區域
     ├── /users             ← 用戶管理
     ├── /products          ← 產品管理

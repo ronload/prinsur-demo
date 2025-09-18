@@ -51,9 +51,9 @@ export default function LoginPage() {
       if (success) {
         // 登录成功，跳转到对应的角色专区
         if (userType === "consumer") {
-          router.push(`/${locale}/consumer/`);
+          router.push(`/${locale}/public/products`);
         } else {
-          router.push(`/${locale}/agent/dashboard`);
+          router.push(`/${locale}/app/dashboard`);
         }
       } else {
         setError(
@@ -252,7 +252,7 @@ export default function LoginPage() {
                       ? "Don't have an account? "
                       : "還沒有帳戶？ "}
                     <Link
-                      href={`/${locale}/register?tab=consumer`}
+                      href={`/${locale}/auth/register?tab=consumer`}
                       className="text-primary hover:underline"
                     >
                       {locale === "en" ? "Sign up" : "立即註冊"}
@@ -395,7 +395,7 @@ export default function LoginPage() {
                   <div className="text-center text-sm text-muted-foreground">
                     {locale === "en" ? "New agent? " : "新業務員？ "}
                     <Link
-                      href={`/${locale}/register?tab=agent`}
+                      href={`/${locale}/auth/register?tab=agent`}
                       className="text-primary hover:underline"
                     >
                       {locale === "en" ? "Apply now" : "立即申請"}

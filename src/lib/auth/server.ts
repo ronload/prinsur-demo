@@ -32,7 +32,7 @@ export async function requireAuth(locale: string): Promise<User> {
   const session = await getServerSession();
 
   if (!session?.user) {
-    redirect(`/${locale}/login`);
+    redirect(`/${locale}/auth/login`);
   }
 
   return session.user;

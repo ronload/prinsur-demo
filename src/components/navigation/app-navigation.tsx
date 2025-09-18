@@ -31,7 +31,7 @@ export default function AppNavigation({ locale }: AppNavigationProps) {
 
   const handleLogout = () => {
     logout();
-    router.push(`/${locale}/login`);
+    router.push(`/${locale}/auth/login`);
   };
 
   const handleNavigation = (path: string) => {

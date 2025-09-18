@@ -18,7 +18,7 @@ export default function UnauthorizedPage() {
       if (user.type === "consumer") {
         router.push(`/${locale}/consumer`);
       } else if (["agent", "manager", "admin"].includes(user.type)) {
-        router.push(`/${locale}/agent/dashboard`);
+        router.push(`/${locale}/app/dashboard`);
       } else {
         router.push(`/${locale}/`);
       }
@@ -29,7 +29,7 @@ export default function UnauthorizedPage() {
 
   const handleLogout = () => {
     logout();
-    router.push(`/${locale}/login`);
+    router.push(`/${locale}/auth/login`);
   };
 
   return (

@@ -601,7 +601,7 @@ export default function InsurancePage({
                         <Button
                           variant="outline"
                           className="w-full"
-                          onClick={() => router.push(`/${locale}/login`)}
+                          onClick={() => router.push(`/${locale}/auth/login`)}
                         >
                           {locale === "en"
                             ? "Login for Premium Estimate"

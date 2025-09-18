@@ -117,12 +117,12 @@ export function Header() {
           label: currentLocale === "en" ? "Insurance" : "保險商品",
         },
         {
-          href: `/${currentLocale}/app/policies`,
-          label: currentLocale === "en" ? "My Policies" : "我的保單",
-        },
-        {
           href: `/${currentLocale}/public/agents`,
           label: currentLocale === "en" ? "Find Agents" : "尋找業務員",
+        },
+        {
+          href: `/${currentLocale}/app/policies`,
+          label: currentLocale === "en" ? "My Policies" : "我的保單",
         },
       ];
     } else {
@@ -251,7 +251,7 @@ export function Header() {
                   <DropdownMenuSeparator />
                   {user.type === "agent" && (
                     <DropdownMenuItem asChild>
-                      <Link href={`/${currentLocale}/agent/dashboard`}>
+                      <Link href={`/${currentLocale}/app/dashboard`}>
                         <Settings className="mr-2 h-4 w-4" />
                         {currentLocale === "en" ? "Dashboard" : "工作台"}
                       </Link>
@@ -278,7 +278,7 @@ export function Header() {
               </DropdownMenu>
             ) : (
               <Button variant="ghost" size="sm" asChild>
-                <Link href={`/${currentLocale}/login`}>
+                <Link href={`/${currentLocale}/auth/login`}>
                   <User className="h-4 w-4 mr-2" />
                   {currentLocale === "en" ? "Sign in" : "登入"}
                 </Link>

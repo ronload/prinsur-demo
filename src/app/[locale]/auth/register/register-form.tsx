@@ -116,7 +116,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
       {/* 返回登入頁面按鈕 */}
       <div className="pt-4 pb-6">
         <Link
-          href={`/${locale}/login`}
+          href={`/${locale}/auth/login`}
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
@@ -394,7 +394,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                   ? "Already have an account? "
                   : "已經有帳戶了？ "}
                 <Link
-                  href={`/${locale}/login`}
+                  href={`/${locale}/auth/login`}
                   className="text-primary hover:underline"
                 >
                   {locale === "en" ? "Sign in" : "立即登入"}
@@ -814,7 +814,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                   ? "Already have an account? "
                   : "已經有帳戶了？ "}
                 <Link
-                  href={`/${locale}/login`}
+                  href={`/${locale}/auth/login`}
                   className="text-primary hover:underline"
                 >
                   {locale === "en" ? "Sign in" : "立即登入"}

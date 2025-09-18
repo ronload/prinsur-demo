@@ -11,9 +11,9 @@ function getDefaultPathForRole(userType: string, locale: string): string | null 
       return `/${locale}/consumer`;
     case "agent":
     case "manager":
-      return `/${locale}/agent/dashboard`;
+      return `/${locale}/app/dashboard`;
     case "admin":
-      return `/${locale}/agent/dashboard`; // Admin can access agent features
+      return `/${locale}/app/dashboard`; // Admin can access agent features
     default:
       return null;
   }
@@ -63,9 +63,9 @@ export function RoleGuard({
       logAccessAttempt({
         attemptedPath: pathname,
         result: "redirected",
-        redirectTo: `/${locale}/login`,
+        redirectTo: `/${locale}/auth/login`,
       });
-      router.push(`/${locale}/login`);
+      router.push(`/${locale}/auth/login`);
       return;
     }
 

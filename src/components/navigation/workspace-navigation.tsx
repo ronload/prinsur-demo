@@ -44,7 +44,7 @@ export default function WorkspaceNavigation({ locale }: WorkspaceNavigationProps
 
   const handleLogout = () => {
     logout();
-    router.push(`/${locale}/login`);
+    router.push(`/${locale}/auth/login`);
   };
 
   const handleNavigation = (path: string) => {

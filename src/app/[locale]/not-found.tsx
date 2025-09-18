@@ -48,7 +48,7 @@ export default function NotFound() {
               您可能在尋找：
             </h3>
             <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-              <li>• <Link href="/zh-TW/login" className="hover:underline">登入頁面</Link></li>
+              <li>• <Link href="/zh-TW/auth/login" className="hover:underline">登入頁面</Link></li>
               <li>• <Link href="/zh-TW/app/dashboard" className="hover:underline">用戶儀表板</Link></li>
               <li>• <Link href="/zh-TW/workspace/dashboard" className="hover:underline">企業工作台</Link></li>
             </ul>

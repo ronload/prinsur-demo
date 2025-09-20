@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ChevronDown, Globe } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,34 +13,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export function LanguageToggle() {
-  const pathname = usePathname();
-  const router = useRouter();
   const [mounted, setMounted] = React.useState(false);
-  const [isChanging, setIsChanging] = React.useState(false);
-
-  // 直接從 pathname 獲取當前語言，避免狀態競爭
-  const currentLocale = React.useMemo(() => {
-    return pathname.split("/")[1] || "zh-TW";
-  }, [pathname]);
+  const [currentLocale, setCurrentLocale] = React.useState("zh-TW");
 
   React.useEffect(() => {
     setMounted(true);
+    // 從瀏覽器 URL 獲取當前語言
+    if (typeof window !== "undefined") {
+      const path = window.location.pathname;
+      const locale = path.split("/")[1];
+      if (locale === "en" || locale === "zh-TW") {
+        setCurrentLocale(locale);
+      }
+    }
   }, []);
 
-  const handleLanguageChange = React.useCallback((locale: string) => {
-    if (isChanging || locale === currentLocale) return;
-
-    setIsChanging(true);
-    const pathWithoutLocale = pathname.replace(/^\/(zh-TW|en)/, "") || "/";
-    const newUrl = `/${locale}${pathWithoutLocale === "/" ? "" : pathWithoutLocale}`;
-
-    router.push(newUrl);
-
-    // 防止快速連續點擊
-    setTimeout(() => {
-      setIsChanging(false);
-    }, 500);
-  }, [pathname, router, currentLocale, isChanging]);
+  // 最簡單的語言切換：直接跳轉到對應語言的首頁
+  const handleLanguageChange = (locale: string) => {
+    if (typeof window !== "undefined") {
+      window.location.href = `/${locale}`;
+    }
+  };
 
   const getCurrentLanguageLabel = () =>
     currentLocale === "en" ? "English" : "中文";
@@ -77,7 +70,7 @@ export function LanguageToggle() {
       <DropdownMenuContent align="end">
         <DropdownMenuItem
           onClick={() => handleLanguageChange("zh-TW")}
-          disabled={isChanging || currentLocale === "zh-TW"}
+          disabled={currentLocale === "zh-TW"}
           className="w-full cursor-pointer"
         >
           {/* <span className="mr-2">🇹🇼</span> */}
@@ -85,7 +78,7 @@ export function LanguageToggle() {
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleLanguageChange("en")}
-          disabled={isChanging || currentLocale === "en"}
+          disabled={currentLocale === "en"}
           className="w-full cursor-pointer"
         >
           {/* <span className="mr-2">🇺🇸</span> */}

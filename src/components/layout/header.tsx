@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Menu, User, LogOut, Settings } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/sheet";
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/auth-context";
+import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface MobileNavProps {
@@ -33,7 +34,7 @@ interface MobileNavProps {
 
 function MobileNav({ items, onItemClick }: MobileNavProps) {
   const pathname = usePathname();
-  const currentLocale = pathname.startsWith("/en") ? "en" : "zh-TW";
+  const currentLocale = useLocale();
 
   return (
     <div className="flex flex-col space-y-2">
@@ -79,7 +80,7 @@ export function Header() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
 
-  // 直接從 pathname 計算，避免狀態競爭
+  // 使用 useMemo 穩定地計算語言，避免競爭條件
   const currentLocale = useMemo(() => {
     return pathname.split("/")[1] || "zh-TW";
   }, [pathname]);

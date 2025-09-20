@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 
@@ -56,7 +56,10 @@ export function RoleGuard({
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const locale = pathname.split("/")[1] || "zh-TW";
+
+  const locale = useMemo(() => {
+    return pathname.split("/")[1] || "zh-TW";
+  }, [pathname]);
 
   useEffect(() => {
     if (isLoading) return; // 等待认证状态加载

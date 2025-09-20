@@ -28,26 +28,34 @@
 ### 路由層級設計
 
 ```
+**BREAKING CHANGE**
+
+Before:
+/                          ← 公開入口 (Landing)
+├── /consumer
+│   ├── /insurance
+│   ├── /policies
+│   ├── /agents
+└── /agent
+│   ├── /dashboard
+│   ├── /...
+│   ├── /...
+......
+
+After:
 /                          ← 公開入口 (Landing)
 ├── /auth/                 ← 認證模組
 │   ├── /login
 │   ├── /register
-│   └── /verify
 ├── /public/               ← 公開內容
 │   ├── /products          ← 產品展示
 │   ├── /agents            ← 業務員目錄
-│   └── /about
 ├── /app/                  ← 認證後應用區域
 │   ├── /dashboard         ← 角色化儀表板
 │   ├── /policies          ← 保單管理
-│   ├── /claims            ← 理賠管理
 │   ├── /profile           ← 個人資料
-│   └── /settings          ← 應用設定
 ├── /workspace/            ← 專業工作區域 (Agent 專用)
 │   ├── /clients           ← 客戶管理
-│   ├── /sales             ← 銷售管理(待移除)
-│   ├── /commissions       ← 佣金管理(待移除)
-│   └── /reports           ← 業務報表(待移除)
 └── /admin/                ← 管理員區域
     ├── /users             ← 用戶管理
     ├── /products          ← 產品管理

@@ -27,10 +27,13 @@ export function LanguageToggle() {
     }
   }, []);
 
-  // 最簡單的語言切換：直接跳轉到對應語言的首頁
+  // 語言切換：保持在當前頁面，只更換語言前綴
   const handleLanguageChange = (locale: string) => {
     if (typeof window !== "undefined") {
-      window.location.href = `/${locale}`;
+      const currentPath = window.location.pathname;
+      const pathWithoutLocale = currentPath.replace(/^\/(zh-TW|en)/, "") || "/";
+      const newUrl = `/${locale}${pathWithoutLocale}`;
+      window.location.href = newUrl;
     }
   };
 

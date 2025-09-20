@@ -19,7 +19,9 @@ interface AppErrorBoundaryProps {
 
 function AppErrorFallback({ error, resetError }: ErrorFallbackProps) {
   const pathname = usePathname();
-  const locale = pathname.split("/")[1] || "zh-TW";
+  const locale = React.useMemo(() => {
+    return pathname.split("/")[1] || "zh-TW";
+  }, [pathname]);
 
   const handleGoToDashboard = () => {
     window.location.href = `/${locale}/app/dashboard`;

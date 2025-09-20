@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Menu, User, LogOut, Settings } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,9 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/auth-context";
+import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
 
 interface MobileNavProps {
@@ -33,7 +34,7 @@ interface MobileNavProps {
 
 function MobileNav({ items, onItemClick }: MobileNavProps) {
   const pathname = usePathname();
-  const currentLocale = pathname.startsWith("/en") ? "en" : "zh-TW";
+  const currentLocale = useLocale();
 
   return (
     <div className="flex flex-col space-y-2">
@@ -75,18 +76,18 @@ function MobileNav({ items, onItemClick }: MobileNavProps) {
 export function Header() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { user, logout } = useAuth();
   const pathname = usePathname();
-  const localeFromPath = pathname.split("/")[1] || "zh-TW";
-  const [currentLocale, setCurrentLocale] = useState(localeFromPath);
+
+  // 使用 useMemo 穩定地計算語言，避免競爭條件
+  const currentLocale = useMemo(() => {
+    return pathname.split("/")[1] || "zh-TW";
+  }, [pathname]);
 
   useEffect(() => {
-    const path = pathname;
-    const newLocale = path.split("/")[1] || "zh-TW";
-    if (newLocale !== currentLocale) {
-      setCurrentLocale(newLocale);
-    }
-  }, [pathname, currentLocale]);
+    setMounted(true);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -141,6 +142,42 @@ export function Header() {
   };
 
   const navigationItems = getNavigationItems();
+
+  // 防止 hydration 不一致，在客戶端掛載前使用默認語言
+  if (!mounted) {
+    return (
+      <header
+        className="fixed top-0 left-0 right-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform"
+        style={{
+          transform: "translateZ(0)",
+          minHeight: "56px",
+          height: "56px",
+        }}
+      >
+        <div className="container flex h-14 items-center">
+          <div className="mr-6 hidden md:flex">
+            <Link href="/zh-TW" className="flex items-center">
+              <Image
+                src="/brand/logo.png"
+                alt="Prinsur"
+                width={100}
+                height={28}
+                className="h-7 w-auto dark:invert"
+              />
+            </Link>
+          </div>
+          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
+            <Link href="/zh-TW/public/products">保險商品</Link>
+            <Link href="/zh-TW/public/agents">尋找業務員</Link>
+          </nav>
+          <div className="flex flex-1 items-center justify-end space-x-2">
+            <ThemeToggle />
+            <LanguageToggle />
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header

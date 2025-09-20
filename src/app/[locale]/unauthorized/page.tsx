@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -16,7 +17,9 @@ export default function UnauthorizedPage() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const locale = pathname.split("/")[1] || "zh-TW";
+  const locale = React.useMemo(() => {
+    return pathname.split("/")[1] || "zh-TW";
+  }, [pathname]);
 
   const handleGoHome = () => {
     if (user) {

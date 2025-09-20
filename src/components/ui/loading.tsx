@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { BanterLoader } from "./banter-loader";
 import { usePathname } from "next/navigation";
 
@@ -17,7 +18,9 @@ export function Loading({
   color,
 }: LoadingProps) {
   const pathname = usePathname();
-  const locale = pathname.split("/")[1] || "zh-TW";
+  const locale = React.useMemo(() => {
+    return pathname.split("/")[1] || "zh-TW";
+  }, [pathname]);
   const defaultMessage = locale === "en" ? "Loading..." : "載入中...";
   const loadingMessage = message || defaultMessage;
   const content = (
@@ -88,7 +91,9 @@ export function Loading({
 // 頁面切換時的 Loading 組件
 export function PageLoading() {
   const pathname = usePathname();
-  const locale = pathname.split("/")[1] || "zh-TW";
+  const locale = React.useMemo(() => {
+    return pathname.split("/")[1] || "zh-TW";
+  }, [pathname]);
   const message = locale === "en" ? "Loading..." : "載入中...";
 
   return <Loading message={message} size="lg" fullScreen={true} />;
@@ -97,7 +102,9 @@ export function PageLoading() {
 // 搜尋資料時的 Loading 組件
 export function SearchLoading() {
   const pathname = usePathname();
-  const locale = pathname.split("/")[1] || "zh-TW";
+  const locale = React.useMemo(() => {
+    return pathname.split("/")[1] || "zh-TW";
+  }, [pathname]);
   const message = locale === "en" ? "Searching..." : "搜尋中...";
 
   return <Loading message={message} size="md" fullScreen={false} />;
@@ -106,7 +113,9 @@ export function SearchLoading() {
 // 一般內容載入的 Loading 組件
 export function ContentLoading() {
   const pathname = usePathname();
-  const locale = pathname.split("/")[1] || "zh-TW";
+  const locale = React.useMemo(() => {
+    return pathname.split("/")[1] || "zh-TW";
+  }, [pathname]);
   const message = locale === "en" ? "Loading data..." : "載入資料中...";
 
   return <Loading message={message} size="sm" fullScreen={false} />;

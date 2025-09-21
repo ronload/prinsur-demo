@@ -681,7 +681,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                     rows={4}
                   />
                 </div>
-              </div>
+              {/* </div> */}
 
               {/* 密碼設定 */}
               <div className="space-y-4 pt-4">

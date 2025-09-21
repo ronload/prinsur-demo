@@ -188,10 +188,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
         }
         // Fall through to default if no user location
         return filtered.sort((a, b) => {
-          if (a.rating !== b.rating) {
-            return b.rating - a.rating;
-          }
-          return b.experience - a.experience;
+          return b.rating - a.rating;
         });
 
       case "rating_high_to_low":
@@ -325,7 +322,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
 
           {/* Filter Controls */}
           {!isFiltersCollapsed && (
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 animate-in slide-in-from-top-2 duration-200">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 animate-in slide-in-from-top-2 duration-200">
               <div>
                 <Label htmlFor="specialty" className="text-sm font-normal">
                   {locale === "en" ? "Specialty" : "專業領域"}
@@ -457,7 +454,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="md:hidden">
+              <div className="col-span-2 md:hidden">
                 <Label className="text-sm font-normal mb-2 text-transparent">
                   .
                 </Label>

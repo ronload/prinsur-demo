@@ -44,7 +44,6 @@ interface AgentsPageProps {
 interface AgentFilter {
   specialty?: InsuranceType;
   minRating?: number;
-  minExperience?: number;
   language?: string;
   location?: string;
 }
@@ -70,14 +69,6 @@ const AGENT_SORT_OPTIONS: AgentSortOption[] = [
   {
     id: "rating_low_to_high",
     label: { "zh-TW": "評分：低到高", en: "Rating: Increase" },
-  },
-  {
-    id: "experience_high_to_low",
-    label: { "zh-TW": "年資：高到低", en: "Experience: Decrease" },
-  },
-  {
-    id: "experience_low_to_high",
-    label: { "zh-TW": "年資：低到高", en: "Experience: Increase" },
   },
   {
     id: "reviews_high_to_low",
@@ -181,11 +172,6 @@ export default function AgentsPage({ params }: AgentsPageProps) {
         return false;
       }
 
-      // Experience filter
-      if (filter.minExperience && agent.experience < filter.minExperience) {
-        return false;
-      }
-
       // Language filter
       if (filter.language && !agent.languages.includes(filter.language)) {
         return false;
@@ -222,22 +208,6 @@ export default function AgentsPage({ params }: AgentsPageProps) {
             return a.rating - b.rating;
           }
           return a.reviewCount - b.reviewCount;
-        });
-
-      case "experience_high_to_low":
-        return filtered.sort((a, b) => {
-          if (a.experience !== b.experience) {
-            return b.experience - a.experience;
-          }
-          return b.rating - a.rating;
-        });
-
-      case "experience_low_to_high":
-        return filtered.sort((a, b) => {
-          if (a.experience !== b.experience) {
-            return a.experience - b.experience;
-          }
-          return b.rating - a.rating;
         });
 
       case "reviews_high_to_low":
@@ -279,7 +249,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
           if (a.rating !== b.rating) {
             return b.rating - a.rating;
           }
-          return b.experience - a.experience;
+          return 0;
         });
     }
   }, [searchTerm, filter, sortBy, userLocation, locale]);
@@ -423,24 +393,6 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                 />
               </div>
 
-              <div>
-                <Label htmlFor="min-experience" className="text-sm font-normal">
-                  {locale === "en" ? "Min Experience" : "最低年資"}
-                </Label>
-                <Input
-                  id="min-experience"
-                  type="number"
-                  min="0"
-                  placeholder={locale === "en" ? "Years" : "年資"}
-                  value={filter.minExperience || ""}
-                  onChange={(e) =>
-                    handleFilterChange(
-                      "minExperience",
-                      parseInt(e.target.value, 10) || undefined,
-                    )
-                  }
-                />
-              </div>
 
               <div>
                 <Label htmlFor="language" className="text-sm font-normal">
@@ -629,14 +581,6 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                     );
                   })}
                 </div>
-              </div>
-
-              {/* Experience */}
-              <div className="text-sm">
-                <span className="font-medium">
-                  {locale === "en" ? "Experience:" : "經驗："}
-                </span>
-                {agent.experience} {locale === "en" ? "years" : "年"}
               </div>
 
               {/* Specialties */}

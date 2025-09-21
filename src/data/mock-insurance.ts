@@ -784,7 +784,6 @@ const generateAgents = (): Agent[] => {
         district,
       },
       serviceAreas: agentServiceAreas,
-      experience: Math.floor(seededRandom() * 20 + 1), // 1-20 years
       languages: languages[Math.floor(seededRandom() * languages.length)],
       contactInfo: {
         phone: `09${Math.floor(seededRandom() * 9) + 1}${Math.floor(seededRandom() * 9)}-${Math.floor(seededRandom() * 900 + 100)}-${Math.floor(seededRandom() * 900 + 100)}`,

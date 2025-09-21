@@ -76,7 +76,6 @@ export interface Agent {
   };
   serviceAreas: string[];
   avatar?: string;
-  experience: number;
   languages: string[];
   contactInfo: {
     phone: string;

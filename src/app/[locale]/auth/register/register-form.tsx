@@ -77,7 +77,6 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
     gender: "",
     licenseNumber: "",
     company: "",
-    experience: "",
     specialties: "",
     education: "",
     certifications: "",
@@ -569,39 +568,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="agent-experience">
-                      {locale === "en" ? "Years of Experience" : "從業年資"}
-                    </Label>
-                    <Select
-                      value={agentForm.experience}
-                      onValueChange={(value) =>
-                        handleAgentInputChange("experience", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={locale === "en" ? "Experience" : "年資"}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="0-1">
-                          {locale === "en" ? "0-1 years" : "0-1年"}
-                        </SelectItem>
-                        <SelectItem value="2-5">
-                          {locale === "en" ? "2-5 years" : "2-5年"}
-                        </SelectItem>
-                        <SelectItem value="6-10">
-                          {locale === "en" ? "6-10 years" : "6-10年"}
-                        </SelectItem>
-                        <SelectItem value="10+">
-                          {locale === "en" ? "10+ years" : "10年以上"}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
+                <div className="space-y-2">
                     <Label htmlFor="agent-education">
                       {locale === "en" ? "Education Level" : "教育程度"}
                     </Label>

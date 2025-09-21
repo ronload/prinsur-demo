@@ -390,7 +390,6 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                 />
               </div>
 
-
               <div>
                 <Label htmlFor="language" className="text-sm font-normal">
                   {locale === "en" ? "Language" : "語言"}

@@ -156,7 +156,7 @@ export default function Home({ params }: HomeProps) {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(
-        `/${locale}/consumer/insurance?search=${encodeURIComponent(searchQuery.trim())}`,
+        `/${locale}/public/products?search=${encodeURIComponent(searchQuery.trim())}`,
       );
     }
   };

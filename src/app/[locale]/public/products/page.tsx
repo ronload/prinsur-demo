@@ -659,7 +659,9 @@ export default function InsurancePage({
 
       {filteredAndSortedProducts.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-6xl mb-4">🔍</div>
+          <div className="flex justify-center mb-4">
+            <Search className="h-16 w-16 text-muted-foreground/50" />
+          </div>
           <h3 className="text-lg font-semibold mb-2">
             {locale === "en"
               ? "No insurance products found"

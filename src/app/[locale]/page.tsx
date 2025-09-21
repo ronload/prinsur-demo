@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { GridPattern } from "@/components/ui/GridPattern";
 import TextType from "@/components/ui/TextType";
+import { SearchWithSuggestions } from "@/components/ui/search-with-suggestions";
 import "@/components/ui/TextType.css";
 import {
   useRevealAnimation,
@@ -152,11 +152,10 @@ export default function Home({ params }: HomeProps) {
     return basicFieldsMissing;
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
+  const handleSearch = (searchTerm: string) => {
+    if (searchTerm.trim()) {
       router.push(
-        `/${locale}/consumer/insurance?search=${encodeURIComponent(searchQuery.trim())}`,
+        `/${locale}/public/products?search=${encodeURIComponent(searchTerm.trim())}`,
       );
     }
   };
@@ -215,22 +214,18 @@ export default function Home({ params }: HomeProps) {
             </div>
             <div className="flex flex-col items-center justify-center space-y-8 w-full">
               <div className="w-full max-w-4xl px-2 sm:px-8">
-                <form onSubmit={handleSearch}>
-                  <div className="relative">
-                    <Search className="absolute left-4 top-[18px] h-5 w-5 text-muted-foreground z-10" />
-                    <Input
-                      type="text"
-                      placeholder={
-                        locale === "en"
-                          ? "e.g. life insurance, travel insurance"
-                          : "例如：壽險、旅平險"
-                      }
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="h-14 pl-12 pr-4 text-base sm:text-lg border-2 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 rounded-full placeholder:text-sm sm:placeholder:text-base bg-white/5 backdrop-blur-sm border-gray-300 dark:border-white/10"
-                    />
-                  </div>
-                </form>
+                <SearchWithSuggestions
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  onSubmit={handleSearch}
+                  placeholder={
+                    locale === "en"
+                      ? "e.g. life insurance, travel insurance"
+                      : "例如：壽險、旅平險"
+                  }
+                  locale={locale}
+                  variant="homepage"
+                />
               </div>
               {mounted && !isLoading && !user && (
                 <div

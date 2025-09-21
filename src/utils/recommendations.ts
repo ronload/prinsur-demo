@@ -191,8 +191,8 @@ export function sortAgentsByLocation(
       return b.rating - a.rating;
     }
 
-    // Tertiary sort: experience (higher is better)
-    return b.experience - a.experience;
+    // If ratings are equal, maintain current order
+    return 0;
   });
 }
 

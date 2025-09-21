@@ -29,7 +29,6 @@ interface AgentProfileProps {
 
 interface AgentProfile {
   licenseNumber: string;
-  experience: number;
   serviceCategories: string[];
   insuranceCompanies: string[];
   specialties: string[];
@@ -112,7 +111,6 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [profile, setProfile] = useState<AgentProfile>({
     licenseNumber: "",
-    experience: 0,
     serviceCategories: [],
     insuranceCompanies: [],
     specialties: [],
@@ -247,25 +245,6 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                     placeholder={
                       locale === "en" ? "Enter license number" : "輸入執照號碼"
                     }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="experience">
-                    {locale === "en" ? "Years of Experience" : "工作經驗（年）"}
-                  </Label>
-                  <Input
-                    id="experience"
-                    type="number"
-                    min="0"
-                    max="50"
-                    value={profile.experience || ""}
-                    onChange={(e) =>
-                      setProfile((prev) => ({
-                        ...prev,
-                        experience: parseInt(e.target.value) || 0,
-                      }))
-                    }
-                    placeholder={locale === "en" ? "Years" : "年"}
                   />
                 </div>
               </div>

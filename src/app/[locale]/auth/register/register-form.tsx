@@ -77,7 +77,6 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
     gender: "",
     licenseNumber: "",
     company: "",
-    experience: "",
     specialties: "",
     education: "",
     certifications: "",
@@ -569,152 +568,115 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="agent-experience">
-                      {locale === "en" ? "Years of Experience" : "從業年資"}
-                    </Label>
-                    <Select
-                      value={agentForm.experience}
-                      onValueChange={(value) =>
-                        handleAgentInputChange("experience", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={locale === "en" ? "Experience" : "年資"}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="0-1">
-                          {locale === "en" ? "0-1 years" : "0-1年"}
-                        </SelectItem>
-                        <SelectItem value="2-5">
-                          {locale === "en" ? "2-5 years" : "2-5年"}
-                        </SelectItem>
-                        <SelectItem value="6-10">
-                          {locale === "en" ? "6-10 years" : "6-10年"}
-                        </SelectItem>
-                        <SelectItem value="10+">
-                          {locale === "en" ? "10+ years" : "10年以上"}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="agent-education">
-                      {locale === "en" ? "Education Level" : "教育程度"}
-                    </Label>
-                    <Select
-                      value={agentForm.education}
-                      onValueChange={(value) =>
-                        handleAgentInputChange("education", value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue
-                          placeholder={
-                            locale === "en" ? "Education" : "教育程度"
-                          }
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="high-school">
-                          {locale === "en" ? "High School" : "高中"}
-                        </SelectItem>
-                        <SelectItem value="bachelor">
-                          {locale === "en" ? "Bachelor's Degree" : "學士學位"}
-                        </SelectItem>
-                        <SelectItem value="master">
-                          {locale === "en" ? "Master's Degree" : "碩士學位"}
-                        </SelectItem>
-                        <SelectItem value="phd">
-                          {locale === "en" ? "PhD" : "博士學位"}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
                 <div className="space-y-2">
-                  <Label htmlFor="agent-specialties">
-                    {locale === "en" ? "Specialties" : "專業領域"}
+                  <Label htmlFor="agent-education">
+                    {locale === "en" ? "Education Level" : "教育程度"}
                   </Label>
-                  <Textarea
-                    id="agent-specialties"
-                    placeholder={
-                      locale === "en"
-                        ? "List your insurance specialties (e.g., Life Insurance, Health Insurance, Property Insurance)"
-                        : "請列出您的保險專業領域（例如：壽險、健康險、財產險）"
+                  <Select
+                    value={agentForm.education}
+                    onValueChange={(value) =>
+                      handleAgentInputChange("education", value)
                     }
-                    value={agentForm.specialties}
-                    onChange={(e) =>
-                      handleAgentInputChange("specialties", e.target.value)
-                    }
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="agent-certifications">
-                    {locale === "en" ? "Certifications" : "專業證照"}
-                  </Label>
-                  <Textarea
-                    id="agent-certifications"
-                    placeholder={
-                      locale === "en"
-                        ? "List your professional certifications and qualifications"
-                        : "請列出您的專業證照和資格"
-                    }
-                    value={agentForm.certifications}
-                    onChange={(e) =>
-                      handleAgentInputChange("certifications", e.target.value)
-                    }
-                    rows={3}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="agent-businessAddress">
-                    {locale === "en" ? "Business Address" : "營業地址"} *
-                  </Label>
-                  <Textarea
-                    id="agent-businessAddress"
-                    placeholder={
-                      locale === "en"
-                        ? "Enter your business address"
-                        : "請輸入您的營業地址"
-                    }
-                    value={agentForm.businessAddress}
-                    onChange={(e) =>
-                      handleAgentInputChange("businessAddress", e.target.value)
-                    }
-                    rows={2}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="agent-personalStatement">
-                    {locale === "en" ? "Personal Statement" : "個人簡介"}
-                  </Label>
-                  <Textarea
-                    id="agent-personalStatement"
-                    placeholder={
-                      locale === "en"
-                        ? "Tell us about yourself and why you want to join our platform"
-                        : "請介紹您自己以及為什麼想要加入我們的平台"
-                    }
-                    value={agentForm.personalStatement}
-                    onChange={(e) =>
-                      handleAgentInputChange(
-                        "personalStatement",
-                        e.target.value,
-                      )
-                    }
-                    rows={4}
-                  />
+                  >
+                    <SelectTrigger>
+                      <SelectValue
+                        placeholder={locale === "en" ? "Education" : "教育程度"}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high-school">
+                        {locale === "en" ? "High School" : "高中"}
+                      </SelectItem>
+                      <SelectItem value="bachelor">
+                        {locale === "en" ? "Bachelor's Degree" : "學士學位"}
+                      </SelectItem>
+                      <SelectItem value="master">
+                        {locale === "en" ? "Master's Degree" : "碩士學位"}
+                      </SelectItem>
+                      <SelectItem value="phd">
+                        {locale === "en" ? "PhD" : "博士學位"}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="agent-specialties">
+                  {locale === "en" ? "Specialties" : "專業領域"}
+                </Label>
+                <Textarea
+                  id="agent-specialties"
+                  placeholder={
+                    locale === "en"
+                      ? "List your insurance specialties (e.g., Life Insurance, Health Insurance, Property Insurance)"
+                      : "請列出您的保險專業領域（例如：壽險、健康險、財產險）"
+                  }
+                  value={agentForm.specialties}
+                  onChange={(e) =>
+                    handleAgentInputChange("specialties", e.target.value)
+                  }
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="agent-certifications">
+                  {locale === "en" ? "Certifications" : "專業證照"}
+                </Label>
+                <Textarea
+                  id="agent-certifications"
+                  placeholder={
+                    locale === "en"
+                      ? "List your professional certifications and qualifications"
+                      : "請列出您的專業證照和資格"
+                  }
+                  value={agentForm.certifications}
+                  onChange={(e) =>
+                    handleAgentInputChange("certifications", e.target.value)
+                  }
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="agent-businessAddress">
+                  {locale === "en" ? "Business Address" : "營業地址"} *
+                </Label>
+                <Textarea
+                  id="agent-businessAddress"
+                  placeholder={
+                    locale === "en"
+                      ? "Enter your business address"
+                      : "請輸入您的營業地址"
+                  }
+                  value={agentForm.businessAddress}
+                  onChange={(e) =>
+                    handleAgentInputChange("businessAddress", e.target.value)
+                  }
+                  rows={2}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="agent-personalStatement">
+                  {locale === "en" ? "Personal Statement" : "個人簡介"}
+                </Label>
+                <Textarea
+                  id="agent-personalStatement"
+                  placeholder={
+                    locale === "en"
+                      ? "Tell us about yourself and why you want to join our platform"
+                      : "請介紹您自己以及為什麼想要加入我們的平台"
+                  }
+                  value={agentForm.personalStatement}
+                  onChange={(e) =>
+                    handleAgentInputChange("personalStatement", e.target.value)
+                  }
+                  rows={4}
+                />
+              </div>
+              {/* </div> */}
 
               {/* 密碼設定 */}
               <div className="space-y-4 pt-4">

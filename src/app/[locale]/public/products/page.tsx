@@ -45,6 +45,7 @@ import {
   UserProfile,
 } from "@/utils/premium-calculator";
 import { sortProducts } from "@/utils/recommendations";
+import { SearchWithSuggestions } from "@/components/ui/search-with-suggestions";
 
 interface InsurancePageProps {
   params: Promise<{ locale: string }>;
@@ -246,6 +247,10 @@ export default function InsurancePage({
     setFilter({});
   };
 
+  const handleSearchSubmit = (searchTerm: string) => {
+    setSearchTerm(searchTerm);
+  };
+
   const formatCurrency = (amount: number, locale: "zh-TW" | "en" = "zh-TW") => {
     if (locale === "en") {
       return new Intl.NumberFormat("en-US", {
@@ -280,19 +285,18 @@ export default function InsurancePage({
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder={
-                    locale === "en"
-                      ? "Search insurance products or companies..."
-                      : "搜尋保險商品或公司..."
-                  }
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
-                />
-              </div>
+              <SearchWithSuggestions
+                value={searchTerm}
+                onChange={setSearchTerm}
+                onSubmit={handleSearchSubmit}
+                placeholder={
+                  locale === "en"
+                    ? "Search insurance products or companies..."
+                    : "搜尋保險商品或公司..."
+                }
+                locale={locale}
+                className="[&>form>input]:h-9 [&>form>input]:border [&>form>input]:rounded-md [&>form>input]:bg-background [&>form>input]:pl-9 [&>form>input]:text-sm [&>form]:relative [&>form>.lucide-search]:absolute [&>form>.lucide-search]:left-3 [&>form>.lucide-search]:top-2.5 [&>form>.lucide-search]:h-4 [&>form>.lucide-search]:w-4"
+              />
             </div>
             <Button
               variant="outline"
@@ -659,7 +663,9 @@ export default function InsurancePage({
 
       {filteredAndSortedProducts.length === 0 && (
         <div className="text-center py-12">
-          <div className="text-6xl mb-4">🔍</div>
+          <div className="flex justify-center mb-4">
+            <Search className="h-16 w-16 text-muted-foreground/50" />
+          </div>
           <h3 className="text-lg font-semibold mb-2">
             {locale === "en"
               ? "No insurance products found"

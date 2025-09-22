@@ -14,7 +14,7 @@ interface RecommendationCriteria {
  */
 export function getRecommendedAgents(
   criteria: RecommendationCriteria,
-  maxResults: number = 3
+  maxResults: number = 3,
 ): Agent[] {
   const { product, userLocation } = criteria;
 
@@ -39,7 +39,7 @@ export function getRecommendedAgents(
 
     // 1. 专业匹配度 (40%)
     const specialtyMatchCount = agent.specialties.filter((specialty) =>
-      [product.type].includes(specialty)
+      [product.type].includes(specialty),
     ).length;
     score += (specialtyMatchCount / agent.specialties.length) * 40;
 
@@ -87,7 +87,7 @@ export function getRecommendedAgents(
 export function getRecommendationReason(
   agent: Agent,
   product: InsuranceProduct,
-  locale: string = "zh-TW"
+  locale: string = "zh-TW",
 ): string {
   const reasons: string[] = [];
 
@@ -102,7 +102,8 @@ export function getRecommendationReason(
       property: locale === "en" ? "property insurance" : "財產險",
     };
 
-    const typeName = productTypeNames[product.type as keyof typeof productTypeNames];
+    const typeName =
+      productTypeNames[product.type as keyof typeof productTypeNames];
     if (locale === "en") {
       reasons.push(`Specializes in ${typeName}`);
     } else {
@@ -143,7 +144,7 @@ export function getRecommendationReason(
  */
 export function canServeLocation(
   agent: Agent,
-  location: { city: string; district: string }
+  location: { city: string; district: string },
 ): boolean {
   // 检查是否在代理人的所在城市
   if (agent.location.city === location.city) {

@@ -80,9 +80,7 @@ export function AgentRecommendationModal({
           <div className="text-center py-8">
             <Building2 className="h-16 w-16 text-muted-foreground/50 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">
-              {locale === "en"
-                ? "No agents available"
-                : "暫無可推薦的業務員"}
+              {locale === "en" ? "No agents available" : "暫無可推薦的業務員"}
             </h3>
             <p className="text-muted-foreground mb-4">
               {locale === "en"
@@ -96,72 +94,81 @@ export function AgentRecommendationModal({
         ) : (
           <div className="flex gap-4 overflow-x-auto pb-2 md:justify-center md:overflow-x-visible">
             {recommendedAgents.map((agent) => (
-            <Card key={agent.id} className="hover:shadow-md transition-shadow w-64 md:w-72 flex-shrink-0">
-              <CardHeader className="pb-3 text-center">
-                <div className="flex flex-col items-center gap-3">
-                  <Avatar className="h-20 w-20">
-                    <AvatarImage src={agent.avatar} alt={agent.name} />
-                    <AvatarFallback className="text-xl">
-                      {agent.name.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
+              <Card
+                key={agent.id}
+                className="hover:shadow-md transition-shadow w-64 md:w-72 flex-shrink-0"
+              >
+                <CardHeader className="pb-3 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <Avatar className="h-20 w-20">
+                      <AvatarImage src={agent.avatar} alt={agent.name} />
+                      <AvatarFallback className="text-xl">
+                        {agent.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
 
-                  <div className="w-full">
-                    <div className="mb-2">
-                      <h3 className="text-lg font-semibold text-center">{agent.name}</h3>
-                    </div>
+                    <div className="w-full">
+                      <div className="mb-2">
+                        <h3 className="text-lg font-semibold text-center">
+                          {agent.name}
+                        </h3>
+                      </div>
 
-                    <div className="flex flex-col gap-2 text-sm text-muted-foreground mb-3">
-                      <div className="flex items-center justify-center gap-1">
-                        <Building2 className="h-4 w-4" />
-                        {agent.company}
-                        {agent.position && ` - ${agent.position}`}
+                      <div className="flex flex-col gap-2 text-sm text-muted-foreground mb-3">
+                        <div className="flex items-center justify-center gap-1">
+                          <Building2 className="h-4 w-4" />
+                          {agent.company}
+                          {agent.position && ` - ${agent.position}`}
+                        </div>
+                        <div className="flex items-center justify-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          {agent.location.city} {agent.location.district}
+                        </div>
+                        <div className="flex items-center justify-center gap-1">
+                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                          <span>{agent.rating}</span>
+                          <span className="text-xs">({agent.reviewCount})</span>
+                        </div>
                       </div>
-                      <div className="flex items-center justify-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {agent.location.city} {agent.location.district}
-                      </div>
-                      <div className="flex items-center justify-center gap-1">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span>{agent.rating}</span>
-                        <span className="text-xs">({agent.reviewCount})</span>
-                      </div>
-                    </div>
 
-                    <div className="flex flex-wrap justify-center gap-1 mb-3">
-                      {agent.specialties.slice(0, 3).map((specialty) => (
-                        <Badge key={specialty} variant="secondary" className="text-xs">
-                          {getSpecialtyName(specialty)}
-                        </Badge>
-                      ))}
+                      <div className="flex flex-wrap justify-center gap-1 mb-3">
+                        {agent.specialties.slice(0, 3).map((specialty) => (
+                          <Badge
+                            key={specialty}
+                            variant="secondary"
+                            className="text-xs"
+                          >
+                            {getSpecialtyName(specialty)}
+                          </Badge>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardHeader>
+                </CardHeader>
 
-              <CardContent className="pt-0 text-center">
-                <div className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-2 text-sm">
-                    <div className="flex items-center justify-center gap-1">
-                      <Phone className="h-4 w-4" />
-                      {agent.contactInfo.phone}
+                <CardContent className="pt-0 text-center">
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-2 text-sm">
+                      <div className="flex items-center justify-center gap-1">
+                        <Phone className="h-4 w-4" />
+                        {agent.contactInfo.phone}
+                      </div>
+                      <div className="flex items-center justify-center gap-1">
+                        <Mail className="h-4 w-4" />
+                        {agent.contactInfo.email}
+                      </div>
                     </div>
-                    <div className="flex items-center justify-center gap-1">
-                      <Mail className="h-4 w-4" />
-                      {agent.contactInfo.email}
-                    </div>
+
+                    <Button
+                      onClick={() => handleContactAgent(agent)}
+                      size="sm"
+                      className="w-full"
+                    >
+                      {locale === "en" ? "Contact" : "聯絡"}
+                    </Button>
                   </div>
-
-                  <Button
-                    onClick={() => handleContactAgent(agent)}
-                    size="sm"
-                    className="w-full"
-                  >
-                    {locale === "en" ? "Contact" : "聯絡"}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
             ))}
           </div>
         )}

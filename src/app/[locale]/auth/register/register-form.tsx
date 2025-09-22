@@ -576,7 +576,9 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                   <Input
                     id="agent-position"
                     placeholder={
-                      locale === "en" ? "e.g., Senior Agent, Team Leader" : "例如：資深業務員、團隊主管"
+                      locale === "en"
+                        ? "e.g., Senior Agent, Team Leader"
+                        : "例如：資深業務員、團隊主管"
                     }
                     value={agentForm.position}
                     onChange={(e) =>

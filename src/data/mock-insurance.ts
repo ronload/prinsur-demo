@@ -790,7 +790,9 @@ const generateAgents = (): Agent[] => {
 
     // Randomly assign position to about 80% of agents (some agents might not have filled position)
     const hasPosition = seededRandom() > 0.2;
-    const position = hasPosition ? positions[Math.floor(seededRandom() * positions.length)] : undefined;
+    const position = hasPosition
+      ? positions[Math.floor(seededRandom() * positions.length)]
+      : undefined;
 
     agents.push({
       id: (i + 1).toString(),

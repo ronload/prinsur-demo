@@ -5,7 +5,11 @@ import { Search, History, Building2, Tag, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { safeLocalStorage, safeJsonParse, runOnClient } from "@/lib/utils/browser-safe";
+import {
+  safeLocalStorage,
+  safeJsonParse,
+  runOnClient,
+} from "@/lib/utils/browser-safe";
 
 interface SearchSuggestion {
   id: string;

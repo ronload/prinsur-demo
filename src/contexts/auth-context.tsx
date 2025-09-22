@@ -12,7 +12,11 @@ import {
   invalidateUserCache,
 } from "@/lib/cache/auth-cache";
 import { rbac } from "@/lib/rbac/advanced-permissions";
-import { getSafeUserAgent, safeLocalStorage, safeJsonParseNullable } from "@/lib/utils/browser-safe";
+import {
+  getSafeUserAgent,
+  safeLocalStorage,
+  safeJsonParseNullable,
+} from "@/lib/utils/browser-safe";
 
 export interface User {
   id: string;
@@ -69,26 +73,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               logger.setUser(user.id, user.type);
 
               // Warm up cache in background, don't block initialization
-              authCache.warmCache(user.id, user).catch(error => {
+              authCache.warmCache(user.id, user).catch((error) => {
                 logger.warn("auth", "cache_warm_failed", {
                   user_id: user.id,
-                  error: error instanceof Error ? error.message : "Unknown error",
+                  error:
+                    error instanceof Error ? error.message : "Unknown error",
                 });
               });
             }
 
             // Record session restoration for audit in background
-            auditTrail.recordAuthentication(
-              user,
-              "login",
-              undefined,
-              getSafeUserAgent(),
-            ).catch(error => {
-              logger.warn("auth", "session_restoration_audit_failed", {
-                user_id: user.id,
-                error: error instanceof Error ? error.message : "Unknown error",
+            auditTrail
+              .recordAuthentication(
+                user,
+                "login",
+                undefined,
+                getSafeUserAgent(),
+              )
+              .catch((error) => {
+                logger.warn("auth", "session_restoration_audit_failed", {
+                  user_id: user.id,
+                  error:
+                    error instanceof Error ? error.message : "Unknown error",
+                });
               });
-            });
           }
         }
       } catch (error) {
@@ -164,7 +172,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const operation = index === 0 ? "server_session_sync" : "audit_trail";
           logger.warn("auth", `${operation}_failed`, {
             user_id: newUser.id,
-            error: result.reason instanceof Error ? result.reason.message : "Unknown error",
+            error:
+              result.reason instanceof Error
+                ? result.reason.message
+                : "Unknown error",
           });
         } else if (index === 0) {
           logger.info("auth", "server_session_sync_success", {
@@ -244,9 +255,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       ]).then((results) => {
         results.forEach((result, index) => {
           if (result.status === "rejected") {
-            const operation = index === 0 ? "audit_trail" : "server_session_clear";
+            const operation =
+              index === 0 ? "audit_trail" : "server_session_clear";
             logger.warn("auth", `${operation}_failed`, {
-              error: result.reason instanceof Error ? result.reason.message : "Unknown error",
+              error:
+                result.reason instanceof Error
+                  ? result.reason.message
+                  : "Unknown error",
             });
           } else if (index === 1) {
             logger.info("auth", "server_session_clear_success");

@@ -2,7 +2,13 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 
 interface ErrorBoundaryState {
@@ -17,7 +23,10 @@ interface ErrorBoundaryProps {
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -54,8 +63,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
         stack: error.stack,
         componentStack: errorInfo.componentStack,
         timestamp: new Date().toISOString(),
-        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
-        url: typeof window !== 'undefined' ? window.location?.href : undefined,
+        userAgent:
+          typeof navigator !== "undefined" ? navigator.userAgent : undefined,
+        url: typeof window !== "undefined" ? window.location?.href : undefined,
       };
 
       // 模拟发送到监控服务
@@ -63,7 +73,6 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
 
       // 可以在这里添加实际的错误报告逻辑
       // 例如：fetch('/api/error-report', { method: 'POST', body: JSON.stringify(errorReport) })
-
     } catch (reportingError) {
       console.error("Failed to report error:", reportingError);
     }
@@ -74,7 +83,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
   };
 
   private handleReload = () => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       window.location.reload();
     }
   };
@@ -84,7 +93,12 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       // 如果提供了自定义 fallback 组件，使用它
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback;
-        return <FallbackComponent error={this.state.error!} resetError={this.handleReset} />;
+        return (
+          <FallbackComponent
+            error={this.state.error!}
+            resetError={this.handleReset}
+          />
+        );
       }
 
       // 默认错误UI
@@ -108,7 +122,9 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
                       錯誤詳情 (開發模式)
                     </summary>
                     <div className="mt-2 space-y-2 text-red-700 dark:text-red-300">
-                      <p><strong>錯誤訊息:</strong> {this.state.error.message}</p>
+                      <p>
+                        <strong>錯誤訊息:</strong> {this.state.error.message}
+                      </p>
                       {this.state.error.stack && (
                         <pre className="text-xs overflow-auto whitespace-pre-wrap">
                           {this.state.error.stack}
@@ -120,7 +136,11 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
               )}
 
               <div className="flex gap-2">
-                <Button onClick={this.handleReset} variant="outline" className="flex-1">
+                <Button
+                  onClick={this.handleReset}
+                  variant="outline"
+                  className="flex-1"
+                >
                   <RefreshCw className="mr-2 h-4 w-4" />
                   重試
                 </Button>

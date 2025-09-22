@@ -4,14 +4,14 @@
  */
 
 // 检查是否在浏览器环境中
-export const isBrowser = typeof window !== 'undefined';
+export const isBrowser = typeof window !== "undefined";
 
 // 安全获取 navigator 信息
 export const getSafeUserAgent = (): string | undefined => {
   try {
     return isBrowser && navigator?.userAgent ? navigator.userAgent : undefined;
   } catch (error) {
-    console.warn('Failed to get user agent:', error);
+    console.warn("Failed to get user agent:", error);
     return undefined;
   }
 };
@@ -51,7 +51,7 @@ export const safeLocalStorage = {
       console.warn(`Failed to remove localStorage item "${key}":`, error);
       return false;
     }
-  }
+  },
 };
 
 // 安全解析 JSON
@@ -61,7 +61,7 @@ export const safeJsonParse = <T>(value: string | null, fallback: T): T => {
   try {
     return JSON.parse(value) as T;
   } catch (error) {
-    console.warn('Failed to parse JSON:', error);
+    console.warn("Failed to parse JSON:", error);
     return fallback;
   }
 };
@@ -73,7 +73,7 @@ export const safeJsonParseNullable = <T>(value: string | null): T | null => {
   try {
     return JSON.parse(value) as T;
   } catch (error) {
-    console.warn('Failed to parse JSON:', error);
+    console.warn("Failed to parse JSON:", error);
     return null;
   }
 };

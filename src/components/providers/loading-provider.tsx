@@ -41,9 +41,11 @@ export function LoadingProvider({ children }: LoadingProviderProps) {
 
   const triggerPageTransition = () => {
     setIsPageLoading(true);
-    setTimeout(() => {
-      setIsPageLoading(false);
-    }, 1000);
+    // // 减少延迟到 200ms，提供视觉反馈但不影响性能
+    // setTimeout(() => {
+    //   setIsPageLoading(false);
+    // }, 200);
+    setIsPageLoading(true);
   };
 
   return (

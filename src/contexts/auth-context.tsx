@@ -12,6 +12,7 @@ import {
   invalidateUserCache,
 } from "@/lib/cache/auth-cache";
 import { rbac } from "@/lib/rbac/advanced-permissions";
+import { getSafeUserAgent, safeLocalStorage, safeJsonParseNullable } from "@/lib/utils/browser-safe";
 
 export interface User {
   id: string;
@@ -49,34 +50,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initializeUser = async () => {
       try {
-        const savedUser = localStorage.getItem("prinsur_user");
+        const savedUser = safeLocalStorage.getItem("prinsur_user");
         if (savedUser) {
-          const user = JSON.parse(savedUser);
-          // Ensure backward compatibility - set role if not present
-          if (!user.role && user.type) {
-            user.role = user.type;
+          const user = safeJsonParseNullable<User>(savedUser);
+          if (user) {
+            // Ensure backward compatibility - set role if not present
+            if (!user.role && user.type) {
+              user.role = user.type;
+            }
+
+            // Check cache first
+            const cachedSession = getUserSession(user.id);
+            if (cachedSession) {
+              setUser(cachedSession.user);
+              logger.setUser(user.id, user.type);
+            } else {
+              setUser(user);
+              logger.setUser(user.id, user.type);
+
+              // Warm up cache in background, don't block initialization
+              authCache.warmCache(user.id, user).catch(error => {
+                logger.warn("auth", "cache_warm_failed", {
+                  user_id: user.id,
+                  error: error instanceof Error ? error.message : "Unknown error",
+                });
+              });
+            }
+
+            // Record session restoration for audit in background
+            auditTrail.recordAuthentication(
+              user,
+              "login",
+              undefined,
+              getSafeUserAgent(),
+            ).catch(error => {
+              logger.warn("auth", "session_restoration_audit_failed", {
+                user_id: user.id,
+                error: error instanceof Error ? error.message : "Unknown error",
+              });
+            });
           }
-
-          // Check cache first
-          const cachedSession = getUserSession(user.id);
-          if (cachedSession) {
-            setUser(cachedSession.user);
-            logger.setUser(user.id, user.type);
-          } else {
-            setUser(user);
-            logger.setUser(user.id, user.type);
-
-            // Warm up cache
-            await authCache.warmCache(user.id, user);
-          }
-
-          // Record session restoration for audit
-          await auditTrail.recordAuthentication(
-            user,
-            "login",
-            undefined,
-            typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-          );
         }
       } catch (error) {
         logger.error("auth", "session_restoration_failed", {
@@ -114,7 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // 保存用户信息到客户端
     setUser(newUser);
-    localStorage.setItem("prinsur_user", JSON.stringify(newUser));
+    safeLocalStorage.setItem("prinsur_user", JSON.stringify(newUser));
 
     // 更新日志记录器的用户信息
     logger.setUser(newUser.id, newUser.type);
@@ -127,42 +140,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       login_method: "demo_auth",
     });
 
-    // 同步会话到服务端
-    try {
-      await fetch("/api/auth/sync", {
+    // 异步操作并行执行，避免阻塞
+    Promise.allSettled([
+      // 同步会话到服务端（带超时）
+      fetch("/api/auth/sync", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ user: newUser, action: "login" }),
+        signal: AbortSignal.timeout(5000), // 5秒超时
+      }),
+      // 记录审计跟踪
+      auditTrail.recordAuthentication(
+        newUser,
+        "login",
+        undefined,
+        getSafeUserAgent(),
+      ),
+    ]).then((results) => {
+      results.forEach((result, index) => {
+        if (result.status === "rejected") {
+          const operation = index === 0 ? "server_session_sync" : "audit_trail";
+          logger.warn("auth", `${operation}_failed`, {
+            user_id: newUser.id,
+            error: result.reason instanceof Error ? result.reason.message : "Unknown error",
+          });
+        } else if (index === 0) {
+          logger.info("auth", "server_session_sync_success", {
+            user_id: newUser.id,
+          });
+        }
       });
+    });
 
-      logger.info("auth", "server_session_sync_success", {
-        user_id: newUser.id,
+    // Cache session data (同步执行，因为是本地操作)
+    try {
+      cacheUserSession(newUser.id, {
+        user: newUser,
+        permissions: [], // Will be populated by RBAC system
+        roles: [`role_${newUser.type}`],
+        lastActivity: Date.now(),
       });
     } catch (error) {
-      logger.warn("auth", "server_session_sync_failed", {
+      logger.warn("auth", "cache_session_failed", {
         user_id: newUser.id,
         error: error instanceof Error ? error.message : "Unknown error",
       });
-      // Continue with login even if server sync fails
     }
-
-    // Record audit trail
-    await auditTrail.recordAuthentication(
-      newUser,
-      "login",
-      undefined,
-      typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-    );
-
-    // Cache session data
-    cacheUserSession(newUser.id, {
-      user: newUser,
-      permissions: [], // Will be populated by RBAC system
-      roles: [`role_${newUser.type}`],
-      lastActivity: Date.now(),
-    });
 
     return true;
   };
@@ -180,44 +205,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
     }
 
-    // Record audit trail before clearing user data
-    if (currentUser) {
-      await auditTrail.recordAuthentication(
-        currentUser,
-        "logout",
-        undefined,
-        typeof navigator !== "undefined" ? navigator.userAgent : undefined,
-      );
-    }
-
-    // 清除客户端状态
+    // 立即清除客户端状态，不等待异步操作
     setUser(null);
-    localStorage.removeItem("prinsur_user");
-
-    // 清除日志记录器的用户信息
+    safeLocalStorage.removeItem("prinsur_user");
     logger.clearUser();
 
-    // 清除快取
+    // 清除快取（同步操作）
     if (currentUser) {
-      invalidateUserCache(currentUser.id);
+      try {
+        invalidateUserCache(currentUser.id);
+      } catch (error) {
+        logger.warn("auth", "cache_invalidation_failed", {
+          user_id: currentUser.id,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
     }
 
-    // 同步登出状态到服务端
-    try {
-      await fetch("/api/auth/sync", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ action: "logout" }),
+    // 异步操作在后台执行，不阻塞UI
+    if (currentUser) {
+      Promise.allSettled([
+        // 记录审计跟踪
+        auditTrail.recordAuthentication(
+          currentUser,
+          "logout",
+          undefined,
+          getSafeUserAgent(),
+        ),
+        // 同步登出状态到服务端（带超时）
+        fetch("/api/auth/sync", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ action: "logout" }),
+          signal: AbortSignal.timeout(3000), // 3秒超时
+        }),
+      ]).then((results) => {
+        results.forEach((result, index) => {
+          if (result.status === "rejected") {
+            const operation = index === 0 ? "audit_trail" : "server_session_clear";
+            logger.warn("auth", `${operation}_failed`, {
+              error: result.reason instanceof Error ? result.reason.message : "Unknown error",
+            });
+          } else if (index === 1) {
+            logger.info("auth", "server_session_clear_success");
+          }
+        });
       });
-
-      logger.info("auth", "server_session_clear_success");
-    } catch (error) {
-      logger.warn("auth", "server_session_clear_failed", {
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
-      // Continue with logout even if server sync fails
     }
   };
 

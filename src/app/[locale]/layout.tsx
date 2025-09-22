@@ -10,6 +10,7 @@ import { locales } from "@/i18n/config";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { LoadingProvider } from "@/components/providers/loading-provider";
 import { AuthProvider } from "@/contexts/auth-context";
+import ErrorBoundary from "@/components/providers/error-boundary";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { ThemeIcon } from "@/components/theme-icon";
@@ -82,25 +83,27 @@ export default async function LocaleLayout({
         <meta name="apple-mobile-web-app-title" content="Prinsur" />
       </head>
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ThemeIcon />
-          <LoadingProvider>
-            <AuthProvider>
-              <NextIntlClientProvider messages={messages}>
-                <div className="relative flex min-h-screen flex-col">
-                  <Header />
-                  <main className="flex-1 pt-14">{children}</main>
-                  <Footer locale={locale} />
-                </div>
-              </NextIntlClientProvider>
-            </AuthProvider>
-          </LoadingProvider>
-        </ThemeProvider>
+        <ErrorBoundary>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ThemeIcon />
+            <LoadingProvider>
+              <AuthProvider>
+                <NextIntlClientProvider messages={messages}>
+                  <div className="relative flex min-h-screen flex-col">
+                    <Header />
+                    <main className="flex-1 pt-14">{children}</main>
+                    <Footer locale={locale} />
+                  </div>
+                </NextIntlClientProvider>
+              </AuthProvider>
+            </LoadingProvider>
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

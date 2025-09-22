@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { Menu, User, LogOut, Settings } from "lucide-react";
+import { User, LogOut, Settings, Moon, Sun, Globe } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { LanguageToggle } from "@/components/ui/language-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,71 +12,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuPortal,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { useTheme } from "next-themes";
 import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/auth-context";
-import { useLocale } from "next-intl";
 import { cn } from "@/lib/utils";
-
-interface MobileNavProps {
-  items: { href: string; label: string }[];
-  onItemClick: () => void;
-}
-
-function MobileNav({ items, onItemClick }: MobileNavProps) {
-  const pathname = usePathname();
-  const currentLocale = useLocale();
-
-  return (
-    <div className="flex flex-col space-y-2">
-      <Link
-        href={`/${currentLocale}`}
-        onClick={onItemClick}
-        className="flex items-center space-x-2 pb-4"
-      >
-        <Image
-          src="/brand/logo.png"
-          alt="Prinsur"
-          width={120}
-          height={32}
-          className="h-8 w-auto dark:invert"
-        />
-      </Link>
-      {items.map((item) => {
-        const isActive = pathname === item.href;
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onItemClick}
-            className={cn(
-              "block px-3 py-2 text-lg transition-colors rounded-md",
-              isActive
-                ? "text-foreground bg-muted"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
-            )}
-          >
-            {item.label}
-          </Link>
-        );
-      })}
-    </div>
-  );
-}
 
 export function Header() {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const { user, logout } = useAuth();
   const pathname = usePathname();
+  const { setTheme, theme } = useTheme();
 
   // 使用 useMemo 穩定地計算語言，避免競爭條件
   const currentLocale = useMemo(() => {
@@ -92,6 +41,19 @@ export function Header() {
   const handleLogout = () => {
     logout();
     router.push("/");
+  };
+
+  const handleThemeChange = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
+  const handleLanguageChange = (locale: string) => {
+    if (typeof window !== "undefined") {
+      const currentPath = window.location.pathname;
+      const pathWithoutLocale = currentPath.replace(/^\/(zh-TW|en)/, "") || "/";
+      const newUrl = `/${locale}${pathWithoutLocale}`;
+      window.location.href = newUrl;
+    }
   };
 
   // 根据用户角色生成不同的导航菜单
@@ -155,7 +117,7 @@ export function Header() {
         }}
       >
         <div className="container flex h-14 items-center">
-          <div className="mr-6 hidden md:flex">
+          <div className="mr-4">
             <Link href="/zh-TW" className="flex items-center">
               <Image
                 src="/brand/logo.png"
@@ -166,15 +128,65 @@ export function Header() {
               />
             </Link>
           </div>
-          <div className="flex-1 hidden md:flex justify-center">
-            <nav className="flex items-center space-x-6 text-sm font-medium">
-              <Link href="/zh-TW/public/products">保險商品</Link>
-              <Link href="/zh-TW/public/agents">尋找業務員</Link>
+          <div className="flex-1 flex justify-center">
+            <nav className="flex items-center space-x-1 md:space-x-2 text-xs md:text-sm font-medium">
+              <Link
+                href="/zh-TW/public/products"
+                className="px-2 md:px-3 py-2 rounded-md text-center min-w-[80px] md:min-w-[100px] text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              >
+                保險商品
+              </Link>
+              <Link
+                href="/zh-TW/public/agents"
+                className="px-2 md:px-3 py-2 rounded-md text-center min-w-[80px] md:min-w-[100px] text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              >
+                尋找業務員
+              </Link>
             </nav>
           </div>
-          <div className="flex flex-1 md:flex-none items-center justify-end space-x-2">
-            <ThemeToggle />
-            <LanguageToggle />
+          <div className="flex items-center justify-end space-x-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <User className="h-4 w-4" />
+                  <span className="sr-only">User menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">訪客</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      未登入
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>
+                  <Moon className="mr-2 h-4 w-4" />
+                  深色模式
+                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <Globe className="mr-2 h-4 w-4" />
+                    語言
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuPortal>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem>中文</DropdownMenuItem>
+                      <DropdownMenuItem>English</DropdownMenuItem>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuPortal>
+                </DropdownMenuSub>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/zh-TW/auth/login">
+                    <LogOut className="mr-2 h-4 w-4 rotate-180" />
+                    登入
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </header>
@@ -192,43 +204,28 @@ export function Header() {
     >
       <div className="container flex h-14 items-center">
         {/* Logo */}
-        <div className="mr-6 hidden md:flex">
+        <div className="mr-2 md:mr-4">
           <Link href={`/${currentLocale}`} className="flex items-center">
+            <Image
+              src="/brand/icon.png"
+              alt="Prinsur"
+              width={28}
+              height={28}
+              className="h-6 w-6 md:hidden dark:invert"
+            />
             <Image
               src="/brand/logo.png"
               alt="Prinsur"
               width={100}
               height={28}
-              className="h-7 w-auto dark:invert"
+              className="hidden md:block h-7 w-auto dark:invert"
             />
           </Link>
         </div>
 
-        {/* Mobile menu */}
-        <Sheet open={isOpen} onOpenChange={setIsOpen}>
-          <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
-            >
-              <Menu className="h-6 w-6" />
-              <span className="sr-only">Toggle Menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="pr-0">
-            <SheetHeader className="sr-only">
-              <SheetTitle>Navigation Menu</SheetTitle>
-            </SheetHeader>
-            <MobileNav
-              items={navigationItems}
-              onItemClick={() => setIsOpen(false)}
-            />
-          </SheetContent>
-        </Sheet>
-
-        {/* Desktop navigation */}
-        <div className="flex-1 hidden md:flex justify-center">
-          <nav className="flex items-center space-x-2">
+        {/* Navigation - both desktop and mobile */}
+        <div className="flex-1 flex justify-center">
+          <nav className="flex items-center space-x-1 md:space-x-2">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -236,7 +233,8 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-sm font-medium transition-colors px-3 py-2 rounded-md min-w-[100px] text-center",
+                    "text-xs md:text-sm font-medium transition-colors px-1.5 md:px-3 py-1.5 md:py-2 rounded-md text-center",
+                    "min-w-[70px] md:min-w-[100px]",
                     isActive
                       ? "text-foreground bg-muted"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
@@ -249,25 +247,27 @@ export function Header() {
           </nav>
         </div>
 
-        {/* Right side */}
-        <div className="flex flex-1 md:flex-none items-center justify-end space-x-1">
-          <nav className="flex items-center space-x-1">
-            <ThemeToggle />
-            <LanguageToggle />
-
-            {user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center">
-                      <span className="text-primary-foreground text-xs font-medium">
-                        {user.name.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                    <span className="sr-only">User menu</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+        {/* Right side - User menu */}
+        <div className="flex items-center justify-end">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                {user ? (
+                  <div className="h-6 w-6 bg-primary rounded-full flex items-center justify-center">
+                    <span className="text-primary-foreground text-xs font-medium">
+                      {user.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                ) : (
+                  <User className="h-4 w-4" />
+                )}
+                <span className="sr-only">User menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              {user ? (
+                <>
+                  {/* 已登录用户信息 */}
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
                       <p className="text-sm font-medium leading-none">
@@ -288,6 +288,69 @@ export function Header() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                </>
+              ) : (
+                <>
+                  {/* 未登录用户提示 */}
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {currentLocale === "en" ? "Guest User" : "訪客"}
+                      </p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {currentLocale === "en" ? "Not logged in" : "未登入"}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                </>
+              )}
+
+              {/* 主题切换 - 所有用户都能使用 */}
+              <DropdownMenuItem onClick={handleThemeChange}>
+                {theme === "light" ? (
+                  <Moon className="mr-2 h-4 w-4" />
+                ) : (
+                  <Sun className="mr-2 h-4 w-4" />
+                )}
+                {currentLocale === "en"
+                  ? theme === "light"
+                    ? "Dark Mode"
+                    : "Light Mode"
+                  : theme === "light"
+                    ? "深色模式"
+                    : "淺色模式"}
+              </DropdownMenuItem>
+
+              {/* 语言切换子菜单 - 所有用户都能使用 */}
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <Globe className="mr-2 h-4 w-4" />
+                  {currentLocale === "en" ? "Language" : "語言"}
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem
+                      onClick={() => handleLanguageChange("zh-TW")}
+                      disabled={currentLocale === "zh-TW"}
+                    >
+                      中文
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleLanguageChange("en")}
+                      disabled={currentLocale === "en"}
+                    >
+                      English
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+
+              <DropdownMenuSeparator />
+
+              {user ? (
+                <>
+                  {/* 已登录用户的功能菜单 */}
                   {user.type === "agent" && (
                     <DropdownMenuItem asChild>
                       <Link href={`/${currentLocale}/app/dashboard`}>
@@ -313,17 +376,20 @@ export function Header() {
                     <LogOut className="mr-2 h-4 w-4" />
                     {currentLocale === "en" ? "Sign out" : "登出"}
                   </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Button variant="ghost" size="sm" asChild>
-                <Link href={`/${currentLocale}/auth/login`}>
-                  <User className="h-4 w-4 mr-2" />
-                  {currentLocale === "en" ? "Sign in" : "登入"}
-                </Link>
-              </Button>
-            )}
-          </nav>
+                </>
+              ) : (
+                <>
+                  {/* 未登录用户的登录按钮 */}
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${currentLocale}/auth/login`}>
+                      <LogOut className="mr-2 h-4 w-4 rotate-180" />
+                      {currentLocale === "en" ? "Sign in" : "登入"}
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

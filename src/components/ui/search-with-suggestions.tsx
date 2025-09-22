@@ -5,6 +5,11 @@ import { Search, History, Building2, Tag, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  safeLocalStorage,
+  safeJsonParse,
+  runOnClient,
+} from "@/lib/utils/browser-safe";
 
 interface SearchSuggestion {
   id: string;
@@ -90,16 +95,15 @@ export function SearchWithSuggestions({
   const [isOpen, setIsOpen] = React.useState(false);
   const [searchHistory, setSearchHistory] = React.useState<string[]>([]);
 
-  // 載入搜尋歷史
+  // 載入搜尋歷史 - 使用安全的 localStorage 访问
   React.useEffect(() => {
-    const history = localStorage.getItem("search_history");
-    if (history) {
-      try {
-        setSearchHistory(JSON.parse(history));
-      } catch (error) {
-        console.error("Error loading search history:", error);
+    runOnClient(() => {
+      const history = safeLocalStorage.getItem("search_history");
+      if (history) {
+        const parsedHistory = safeJsonParse<string[]>(history, []);
+        setSearchHistory(parsedHistory);
       }
-    }
+    });
   }, []);
 
   // 保存搜尋到歷史紀錄
@@ -112,14 +116,14 @@ export function SearchWithSuggestions({
     ].slice(0, 10); // 最多保存 10 個歷史紀錄
 
     setSearchHistory(newHistory);
-    localStorage.setItem("search_history", JSON.stringify(newHistory));
+    safeLocalStorage.setItem("search_history", JSON.stringify(newHistory));
   };
 
   // 清除特定歷史紀錄
   const removeFromHistory = (searchTerm: string) => {
     const newHistory = searchHistory.filter((item) => item !== searchTerm);
     setSearchHistory(newHistory);
-    localStorage.setItem("search_history", JSON.stringify(newHistory));
+    safeLocalStorage.setItem("search_history", JSON.stringify(newHistory));
   };
 
   // 生成建議列表

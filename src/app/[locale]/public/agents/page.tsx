@@ -287,7 +287,7 @@ export default function AgentsPage({ params }: AgentsPageProps) {
               variant="outline"
               size="sm"
               onClick={clearAllFilters}
-              className="hidden md:flex"
+              className="h-9 hidden md:flex"
             >
               <X className="h-4 w-4 mr-2" />
               {locale === "en" ? "Clear Filters" : "清除篩選"}
@@ -515,7 +515,10 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                   </div>
                   <div>
                     <CardTitle className="text-lg">{agent.name}</CardTitle>
-                    <CardDescription>{agent.company}</CardDescription>
+                    <CardDescription>
+                      {agent.company}
+                      {agent.position && ` - ${agent.position}`}
+                    </CardDescription>
                   </div>
                 </div>
                 <div className="flex items-center">

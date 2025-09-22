@@ -433,7 +433,7 @@ export default function ConsumerProfilePage({ params }: ConsumerProfileProps) {
                     setProfile((prev) => ({ ...prev, occupationLevel: value }))
                   }
                 >
-                  <SelectTrigger className="max-w-xs">
+                  <SelectTrigger className="max-w-xs sm:max-w-none">
                     <SelectValue
                       placeholder={
                         locale === "en"

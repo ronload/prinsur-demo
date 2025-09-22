@@ -610,6 +610,24 @@ const generateAgents = (): Agent[] => {
     ["中文", "English", "台語"],
   ];
 
+  const positions = [
+    "業務員",
+    "資深業務員",
+    "高級業務員",
+    "業務主管",
+    "團隊主管",
+    "區經理",
+    "處經理",
+    "業務副理",
+    "業務經理",
+    "資深業務經理",
+    "業務協理",
+    "業務副總",
+    "首席業務顧問",
+    "資深顧問",
+    "業務總監",
+  ];
+
   const agents: Agent[] = [];
 
   // 姓名拼音映射表
@@ -770,6 +788,12 @@ const generateAgents = (): Agent[] => {
       }
     }
 
+    // Randomly assign position to about 80% of agents (some agents might not have filled position)
+    const hasPosition = seededRandom() > 0.2;
+    const position = hasPosition
+      ? positions[Math.floor(seededRandom() * positions.length)]
+      : undefined;
+
     agents.push({
       id: (i + 1).toString(),
       name: `${lastName}${firstName}`,
@@ -784,6 +808,7 @@ const generateAgents = (): Agent[] => {
         district,
       },
       serviceAreas: agentServiceAreas,
+      position,
       languages: languages[Math.floor(seededRandom() * languages.length)],
       contactInfo: {
         phone: `09${Math.floor(seededRandom() * 9) + 1}${Math.floor(seededRandom() * 9)}-${Math.floor(seededRandom() * 900 + 100)}-${Math.floor(seededRandom() * 900 + 100)}`,

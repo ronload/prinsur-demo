@@ -77,6 +77,7 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
     gender: "",
     licenseNumber: "",
     company: "",
+    position: "",
     specialties: "",
     education: "",
     certifications: "",
@@ -566,6 +567,29 @@ export default function RegisterForm({ locale }: RegisterFormProps) {
                       }
                     />
                   </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="agent-position">
+                    {locale === "en" ? "Position/Rank" : "職級"}
+                  </Label>
+                  <Input
+                    id="agent-position"
+                    placeholder={
+                      locale === "en"
+                        ? "e.g., Senior Agent, Team Leader"
+                        : "例如：資深業務員、團隊主管"
+                    }
+                    value={agentForm.position}
+                    onChange={(e) =>
+                      handleAgentInputChange("position", e.target.value)
+                    }
+                  />
+                  <p className="text-sm text-amber-600 dark:text-amber-500">
+                    {locale === "en"
+                      ? "Please be honest, falsifying your position may constitute document fraud"
+                      : "請誠實填寫，偽造職級將涉嫌偽造文書"}
+                  </p>
                 </div>
 
                 <div className="space-y-2">

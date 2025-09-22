@@ -29,6 +29,7 @@ interface AgentProfileProps {
 
 interface AgentProfile {
   licenseNumber: string;
+  position: string;
   serviceCategories: string[];
   insuranceCompanies: string[];
   specialties: string[];
@@ -111,6 +112,7 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
   const [isSaving, setIsSaving] = useState(false);
   const [profile, setProfile] = useState<AgentProfile>({
     licenseNumber: "",
+    position: "",
     serviceCategories: [],
     insuranceCompanies: [],
     specialties: [],
@@ -246,6 +248,29 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                       locale === "en" ? "Enter license number" : "輸入執照號碼"
                     }
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="position">
+                    {locale === "en" ? "Position/Rank" : "職級"}
+                  </Label>
+                  <Input
+                    id="position"
+                    value={profile.position}
+                    onChange={(e) =>
+                      setProfile((prev) => ({
+                        ...prev,
+                        position: e.target.value,
+                      }))
+                    }
+                    placeholder={
+                      locale === "en" ? "e.g., Senior Agent, Team Leader" : "例如：資深業務員、團隊主管"
+                    }
+                  />
+                  <p className="text-sm text-amber-600 dark:text-amber-500">
+                    {locale === "en"
+                      ? "Please be honest, falsifying your position may constitute document fraud"
+                      : "請誠實填寫，偽造職級將涉嫌偽造文書"}
+                  </p>
                 </div>
               </div>
 

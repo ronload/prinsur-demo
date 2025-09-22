@@ -115,6 +115,7 @@ export function AgentRecommendationModal({
                       <div className="flex items-center justify-center gap-1">
                         <Building2 className="h-4 w-4" />
                         {agent.company}
+                        {agent.position && ` - ${agent.position}`}
                       </div>
                       <div className="flex items-center justify-center gap-1">
                         <MapPin className="h-4 w-4" />

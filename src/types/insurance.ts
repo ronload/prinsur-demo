@@ -77,6 +77,7 @@ export interface Agent {
   serviceAreas: string[];
   avatar?: string;
   languages: string[];
+  position?: string;
   contactInfo: {
     phone: string;
     email: string;

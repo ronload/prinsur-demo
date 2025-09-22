@@ -515,7 +515,10 @@ export default function AgentsPage({ params }: AgentsPageProps) {
                   </div>
                   <div>
                     <CardTitle className="text-lg">{agent.name}</CardTitle>
-                    <CardDescription>{agent.company}</CardDescription>
+                    <CardDescription>
+                      {agent.company}
+                      {agent.position && ` - ${agent.position}`}
+                    </CardDescription>
                   </div>
                 </div>
                 <div className="flex items-center">

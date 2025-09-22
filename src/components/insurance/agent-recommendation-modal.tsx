@@ -2,7 +2,7 @@
 "use client";
 
 import React from "react";
-import { Star, MapPin, Building2, Phone, Mail, X } from "lucide-react";
+import { Star, MapPin, Building2, Phone, Mail } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -60,10 +60,10 @@ export function AgentRecommendationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg w-[calc(100vw-2rem)] sm:w-auto">
+      <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-lg w-[calc(100vw-2rem)] sm:w-auto">
         <DialogHeader>
           <div className="flex items-center justify-center">
-            <div>
+            <div className="text-center">
               <DialogTitle className="text-xl">
                 {locale === "en" ? "Recommended Agents" : "推薦業務員"}
               </DialogTitle>
@@ -94,9 +94,9 @@ export function AgentRecommendationModal({
             </Button>
           </div>
         ) : (
-          <div className="flex gap-4 overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-x-visible">
+          <div className="flex gap-4 overflow-x-auto pb-2 md:justify-center md:overflow-x-visible">
             {recommendedAgents.map((agent) => (
-            <Card key={agent.id} className="hover:shadow-md transition-shadow w-64 flex-shrink-0">
+            <Card key={agent.id} className="hover:shadow-md transition-shadow w-64 md:w-72 flex-shrink-0">
               <CardHeader className="pb-3 text-center">
                 <div className="flex flex-col items-center gap-3">
                   <Avatar className="h-20 w-20">

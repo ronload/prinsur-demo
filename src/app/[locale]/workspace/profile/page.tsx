@@ -263,7 +263,9 @@ export default function AgentProfilePage({ params }: AgentProfileProps) {
                       }))
                     }
                     placeholder={
-                      locale === "en" ? "e.g., Senior Agent, Team Leader" : "例如：資深業務員、團隊主管"
+                      locale === "en"
+                        ? "e.g., Senior Agent, Team Leader"
+                        : "例如：資深業務員、團隊主管"
                     }
                   />
                   <p className="text-sm text-amber-600 dark:text-amber-500">

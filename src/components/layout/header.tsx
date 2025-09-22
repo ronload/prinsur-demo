@@ -172,7 +172,7 @@ export function Header() {
               <Link href="/zh-TW/public/agents">尋找業務員</Link>
             </nav>
           </div>
-          <div className="flex items-center justify-end space-x-2">
+          <div className="flex flex-1 md:flex-none items-center justify-end space-x-2">
             <ThemeToggle />
             <LanguageToggle />
           </div>
@@ -250,7 +250,7 @@ export function Header() {
         </div>
 
         {/* Right side */}
-        <div className="flex items-center justify-end space-x-1">
+        <div className="flex flex-1 md:flex-none items-center justify-end space-x-1">
           <nav className="flex items-center space-x-1">
             <ThemeToggle />
             <LanguageToggle />

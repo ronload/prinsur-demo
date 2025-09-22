@@ -60,9 +60,9 @@ export function AgentRecommendationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-lg w-[calc(100vw-2rem)] sm:w-auto">
         <DialogHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center">
             <div>
               <DialogTitle className="text-xl">
                 {locale === "en" ? "Recommended Agents" : "推薦業務員"}
@@ -73,14 +73,6 @@ export function AgentRecommendationModal({
                   : `為您推薦 ${product.name} 的專業業務員`}
               </DialogDescription>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-              className="h-6 w-6"
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         </DialogHeader>
 
@@ -102,9 +94,9 @@ export function AgentRecommendationModal({
             </Button>
           </div>
         ) : (
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex gap-4 overflow-x-auto pb-2 md:flex-wrap md:justify-center md:overflow-x-visible">
             {recommendedAgents.map((agent) => (
-            <Card key={agent.id} className="hover:shadow-md transition-shadow w-64">
+            <Card key={agent.id} className="hover:shadow-md transition-shadow w-64 flex-shrink-0">
               <CardHeader className="pb-3 text-center">
                 <div className="flex flex-col items-center gap-3">
                   <Avatar className="h-20 w-20">

@@ -39,6 +39,7 @@ import {
   InsuranceProduct,
 } from "@/types/insurance";
 import { ProductDetailModal } from "@/components/insurance/product-detail-modal";
+import { AgentRecommendationModal } from "@/components/insurance/agent-recommendation-modal";
 import { useAuth } from "@/contexts/auth-context";
 import {
   getPremiumDisplayStatus,
@@ -139,11 +140,17 @@ export default function InsurancePage({
   const [filter, setFilter] = useState<InsuranceFilter>({});
   const [selectedProduct, setSelectedProduct] =
     useState<InsuranceProduct | null>(null);
+  const [selectedProductForAgent, setSelectedProductForAgent] =
+    useState<InsuranceProduct | null>(null);
   const [sortBy, setSortBy] = useState<string>("default");
   const [isClient, setIsClient] = useState(false);
   const [isFiltersCollapsed, setIsFiltersCollapsed] = useState(false);
   const { user } = useAuth();
   const [userProfile, setUserProfile] = useState<UserProfile>({});
+  const [userLocation, setUserLocation] = useState<{
+    city: string;
+    district: string;
+  }>();
 
   useEffect(() => {
     params.then(({ locale: paramLocale }) => {
@@ -183,6 +190,14 @@ export default function InsurancePage({
             height: profile.height,
             medicalConditions: profile.medicalConditions,
           });
+
+          // 同时加载用户地理位置信息
+          if (profile.location) {
+            setUserLocation({
+              city: profile.location.city,
+              district: profile.location.district,
+            });
+          }
         } catch (error) {
           console.error("Error loading user profile:", error);
         }
@@ -653,7 +668,10 @@ export default function InsurancePage({
               >
                 {locale === "en" ? "View Details" : "查看詳情"}
               </Button>
-              <Button className="flex-1">
+              <Button
+                className="flex-1"
+                onClick={() => setSelectedProductForAgent(product)}
+              >
                 {locale === "en" ? "Apply Now" : "立即申請"}
               </Button>
             </CardFooter>
@@ -687,6 +705,15 @@ export default function InsurancePage({
         product={selectedProduct}
         locale={locale}
         onClose={() => setSelectedProduct(null)}
+      />
+
+      {/* Agent Recommendation Modal */}
+      <AgentRecommendationModal
+        product={selectedProductForAgent}
+        isOpen={!!selectedProductForAgent}
+        onClose={() => setSelectedProductForAgent(null)}
+        locale={locale}
+        userLocation={userLocation}
       />
     </div>
   );

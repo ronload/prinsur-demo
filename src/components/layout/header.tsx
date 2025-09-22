@@ -166,11 +166,13 @@ export function Header() {
               />
             </Link>
           </div>
-          <nav className="hidden md:flex items-center space-x-6 text-sm font-medium">
-            <Link href="/zh-TW/public/products">保險商品</Link>
-            <Link href="/zh-TW/public/agents">尋找業務員</Link>
-          </nav>
-          <div className="flex flex-1 items-center justify-end space-x-2">
+          <div className="flex-1 hidden md:flex justify-center">
+            <nav className="flex items-center space-x-6 text-sm font-medium">
+              <Link href="/zh-TW/public/products">保險商品</Link>
+              <Link href="/zh-TW/public/agents">尋找業務員</Link>
+            </nav>
+          </div>
+          <div className="flex items-center justify-end space-x-2">
             <ThemeToggle />
             <LanguageToggle />
           </div>
@@ -225,7 +227,7 @@ export function Header() {
         </Sheet>
 
         {/* Desktop navigation */}
-        <div className="mr-6 hidden md:flex">
+        <div className="flex-1 hidden md:flex justify-center">
           <nav className="flex items-center space-x-2">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href;
@@ -248,7 +250,7 @@ export function Header() {
         </div>
 
         {/* Right side */}
-        <div className="flex flex-1 items-center justify-end space-x-1">
+        <div className="flex items-center justify-end space-x-1">
           <nav className="flex items-center space-x-1">
             <ThemeToggle />
             <LanguageToggle />

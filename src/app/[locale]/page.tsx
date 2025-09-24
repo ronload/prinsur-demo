@@ -16,6 +16,15 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { UserProfile } from "@/utils/premium-calculator";
 
+// Extended profile type to include agent fields
+interface ExtendedProfile extends Partial<UserProfile> {
+  licenseNumber?: string;
+  position?: string;
+  serviceCategories?: string[];
+  contactPhone?: string;
+  officeAddress?: string;
+}
+
 interface HomeProps {
   params: Promise<{ locale: string }>;
 }
@@ -26,7 +35,7 @@ export default function Home({ params }: HomeProps) {
   const [locale, setLocale] = useState<string>(localeFromPath);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [mounted, setMounted] = useState(false);
-  const [userProfile, setUserProfile] = useState<UserProfile>({});
+  const [userProfile, setUserProfile] = useState<ExtendedProfile>({});
   const router = useRouter();
   const { user, isLoading } = useAuth();
 
@@ -52,23 +61,41 @@ export default function Home({ params }: HomeProps) {
   // Load user profile for checking completeness
   useEffect(() => {
     if (user?.id) {
-      const savedProfile = localStorage.getItem(`consumer_profile_${user.id}`);
-      if (savedProfile) {
-        try {
-          const profile = JSON.parse(savedProfile);
-          setUserProfile({
-            age: profile.age,
-            weight: profile.weight,
-            height: profile.height,
-            gender: profile.gender,
-            medicalConditions: profile.medicalConditions,
-          });
-        } catch (error) {
-          console.error("Error loading user profile:", error);
+      if (user.type === 'consumer') {
+        const savedProfile = localStorage.getItem(`consumer_profile_${user.id}`);
+        if (savedProfile) {
+          try {
+            const profile = JSON.parse(savedProfile);
+            setUserProfile({
+              age: profile.age,
+              weight: profile.weight,
+              height: profile.height,
+              gender: profile.gender,
+              medicalConditions: profile.medicalConditions,
+            });
+          } catch (error) {
+            console.error("Error loading user profile:", error);
+          }
+        }
+      } else if (user.type === 'agent') {
+        const savedProfile = localStorage.getItem(`agent_profile_${user.id}`);
+        if (savedProfile) {
+          try {
+            const profile = JSON.parse(savedProfile);
+            setUserProfile({
+              licenseNumber: profile.licenseNumber,
+              position: profile.position,
+              serviceCategories: profile.serviceCategories,
+              contactPhone: profile.contactPhone,
+              officeAddress: profile.officeAddress,
+            });
+          } catch (error) {
+            console.error("Error loading agent profile:", error);
+          }
         }
       }
     }
-  }, [user?.id]);
+  }, [user?.id, user?.type]);
 
   // Trigger TextType after other animations complete
   useEffect(() => {
@@ -142,14 +169,28 @@ export default function Home({ params }: HomeProps) {
   const isProfileIncomplete = () => {
     if (!user) return false;
 
-    // Check if basic profile fields are missing
-    const basicFieldsMissing =
-      !userProfile.age ||
-      !userProfile.weight ||
-      !userProfile.height ||
-      !userProfile.gender;
+    if (user.type === 'consumer') {
+      // Check if basic consumer profile fields are missing
+      const basicFieldsMissing =
+        !userProfile.age ||
+        !userProfile.weight ||
+        !userProfile.height ||
+        !userProfile.gender;
 
-    return basicFieldsMissing;
+      return basicFieldsMissing;
+    } else if (user.type === 'agent') {
+      // Check if basic agent profile fields are missing
+      const agentFieldsMissing =
+        !userProfile.licenseNumber ||
+        !userProfile.position ||
+        !userProfile.serviceCategories?.length ||
+        !userProfile.contactPhone ||
+        !userProfile.officeAddress;
+
+      return agentFieldsMissing;
+    }
+
+    return false;
   };
 
   const handleSearch = (searchTerm: string) => {
@@ -257,14 +298,26 @@ export default function Home({ params }: HomeProps) {
                 >
                   <div className="flex flex-row items-center justify-center gap-1">
                     <span className="text-muted-foreground text-sm">
-                      {locale === "en"
-                        ? "Complete profile for better results - "
-                        : "完善個人資料以獲得更佳結果 - "}
+                      {user.type === 'agent' ? (
+                        locale === "en"
+                          ? "Complete profile for higher visibility - "
+                          : "完善資料以獲得更高曝光 - "
+                      ) : (
+                        locale === "en"
+                          ? "Complete profile for better results - "
+                          : "完善個人資料以獲得更佳結果 - "
+                      )}
                     </span>
                     <Button
                       variant="link"
                       className="text-primary p-0 h-auto text-sm underline"
-                      onClick={() => router.push(`/${locale}/app/profile`)}
+                      onClick={() => {
+                        if (user.type === 'agent') {
+                          router.push(`/${locale}/workspace/profile`);
+                        } else {
+                          router.push(`/${locale}/app/profile`);
+                        }
+                      }}
                     >
                       {locale === "en" ? "Complete Profile" : "前往完善資料"}
                     </Button>

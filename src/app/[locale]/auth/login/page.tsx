@@ -53,7 +53,7 @@ export default function LoginPage() {
         if (userType === "consumer") {
           router.push(`/${locale}/public/products`);
         } else {
-          router.push(`/${locale}/app/dashboard`);
+          router.push(`/${locale}/workspace/clients`);
         }
       } else {
         setError(

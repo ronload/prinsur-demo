@@ -198,7 +198,7 @@ export default function WorkspaceNavigation({
 function getWorkspaceNavigationItems(user: User, locale: string) {
   const baseItems = [
     {
-      path: `/${locale}/workspace/dashboard`,
+      path: `/${locale}/workspace/clients`,
       label: "工作台總覽",
       icon: BarChart3,
       roles: ["agent", "manager", "admin"],

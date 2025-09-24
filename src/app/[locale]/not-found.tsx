@@ -65,7 +65,7 @@ export default function NotFound() {
               <li>
                 •{" "}
                 <Link
-                  href="/zh-TW/workspace/dashboard"
+                  href="/zh-TW/workspace/clients"
                   className="hover:underline"
                 >
                   企業工作台

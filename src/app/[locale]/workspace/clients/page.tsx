@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { mockCustomers } from "@/data/mock-agent-data";
 import { CustomerStatus, Policy } from "@/types/agent-dashboard";
 
-export default function DashboardPage({
+export default function ClientsPage({
   params,
 }: {
   params: Promise<{ locale: string }>;

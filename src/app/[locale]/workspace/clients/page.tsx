@@ -2,7 +2,17 @@
 "use client";
 
 import { useState, use } from "react";
-import { Users, Phone, Mail, Plus, AlertTriangle, Edit, Save, X, Trash2 } from "lucide-react";
+import {
+  Users,
+  Phone,
+  Mail,
+  Plus,
+  AlertTriangle,
+  Edit,
+  Save,
+  X,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -98,10 +108,10 @@ export default function ClientsPage({
 
   const handleSaveCustomer = () => {
     if (editingCustomer) {
-      setCustomers(prev =>
-        prev.map(customer =>
-          customer.id === editingCustomer.id ? editingCustomer : customer
-        )
+      setCustomers((prev) =>
+        prev.map((customer) =>
+          customer.id === editingCustomer.id ? editingCustomer : customer,
+        ),
       );
       setIsEditDialogOpen(false);
       setEditingCustomer(null);
@@ -115,16 +125,16 @@ export default function ClientsPage({
 
   const updateEditingCustomer = (field: keyof Customer, value: any) => {
     if (editingCustomer) {
-      setEditingCustomer(prev => prev ? { ...prev, [field]: value } : null);
+      setEditingCustomer((prev) => (prev ? { ...prev, [field]: value } : null));
     }
   };
 
   const formatPhoneNumber = (phone: string): string => {
     // Remove all non-digit characters
-    const digits = phone.replace(/\D/g, '');
+    const digits = phone.replace(/\D/g, "");
 
     // If it starts with 09 and has 10 digits, format as 09xx-xxx-xxx
-    if (digits.startsWith('09') && digits.length === 10) {
+    if (digits.startsWith("09") && digits.length === 10) {
       return `${digits.slice(0, 4)}-${digits.slice(4, 7)}-${digits.slice(7)}`;
     }
 
@@ -169,13 +179,13 @@ export default function ClientsPage({
         location: newCustomer.location || { city: "", district: "" },
         interestedProducts: newCustomer.interestedProducts || [],
         status: newCustomer.status || "new",
-        assignedDate: new Date().toISOString().split('T')[0],
-        lastContact: new Date().toISOString().split('T')[0],
+        assignedDate: new Date().toISOString().split("T")[0],
+        lastContact: new Date().toISOString().split("T")[0],
         notes: newCustomer.notes || "",
         policies: [],
       };
 
-      setCustomers(prev => [customer, ...prev]);
+      setCustomers((prev) => [customer, ...prev]);
       setIsAddDialogOpen(false);
       setNewCustomer({
         name: "",
@@ -207,7 +217,7 @@ export default function ClientsPage({
   };
 
   const updateNewCustomer = (field: keyof Partial<Customer>, value: any) => {
-    setNewCustomer(prev => ({ ...prev, [field]: value }));
+    setNewCustomer((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleNewCustomerPhoneChange = (phoneInput: string) => {
@@ -221,7 +231,9 @@ export default function ClientsPage({
 
   const confirmDeleteCustomer = () => {
     if (editingCustomer) {
-      setCustomers(prev => prev.filter(customer => customer.id !== editingCustomer.id));
+      setCustomers((prev) =>
+        prev.filter((customer) => customer.id !== editingCustomer.id),
+      );
       setIsDeleteConfirmOpen(false);
       setIsEditDialogOpen(false);
       setEditingCustomer(null);
@@ -267,7 +279,11 @@ export default function ClientsPage({
                   : "管理您的潛在客戶和現有客戶"}
               </p>
             </div>
-            <Button size="sm" className="self-start sm:self-auto" onClick={handleAddCustomer}>
+            <Button
+              size="sm"
+              className="self-start sm:self-auto"
+              onClick={handleAddCustomer}
+            >
               <Plus className="h-4 w-4 mr-1" />
               {locale === "en" ? "Add Customer" : "新增客戶"}
             </Button>
@@ -429,7 +445,9 @@ export default function ClientsPage({
                 <Input
                   id="name"
                   value={editingCustomer.name}
-                  onChange={(e) => updateEditingCustomer("name", e.target.value)}
+                  onChange={(e) =>
+                    updateEditingCustomer("name", e.target.value)
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -440,7 +458,9 @@ export default function ClientsPage({
                   id="email"
                   type="email"
                   value={editingCustomer.email}
-                  onChange={(e) => updateEditingCustomer("email", e.target.value)}
+                  onChange={(e) =>
+                    updateEditingCustomer("email", e.target.value)
+                  }
                 />
               </div>
               <div className="space-y-2">
@@ -463,7 +483,12 @@ export default function ClientsPage({
                     id="age"
                     type="number"
                     value={editingCustomer.age}
-                    onChange={(e) => updateEditingCustomer("age", parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      updateEditingCustomer(
+                        "age",
+                        parseInt(e.target.value) || 0,
+                      )
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -473,7 +498,12 @@ export default function ClientsPage({
                   <Input
                     id="city"
                     value={editingCustomer.location.city}
-                    onChange={(e) => updateEditingCustomer("location", {...editingCustomer.location, city: e.target.value})}
+                    onChange={(e) =>
+                      updateEditingCustomer("location", {
+                        ...editingCustomer.location,
+                        city: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -483,7 +513,9 @@ export default function ClientsPage({
                 </Label>
                 <Select
                   value={editingCustomer.status}
-                  onValueChange={(value) => updateEditingCustomer("status", value)}
+                  onValueChange={(value) =>
+                    updateEditingCustomer("status", value)
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -517,7 +549,9 @@ export default function ClientsPage({
                 <Textarea
                   id="notes"
                   value={editingCustomer.notes || ""}
-                  onChange={(e) => updateEditingCustomer("notes", e.target.value)}
+                  onChange={(e) =>
+                    updateEditingCustomer("notes", e.target.value)
+                  }
                   rows={3}
                 />
               </div>
@@ -551,12 +585,19 @@ export default function ClientsPage({
                 <Trash2 className="h-4 w-4 mr-2" />
                 {locale === "en" ? "Delete" : "刪除"}
               </Button>
-              <Button variant="outline" onClick={handleCancelEdit} className="flex-1 sm:w-auto sm:px-4">
+              <Button
+                variant="outline"
+                onClick={handleCancelEdit}
+                className="flex-1 sm:w-auto sm:px-4"
+              >
                 <X className="h-4 w-4 mr-2" />
                 {locale === "en" ? "Cancel" : "取消"}
               </Button>
               {/* 桌面端的儲存按鈕 */}
-              <Button onClick={handleSaveCustomer} className="hidden sm:flex flex-2 sm:w-auto sm:px-4">
+              <Button
+                onClick={handleSaveCustomer}
+                className="hidden sm:flex flex-2 sm:w-auto sm:px-4"
+              >
                 <Save className="h-4 w-4 mr-2" />
                 {locale === "en" ? "Save" : "儲存"}
               </Button>
@@ -587,7 +628,9 @@ export default function ClientsPage({
                 id="new-name"
                 value={newCustomer.name || ""}
                 onChange={(e) => updateNewCustomer("name", e.target.value)}
-                placeholder={locale === "en" ? "Enter customer name" : "輸入客戶姓名"}
+                placeholder={
+                  locale === "en" ? "Enter customer name" : "輸入客戶姓名"
+                }
               />
             </div>
             <div className="space-y-2">
@@ -599,7 +642,9 @@ export default function ClientsPage({
                 type="email"
                 value={newCustomer.email || ""}
                 onChange={(e) => updateNewCustomer("email", e.target.value)}
-                placeholder={locale === "en" ? "Enter email address" : "輸入電子郵件"}
+                placeholder={
+                  locale === "en" ? "Enter email address" : "輸入電子郵件"
+                }
               />
             </div>
             <div className="space-y-2">
@@ -622,7 +667,9 @@ export default function ClientsPage({
                   id="new-age"
                   type="number"
                   value={newCustomer.age || ""}
-                  onChange={(e) => updateNewCustomer("age", parseInt(e.target.value) || 0)}
+                  onChange={(e) =>
+                    updateNewCustomer("age", parseInt(e.target.value) || 0)
+                  }
                   placeholder={locale === "en" ? "Age" : "年齡"}
                 />
               </div>
@@ -635,7 +682,11 @@ export default function ClientsPage({
                   onValueChange={(value) => updateNewCustomer("gender", value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={locale === "en" ? "Select gender" : "選擇性別"} />
+                    <SelectValue
+                      placeholder={
+                        locale === "en" ? "Select gender" : "選擇性別"
+                      }
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="male">
@@ -655,7 +706,12 @@ export default function ClientsPage({
               <Input
                 id="new-city"
                 value={newCustomer.location?.city || ""}
-                onChange={(e) => updateNewCustomer("location", {...(newCustomer.location || {}), city: e.target.value})}
+                onChange={(e) =>
+                  updateNewCustomer("location", {
+                    ...(newCustomer.location || {}),
+                    city: e.target.value,
+                  })
+                }
                 placeholder={locale === "en" ? "Enter city" : "輸入城市"}
               />
             </div>
@@ -668,20 +724,30 @@ export default function ClientsPage({
                 value={newCustomer.notes || ""}
                 onChange={(e) => updateNewCustomer("notes", e.target.value)}
                 rows={3}
-                placeholder={locale === "en" ? "Add any additional notes..." : "新增任何額外備註..."}
+                placeholder={
+                  locale === "en"
+                    ? "Add any additional notes..."
+                    : "新增任何額外備註..."
+                }
               />
             </div>
           </div>
           <DialogFooter className="flex gap-2">
             <Button
               onClick={handleSaveNewCustomer}
-              disabled={!newCustomer.name || !newCustomer.email || !newCustomer.phone}
+              disabled={
+                !newCustomer.name || !newCustomer.email || !newCustomer.phone
+              }
               className="flex-1 sm:w-20 order-1 sm:order-2"
             >
               <Save className="h-4 w-4 mr-2" />
               {locale === "en" ? "Save" : "儲存"}
             </Button>
-            <Button variant="outline" onClick={handleCancelAdd} className="flex-1 sm:w-20 order-2 sm:order-1">
+            <Button
+              variant="outline"
+              onClick={handleCancelAdd}
+              className="flex-1 sm:w-20 order-2 sm:order-1"
+            >
               <X className="h-4 w-4 mr-2" />
               {locale === "en" ? "Cancel" : "取消"}
             </Button>
@@ -707,20 +773,31 @@ export default function ClientsPage({
             <div className="py-4">
               <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
                 <p className="text-sm font-medium text-red-800 dark:text-red-200">
-                  {locale === "en" ? "Customer to be deleted:" : "即將刪除的客戶："}
+                  {locale === "en"
+                    ? "Customer to be deleted:"
+                    : "即將刪除的客戶："}
                 </p>
                 <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                  <strong>{editingCustomer.name}</strong> - {editingCustomer.email}
+                  <strong>{editingCustomer.name}</strong> -{" "}
+                  {editingCustomer.email}
                 </p>
               </div>
             </div>
           )}
           <DialogFooter className="flex gap-2">
-            <Button variant="outline" onClick={cancelDeleteCustomer} className="flex-1 sm:w-20">
+            <Button
+              variant="outline"
+              onClick={cancelDeleteCustomer}
+              className="flex-1 sm:w-20"
+            >
               <X className="h-4 w-4 mr-2" />
               {locale === "en" ? "Cancel" : "取消"}
             </Button>
-            <Button variant="destructive" onClick={confirmDeleteCustomer} className="flex-1 sm:w-20">
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteCustomer}
+              className="flex-1 sm:w-20"
+            >
               <Trash2 className="h-4 w-4 mr-2" />
               {locale === "en" ? "Delete" : "刪除"}
             </Button>

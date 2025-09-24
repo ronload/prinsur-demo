@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState, use } from "react";
@@ -408,7 +409,7 @@ export default function ClientsPage({
 
       {/* Edit Customer Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[425px] mx-auto rounded-lg">
           <DialogHeader>
             <DialogTitle>
               {locale === "en" ? "Edit Customer" : "編輯客戶"}
@@ -522,21 +523,40 @@ export default function ClientsPage({
               </div>
             </div>
           )}
-          <DialogFooter className="flex justify-between">
+          <DialogFooter className="flex flex-col-reverse sm:flex-row sm:justify-between gap-2">
+            {/* 桌面端左側的刪除按鈕 */}
             <Button
               variant="destructive"
               onClick={handleDeleteCustomer}
-              className="mr-auto w-20"
+              className="hidden sm:flex flex-0 sm:w-auto sm:px-4"
             >
               <Trash2 className="h-4 w-4 mr-2" />
               {locale === "en" ? "Delete" : "刪除"}
             </Button>
+
+            {/* 移動端下方的儲存按鈕 */}
+            <Button onClick={handleSaveCustomer} className="w-full sm:hidden">
+              <Save className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Save" : "儲存"}
+            </Button>
+
+            {/* 移動端上方的刪除+取消組合，桌面端右側的取消+儲存組合 */}
             <div className="flex gap-2">
-              <Button variant="outline" onClick={handleCancelEdit} className="w-20">
+              {/* 移動端的刪除按鈕 */}
+              <Button
+                variant="destructive"
+                onClick={handleDeleteCustomer}
+                className="flex-1 sm:hidden"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                {locale === "en" ? "Delete" : "刪除"}
+              </Button>
+              <Button variant="outline" onClick={handleCancelEdit} className="flex-1 sm:w-auto sm:px-4">
                 <X className="h-4 w-4 mr-2" />
                 {locale === "en" ? "Cancel" : "取消"}
               </Button>
-              <Button onClick={handleSaveCustomer} className="w-20">
+              {/* 桌面端的儲存按鈕 */}
+              <Button onClick={handleSaveCustomer} className="hidden sm:flex flex-2 sm:w-auto sm:px-4">
                 <Save className="h-4 w-4 mr-2" />
                 {locale === "en" ? "Save" : "儲存"}
               </Button>
@@ -547,7 +567,7 @@ export default function ClientsPage({
 
       {/* Add Customer Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[425px] mx-auto rounded-lg">
           <DialogHeader>
             <DialogTitle>
               {locale === "en" ? "Add New Customer" : "新增客戶"}
@@ -652,18 +672,18 @@ export default function ClientsPage({
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={handleCancelAdd} className="w-20">
-              <X className="h-4 w-4 mr-2" />
-              {locale === "en" ? "Cancel" : "取消"}
-            </Button>
+          <DialogFooter className="flex gap-2">
             <Button
               onClick={handleSaveNewCustomer}
               disabled={!newCustomer.name || !newCustomer.email || !newCustomer.phone}
-              className="w-20"
+              className="flex-1 sm:w-20 order-1 sm:order-2"
             >
               <Save className="h-4 w-4 mr-2" />
               {locale === "en" ? "Save" : "儲存"}
+            </Button>
+            <Button variant="outline" onClick={handleCancelAdd} className="flex-1 sm:w-20 order-2 sm:order-1">
+              <X className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Cancel" : "取消"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -671,7 +691,7 @@ export default function ClientsPage({
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
-        <DialogContent className="sm:max-w-[400px]">
+        <DialogContent className="w-[calc(100%-2rem)] sm:max-w-[400px] mx-auto rounded-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-red-600">
               <AlertTriangle className="h-5 w-5" />
@@ -695,12 +715,12 @@ export default function ClientsPage({
               </div>
             </div>
           )}
-          <DialogFooter>
-            <Button variant="outline" onClick={cancelDeleteCustomer} className="w-20">
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={cancelDeleteCustomer} className="flex-1 sm:w-20">
               <X className="h-4 w-4 mr-2" />
               {locale === "en" ? "Cancel" : "取消"}
             </Button>
-            <Button variant="destructive" onClick={confirmDeleteCustomer} className="w-20">
+            <Button variant="destructive" onClick={confirmDeleteCustomer} className="flex-1 sm:w-20">
               <Trash2 className="h-4 w-4 mr-2" />
               {locale === "en" ? "Delete" : "刪除"}
             </Button>

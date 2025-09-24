@@ -93,7 +93,7 @@ export function Header() {
       return [
         {
           href: `/${currentLocale}/workspace/dashboard`,
-          label: currentLocale === "en" ? "Customers" : "客戶清單"
+          label: currentLocale === "en" ? "Customers" : "客戶清單",
         },
       ];
     }

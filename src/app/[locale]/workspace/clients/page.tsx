@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, use } from "react";
-import { Users, Phone, Mail, Plus, AlertTriangle, Edit, Save, X } from "lucide-react";
+import { Users, Phone, Mail, Plus, AlertTriangle, Edit, Save, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -41,6 +41,19 @@ export default function ClientsPage({
   const [customers, setCustomers] = useState(mockCustomers);
   const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [newCustomer, setNewCustomer] = useState<Partial<Customer>>({
+    name: "",
+    email: "",
+    phone: "",
+    age: 0,
+    gender: "male",
+    location: { city: "", district: "" },
+    interestedProducts: [],
+    status: "new",
+    notes: "",
+  });
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("zh-TW");
@@ -128,6 +141,96 @@ export default function ClientsPage({
     updateEditingCustomer("phone", formatted);
   };
 
+  const handleAddCustomer = () => {
+    setNewCustomer({
+      name: "",
+      email: "",
+      phone: "",
+      age: 0,
+      gender: "male",
+      location: { city: "", district: "" },
+      interestedProducts: [],
+      status: "new",
+      notes: "",
+    });
+    setIsAddDialogOpen(true);
+  };
+
+  const handleSaveNewCustomer = () => {
+    if (newCustomer.name && newCustomer.email && newCustomer.phone) {
+      const customer: Customer = {
+        id: `customer-${Date.now()}`,
+        name: newCustomer.name!,
+        email: newCustomer.email!,
+        phone: newCustomer.phone!,
+        age: newCustomer.age || 0,
+        gender: newCustomer.gender || "male",
+        location: newCustomer.location || { city: "", district: "" },
+        interestedProducts: newCustomer.interestedProducts || [],
+        status: newCustomer.status || "new",
+        assignedDate: new Date().toISOString().split('T')[0],
+        lastContact: new Date().toISOString().split('T')[0],
+        notes: newCustomer.notes || "",
+        policies: [],
+      };
+
+      setCustomers(prev => [customer, ...prev]);
+      setIsAddDialogOpen(false);
+      setNewCustomer({
+        name: "",
+        email: "",
+        phone: "",
+        age: 0,
+        gender: "male",
+        location: { city: "", district: "" },
+        interestedProducts: [],
+        status: "new",
+        notes: "",
+      });
+    }
+  };
+
+  const handleCancelAdd = () => {
+    setIsAddDialogOpen(false);
+    setNewCustomer({
+      name: "",
+      email: "",
+      phone: "",
+      age: 0,
+      gender: "male",
+      location: { city: "", district: "" },
+      interestedProducts: [],
+      status: "new",
+      notes: "",
+    });
+  };
+
+  const updateNewCustomer = (field: keyof Partial<Customer>, value: any) => {
+    setNewCustomer(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleNewCustomerPhoneChange = (phoneInput: string) => {
+    const formatted = formatPhoneNumber(phoneInput);
+    updateNewCustomer("phone", formatted);
+  };
+
+  const handleDeleteCustomer = () => {
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const confirmDeleteCustomer = () => {
+    if (editingCustomer) {
+      setCustomers(prev => prev.filter(customer => customer.id !== editingCustomer.id));
+      setIsDeleteConfirmOpen(false);
+      setIsEditDialogOpen(false);
+      setEditingCustomer(null);
+    }
+  };
+
+  const cancelDeleteCustomer = () => {
+    setIsDeleteConfirmOpen(false);
+  };
+
   // Helper function to get policies expiring within 3 months
   const getPoliciesExpiringWithinThreeMonths = (
     policies?: Policy[],
@@ -163,7 +266,7 @@ export default function ClientsPage({
                   : "管理您的潛在客戶和現有客戶"}
               </p>
             </div>
-            <Button size="sm" className="self-start sm:self-auto">
+            <Button size="sm" className="self-start sm:self-auto" onClick={handleAddCustomer}>
               <Plus className="h-4 w-4 mr-1" />
               {locale === "en" ? "Add Customer" : "新增客戶"}
             </Button>
@@ -419,14 +522,187 @@ export default function ClientsPage({
               </div>
             </div>
           )}
+          <DialogFooter className="flex justify-between">
+            <Button
+              variant="destructive"
+              onClick={handleDeleteCustomer}
+              className="mr-auto w-20"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Delete" : "刪除"}
+            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleCancelEdit} className="w-20">
+                <X className="h-4 w-4 mr-2" />
+                {locale === "en" ? "Cancel" : "取消"}
+              </Button>
+              <Button onClick={handleSaveCustomer} className="w-20">
+                <Save className="h-4 w-4 mr-2" />
+                {locale === "en" ? "Save" : "儲存"}
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Customer Dialog */}
+      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {locale === "en" ? "Add New Customer" : "新增客戶"}
+            </DialogTitle>
+            <DialogDescription>
+              {locale === "en"
+                ? "Enter new customer information"
+                : "輸入新客戶資訊"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-name">
+                {locale === "en" ? "Name" : "姓名"} *
+              </Label>
+              <Input
+                id="new-name"
+                value={newCustomer.name || ""}
+                onChange={(e) => updateNewCustomer("name", e.target.value)}
+                placeholder={locale === "en" ? "Enter customer name" : "輸入客戶姓名"}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-email">
+                {locale === "en" ? "Email" : "電子郵件"} *
+              </Label>
+              <Input
+                id="new-email"
+                type="email"
+                value={newCustomer.email || ""}
+                onChange={(e) => updateNewCustomer("email", e.target.value)}
+                placeholder={locale === "en" ? "Enter email address" : "輸入電子郵件"}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-phone">
+                {locale === "en" ? "Phone" : "電話"} *
+              </Label>
+              <Input
+                id="new-phone"
+                value={newCustomer.phone || ""}
+                onChange={(e) => handleNewCustomerPhoneChange(e.target.value)}
+                placeholder="09xx-xxx-xxx"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="new-age">
+                  {locale === "en" ? "Age" : "年齡"}
+                </Label>
+                <Input
+                  id="new-age"
+                  type="number"
+                  value={newCustomer.age || ""}
+                  onChange={(e) => updateNewCustomer("age", parseInt(e.target.value) || 0)}
+                  placeholder={locale === "en" ? "Age" : "年齡"}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-gender">
+                  {locale === "en" ? "Gender" : "性別"}
+                </Label>
+                <Select
+                  value={newCustomer.gender}
+                  onValueChange={(value) => updateNewCustomer("gender", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder={locale === "en" ? "Select gender" : "選擇性別"} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">
+                      {locale === "en" ? "Male" : "男性"}
+                    </SelectItem>
+                    <SelectItem value="female">
+                      {locale === "en" ? "Female" : "女性"}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-city">
+                {locale === "en" ? "City" : "城市"}
+              </Label>
+              <Input
+                id="new-city"
+                value={newCustomer.location?.city || ""}
+                onChange={(e) => updateNewCustomer("location", {...(newCustomer.location || {}), city: e.target.value})}
+                placeholder={locale === "en" ? "Enter city" : "輸入城市"}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-notes">
+                {locale === "en" ? "Notes" : "備註"}
+              </Label>
+              <Textarea
+                id="new-notes"
+                value={newCustomer.notes || ""}
+                onChange={(e) => updateNewCustomer("notes", e.target.value)}
+                rows={3}
+                placeholder={locale === "en" ? "Add any additional notes..." : "新增任何額外備註..."}
+              />
+            </div>
+          </div>
           <DialogFooter>
-            <Button variant="outline" onClick={handleCancelEdit}>
+            <Button variant="outline" onClick={handleCancelAdd} className="w-20">
               <X className="h-4 w-4 mr-2" />
               {locale === "en" ? "Cancel" : "取消"}
             </Button>
-            <Button onClick={handleSaveCustomer}>
+            <Button
+              onClick={handleSaveNewCustomer}
+              disabled={!newCustomer.name || !newCustomer.email || !newCustomer.phone}
+              className="w-20"
+            >
               <Save className="h-4 w-4 mr-2" />
-              {locale === "en" ? "Save Changes" : "儲存變更"}
+              {locale === "en" ? "Save" : "儲存"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+        <DialogContent className="sm:max-w-[400px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-600">
+              <AlertTriangle className="h-5 w-5" />
+              {locale === "en" ? "Delete Customer" : "刪除客戶"}
+            </DialogTitle>
+            <DialogDescription>
+              {locale === "en"
+                ? "Are you sure you want to delete this customer? This action cannot be undone."
+                : "確定要刪除此客戶嗎？此操作無法復原。"}
+            </DialogDescription>
+          </DialogHeader>
+          {editingCustomer && (
+            <div className="py-4">
+              <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg p-3">
+                <p className="text-sm font-medium text-red-800 dark:text-red-200">
+                  {locale === "en" ? "Customer to be deleted:" : "即將刪除的客戶："}
+                </p>
+                <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                  <strong>{editingCustomer.name}</strong> - {editingCustomer.email}
+                </p>
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={cancelDeleteCustomer} className="w-20">
+              <X className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Cancel" : "取消"}
+            </Button>
+            <Button variant="destructive" onClick={confirmDeleteCustomer} className="w-20">
+              <Trash2 className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Delete" : "刪除"}
             </Button>
           </DialogFooter>
         </DialogContent>

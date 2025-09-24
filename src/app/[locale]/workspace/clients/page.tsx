@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, use } from "react";
-import { Users, Phone, Mail, Plus, AlertTriangle } from "lucide-react";
+import { Users, Phone, Mail, Plus, AlertTriangle, Edit, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,8 +11,26 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { mockCustomers } from "@/data/mock-agent-data";
-import { CustomerStatus, Policy } from "@/types/agent-dashboard";
+import { Customer, CustomerStatus, Policy } from "@/types/agent-dashboard";
 
 export default function ClientsPage({
   params,
@@ -20,7 +38,9 @@ export default function ClientsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = use(params);
-  const [customers] = useState(mockCustomers);
+  const [customers, setCustomers] = useState(mockCustomers);
+  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString("zh-TW");
@@ -55,6 +75,57 @@ export default function ClientsPage({
 
     const config = statusConfig[status];
     return <Badge variant={config.variant}>{config.label}</Badge>;
+  };
+
+  const handleEditCustomer = (customer: Customer) => {
+    setEditingCustomer({ ...customer });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveCustomer = () => {
+    if (editingCustomer) {
+      setCustomers(prev =>
+        prev.map(customer =>
+          customer.id === editingCustomer.id ? editingCustomer : customer
+        )
+      );
+      setIsEditDialogOpen(false);
+      setEditingCustomer(null);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditDialogOpen(false);
+    setEditingCustomer(null);
+  };
+
+  const updateEditingCustomer = (field: keyof Customer, value: any) => {
+    if (editingCustomer) {
+      setEditingCustomer(prev => prev ? { ...prev, [field]: value } : null);
+    }
+  };
+
+  const formatPhoneNumber = (phone: string): string => {
+    // Remove all non-digit characters
+    const digits = phone.replace(/\D/g, '');
+
+    // If it starts with 09 and has 10 digits, format as 09xx-xxx-xxx
+    if (digits.startsWith('09') && digits.length === 10) {
+      return `${digits.slice(0, 4)}-${digits.slice(4, 7)}-${digits.slice(7)}`;
+    }
+
+    // If it has 10 digits but doesn't start with 09, still format but don't enforce 09
+    if (digits.length === 10) {
+      return `${digits.slice(0, 4)}-${digits.slice(4, 7)}-${digits.slice(7)}`;
+    }
+
+    // Return digits as is for incomplete numbers
+    return digits;
+  };
+
+  const handlePhoneChange = (phoneInput: string) => {
+    const formatted = formatPhoneNumber(phoneInput);
+    updateEditingCustomer("phone", formatted);
   };
 
   // Helper function to get policies expiring within 3 months
@@ -214,7 +285,13 @@ export default function ClientsPage({
                         <Phone className="h-3 w-3 mr-1" />
                         {locale === "en" ? "Call" : "電話"}
                       </Button>
-                      <Button variant="outline" size="sm" className="text-xs">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-xs"
+                        onClick={() => handleEditCustomer(customer)}
+                      >
+                        <Edit className="h-3 w-3 mr-1" />
                         {locale === "en" ? "Edit" : "編輯"}
                       </Button>
                     </div>
@@ -225,6 +302,135 @@ export default function ClientsPage({
           </div>
         </div>
       </div>
+
+      {/* Edit Customer Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>
+              {locale === "en" ? "Edit Customer" : "編輯客戶"}
+            </DialogTitle>
+            <DialogDescription>
+              {locale === "en"
+                ? "Update customer information and status"
+                : "更新客戶資訊和狀態"}
+            </DialogDescription>
+          </DialogHeader>
+          {editingCustomer && (
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">
+                  {locale === "en" ? "Name" : "姓名"}
+                </Label>
+                <Input
+                  id="name"
+                  value={editingCustomer.name}
+                  onChange={(e) => updateEditingCustomer("name", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">
+                  {locale === "en" ? "Email" : "電子郵件"}
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={editingCustomer.email}
+                  onChange={(e) => updateEditingCustomer("email", e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">
+                  {locale === "en" ? "Phone" : "電話"}
+                </Label>
+                <Input
+                  id="phone"
+                  value={editingCustomer.phone}
+                  onChange={(e) => handlePhoneChange(e.target.value)}
+                  placeholder="09xx-xxx-xxx"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="age">
+                    {locale === "en" ? "Age" : "年齡"}
+                  </Label>
+                  <Input
+                    id="age"
+                    type="number"
+                    value={editingCustomer.age}
+                    onChange={(e) => updateEditingCustomer("age", parseInt(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">
+                    {locale === "en" ? "City" : "城市"}
+                  </Label>
+                  <Input
+                    id="city"
+                    value={editingCustomer.location.city}
+                    onChange={(e) => updateEditingCustomer("location", {...editingCustomer.location, city: e.target.value})}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">
+                  {locale === "en" ? "Status" : "狀態"}
+                </Label>
+                <Select
+                  value={editingCustomer.status}
+                  onValueChange={(value) => updateEditingCustomer("status", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">
+                      {locale === "en" ? "New Customer" : "新客戶"}
+                    </SelectItem>
+                    <SelectItem value="contacted">
+                      {locale === "en" ? "Contacted" : "已聯絡"}
+                    </SelectItem>
+                    <SelectItem value="meeting_scheduled">
+                      {locale === "en" ? "Meeting Scheduled" : "會議預定"}
+                    </SelectItem>
+                    <SelectItem value="proposal_sent">
+                      {locale === "en" ? "Proposal Sent" : "已送提案"}
+                    </SelectItem>
+                    <SelectItem value="closed">
+                      {locale === "en" ? "Closed" : "已成交"}
+                    </SelectItem>
+                    <SelectItem value="lost">
+                      {locale === "en" ? "Lost" : "已流失"}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="notes">
+                  {locale === "en" ? "Notes" : "備註"}
+                </Label>
+                <Textarea
+                  id="notes"
+                  value={editingCustomer.notes || ""}
+                  onChange={(e) => updateEditingCustomer("notes", e.target.value)}
+                  rows={3}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancelEdit}>
+              <X className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Cancel" : "取消"}
+            </Button>
+            <Button onClick={handleSaveCustomer}>
+              <Save className="h-4 w-4 mr-2" />
+              {locale === "en" ? "Save Changes" : "儲存變更"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

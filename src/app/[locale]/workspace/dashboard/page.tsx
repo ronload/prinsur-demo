@@ -1,13 +1,7 @@
 "use client";
 
 import { useState, use } from "react";
-import {
-  Users,
-  Phone,
-  Mail,
-  Plus,
-  AlertTriangle,
-} from "lucide-react";
+import { Users, Phone, Mail, Plus, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,13 +11,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  mockCustomers,
-} from "@/data/mock-agent-data";
-import {
-  CustomerStatus,
-  Policy,
-} from "@/types/agent-dashboard";
+import { mockCustomers } from "@/data/mock-agent-data";
+import { CustomerStatus, Policy } from "@/types/agent-dashboard";
 
 export default function DashboardPage({
   params,

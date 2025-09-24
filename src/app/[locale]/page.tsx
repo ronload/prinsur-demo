@@ -61,8 +61,10 @@ export default function Home({ params }: HomeProps) {
   // Load user profile for checking completeness
   useEffect(() => {
     if (user?.id) {
-      if (user.type === 'consumer') {
-        const savedProfile = localStorage.getItem(`consumer_profile_${user.id}`);
+      if (user.type === "consumer") {
+        const savedProfile = localStorage.getItem(
+          `consumer_profile_${user.id}`,
+        );
         if (savedProfile) {
           try {
             const profile = JSON.parse(savedProfile);
@@ -77,7 +79,7 @@ export default function Home({ params }: HomeProps) {
             console.error("Error loading user profile:", error);
           }
         }
-      } else if (user.type === 'agent') {
+      } else if (user.type === "agent") {
         const savedProfile = localStorage.getItem(`agent_profile_${user.id}`);
         if (savedProfile) {
           try {
@@ -169,7 +171,7 @@ export default function Home({ params }: HomeProps) {
   const isProfileIncomplete = () => {
     if (!user) return false;
 
-    if (user.type === 'consumer') {
+    if (user.type === "consumer") {
       // Check if basic consumer profile fields are missing
       const basicFieldsMissing =
         !userProfile.age ||
@@ -178,7 +180,7 @@ export default function Home({ params }: HomeProps) {
         !userProfile.gender;
 
       return basicFieldsMissing;
-    } else if (user.type === 'agent') {
+    } else if (user.type === "agent") {
       // Check if basic agent profile fields are missing
       const agentFieldsMissing =
         !userProfile.licenseNumber ||
@@ -298,21 +300,19 @@ export default function Home({ params }: HomeProps) {
                 >
                   <div className="flex flex-row items-center justify-center gap-1">
                     <span className="text-muted-foreground text-sm">
-                      {user.type === 'agent' ? (
-                        locale === "en"
+                      {user.type === "agent"
+                        ? locale === "en"
                           ? "Complete profile for higher visibility - "
                           : "完善資料以獲得更高曝光 - "
-                      ) : (
-                        locale === "en"
+                        : locale === "en"
                           ? "Complete profile for better results - "
-                          : "完善個人資料以獲得更佳結果 - "
-                      )}
+                          : "完善個人資料以獲得更佳結果 - "}
                     </span>
                     <Button
                       variant="link"
                       className="text-primary p-0 h-auto text-sm underline"
                       onClick={() => {
-                        if (user.type === 'agent') {
+                        if (user.type === "agent") {
                           router.push(`/${locale}/workspace/profile`);
                         } else {
                           router.push(`/${locale}/app/profile`);

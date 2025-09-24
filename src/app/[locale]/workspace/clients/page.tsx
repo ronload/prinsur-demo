@@ -256,7 +256,7 @@ export default function ClientsPage({
     <div className="min-h-screen bg-background">
       <div className="px-4 py-6 md:container md:py-8">
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <h2 className="text-lg md:text-2xl font-bold">
                 {locale === "en" ? "Customer List" : "客戶清單"}

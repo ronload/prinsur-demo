@@ -119,7 +119,7 @@ export function Header() {
         }}
       >
         <div className="container flex h-14 items-center">
-          <div className="mr-4">
+          <div className="w-[40px] md:w-[120px] flex justify-start">
             <Link href="/zh-TW" className="flex items-center">
               <Image
                 src="/brand/logo.png"
@@ -146,7 +146,7 @@ export function Header() {
               </Link>
             </nav>
           </div>
-          <div className="flex items-center justify-end space-x-1">
+          <div className="w-[40px] md:w-[120px] flex justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -207,8 +207,8 @@ export function Header() {
       }}
     >
       <div className="container flex h-14 items-center">
-        {/* Logo */}
-        <div className="mr-2 md:mr-4">
+        {/* Logo - Fixed width for symmetry */}
+        <div className="w-[40px] md:w-[120px] flex justify-start">
           <Link href={`/${currentLocale}`} className="flex items-center">
             <Image
               src="/brand/icon.png"
@@ -227,7 +227,7 @@ export function Header() {
           </Link>
         </div>
 
-        {/* Navigation - both desktop and mobile */}
+        {/* Navigation - Perfectly centered */}
         <div className="flex-1 flex justify-center">
           <nav className="flex items-center space-x-1 md:space-x-2">
             {navigationItems.map((item) => {
@@ -251,8 +251,8 @@ export function Header() {
           </nav>
         </div>
 
-        {/* Right side - User menu */}
-        <div className="flex items-center justify-end">
+        {/* Right side - User menu (Fixed width to match left side) */}
+        <div className="w-[40px] md:w-[120px] flex justify-end">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="h-8 w-8 p-0">

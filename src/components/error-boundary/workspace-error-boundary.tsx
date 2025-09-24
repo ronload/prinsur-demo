@@ -22,7 +22,7 @@ function WorkspaceErrorFallback({ error, resetError }: ErrorFallbackProps) {
   const locale = pathname.split("/")[1] || "zh-TW";
 
   const handleGoToDashboard = () => {
-    window.location.href = `/${locale}/workspace/dashboard`;
+    window.location.href = `/${locale}/workspace/clients`;
   };
 
   const handleGoToApp = () => {

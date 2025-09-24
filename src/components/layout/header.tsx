@@ -92,7 +92,7 @@ export function Header() {
       // 业务员菜单
       return [
         {
-          href: `/${currentLocale}/workspace/dashboard`,
+          href: `/${currentLocale}/workspace/clients`,
           label: currentLocale === "en" ? "Customers" : "客戶清單",
         },
       ];
@@ -353,7 +353,7 @@ export function Header() {
                   {/* 已登录用户的功能菜单 */}
                   {user.type === "agent" && (
                     <DropdownMenuItem asChild>
-                      <Link href={`/${currentLocale}/app/dashboard`}>
+                      <Link href={`/${currentLocale}/workspace/clients`}>
                         <Settings className="mr-2 h-4 w-4" />
                         {currentLocale === "en" ? "Dashboard" : "工作台"}
                       </Link>

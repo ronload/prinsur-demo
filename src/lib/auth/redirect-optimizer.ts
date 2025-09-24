@@ -56,7 +56,7 @@ export function getDefaultRedirect(
     case "agent":
     case "manager":
     case "admin":
-      return `/${locale}/workspace/dashboard`;
+      return `/${locale}/workspace/clients`;
     default:
       return `/${locale}/`;
   }
@@ -155,7 +155,7 @@ const REDIRECT_RULES: RedirectRule[] = [
   {
     fromRole: "agent",
     condition: (user, context) => context.currentPath.includes("/consumer"),
-    redirect: (locale, user, context) => `/${locale}/workspace/dashboard`,
+    redirect: (locale, user, context) => `/${locale}/workspace/clients`,
     priority: 80,
   },
 
@@ -164,7 +164,7 @@ const REDIRECT_RULES: RedirectRule[] = [
     fromRole: "manager",
     condition: (user, context) =>
       context.currentPath ===
-      `/${context.currentPath.split("/")[1]}/workspace/dashboard`,
+      `/${context.currentPath.split("/")[1]}/workspace/clients`,
     redirect: (locale, user, context) => `/${locale}/workspace/reports`,
     priority: 70,
   },
@@ -173,7 +173,7 @@ const REDIRECT_RULES: RedirectRule[] = [
     fromRole: "admin",
     condition: (user, context) =>
       context.currentPath ===
-      `/${context.currentPath.split("/")[1]}/workspace/dashboard`,
+      `/${context.currentPath.split("/")[1]}/workspace/clients`,
     redirect: (locale, user, context) => `/${locale}/workspace/settings`,
     priority: 75,
   },

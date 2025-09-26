@@ -257,7 +257,7 @@ export function SearchWithSuggestions({
 
   const inputClasses = isHomepageVariant
     ? cn(
-        "h-14 pl-12 pr-4 text-base sm:text-lg border border-border/60 dark:border-white/15 bg-background/80 dark:bg-background/80",
+        "h-14 pl-12 pr-4 text-base sm:text-lg border-2 placeholder:text-sm sm:placeholder:text-base bg-white/5 backdrop-blur-md dark:backdrop-blur-md border-gray-300 dark:border-white/10",
         "outline-none focus:outline-none focus-visible:outline-none",
         "ring-0 focus:ring-0 focus-visible:ring-0 active:ring-0",
         "ring-offset-0 focus:ring-offset-0 focus-visible:ring-offset-0 active:ring-offset-0",
@@ -272,7 +272,7 @@ export function SearchWithSuggestions({
       );
 
   const dropdownClasses = isHomepageVariant
-    ? "absolute top-full left-0 right-0 bg-white/5 backdrop-blur-md dark:backdrop-blur-md border border-t-0 border-border/60 dark:border-white/10 rounded-b-[1.8rem] shadow-lg z-50 max-h-80 overflow-y-auto"
+    ? "absolute top-full left-0 right-0 bg-white/5 backdrop-blur-md dark:backdrop-blur-md border-2 border-t-0 border-gray-300 dark:border-white/10 rounded-b-[1.8rem] shadow-lg z-50 max-h-80 overflow-y-auto"
     : "absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto";
 
   const iconClasses = isHomepageVariant
@@ -314,7 +314,7 @@ export function SearchWithSuggestions({
                   : "hover:bg-muted",
                 // 添加底部邊框，除了最後一個項目
                 variant === "homepage" && index < suggestions.length - 1
-                  ? "border-b border-white/10 dark:border-white/5"
+                  ? "border-b border-black/10 dark:border-white/5"
                   : "",
               )}
               onClick={() => handleSuggestionClick(suggestion)}

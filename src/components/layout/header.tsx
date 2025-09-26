@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { User, LogOut, Settings, Moon, Sun, Globe } from "lucide-react";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -193,7 +193,7 @@ export function Header() {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/80 will-change-transform"
+      className="fixed top-0 left-0 right-0 z-50 w-full border-b border-border bg-background shadow-sm"
       style={{
         transform: "translateZ(0)",
         WebkitTransform: "translateZ(0)",
@@ -225,7 +225,7 @@ export function Header() {
 
         {/* Navigation - Perfectly centered */}
         <div className="flex-1 flex justify-center">
-          <nav className="flex items-center space-x-1 md:space-x-2">
+          <nav className="flex items-center gap-1 md:gap-2">
             {navigationItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -233,11 +233,11 @@ export function Header() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "text-xs md:text-sm font-medium transition-colors px-1.5 md:px-3 py-1.5 md:py-2 rounded-md text-center",
-                    "min-w-[70px] md:min-w-[100px]",
-                    isActive
-                      ? "text-foreground bg-muted"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+                    buttonVariants({
+                      variant: isActive ? "secondary" : "ghost",
+                      size: "sm",
+                    }),
+                    "min-w-[80px] justify-center",
                   )}
                 >
                   {item.label}

@@ -310,7 +310,6 @@ export default function InsurancePage({
                     : "搜尋保險商品或公司..."
                 }
                 locale={locale}
-                className="[&>form>input]:h-9 [&>form>input]:border [&>form>input]:rounded-md [&>form>input]:bg-background [&>form>input]:pl-9 [&>form>input]:text-sm [&>form]:relative [&>form>.lucide-search]:absolute [&>form>.lucide-search]:left-3 [&>form>.lucide-search]:top-2.5 [&>form>.lucide-search]:h-4 [&>form>.lucide-search]:w-4"
               />
             </div>
             <Button

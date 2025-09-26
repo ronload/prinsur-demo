@@ -253,38 +253,36 @@ export function SearchWithSuggestions({
     }
   };
 
-  const inputClasses =
-    variant === "homepage"
-      ? cn(
-          "h-14 pl-12 pr-4 text-base sm:text-lg border-2 placeholder:text-sm sm:placeholder:text-base bg-white/5 backdrop-blur-md dark:backdrop-blur-md border-gray-300 dark:border-white/10",
-          // 完全禁用所有outline和ring效果
-          "outline-none focus:outline-none focus-visible:outline-none",
-          "ring-0 focus:ring-0 focus-visible:ring-0 active:ring-0",
-          "ring-offset-0 focus:ring-offset-0 focus-visible:ring-offset-0 active:ring-offset-0",
-          // 禁用浏览器默认的focus样式
-          "[&:focus]:outline-none [&:focus-visible]:outline-none [&:active]:outline-none",
-          isOpen && suggestions.length > 0
-            ? "rounded-t-[1.8rem] rounded-b-none"
-            : "rounded-full",
-        )
-      : cn(
-          "h-14 pl-12 pr-4 text-base sm:text-lg border-2 rounded-full placeholder:text-sm sm:placeholder:text-base bg-white/5 backdrop-blur-md dark:backdrop-blur-md border-gray-300 dark:border-white/10",
-          // 完全禁用所有outline和ring效果
-          "outline-none focus:outline-none focus-visible:outline-none",
-          "ring-0 focus:ring-0 focus-visible:ring-0 active:ring-0",
-          "ring-offset-0 focus:ring-offset-0 focus-visible:ring-offset-0 active:ring-offset-0",
-          "[&:focus]:outline-none [&:focus-visible]:outline-none [&:active]:outline-none",
-        );
+  const isHomepageVariant = variant === "homepage";
 
-  const dropdownClasses =
-    variant === "homepage"
-      ? "absolute top-full left-0 right-0 bg-white/5 backdrop-blur-md dark:backdrop-blur-md border-2 border-t-0 border-gray-300 dark:border-white/10 rounded-b-[1.8rem] shadow-lg z-50 max-h-80 overflow-y-auto"
-      : "absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto";
+  const inputClasses = isHomepageVariant
+    ? cn(
+        "h-14 pl-12 pr-4 text-base sm:text-lg border border-border/60 dark:border-white/15 bg-background/80 dark:bg-background/80",
+        "outline-none focus:outline-none focus-visible:outline-none",
+        "ring-0 focus:ring-0 focus-visible:ring-0 active:ring-0",
+        "ring-offset-0 focus:ring-offset-0 focus-visible:ring-offset-0 active:ring-offset-0",
+        "[&:focus]:outline-none [&:focus-visible]:outline-none [&:active]:outline-none",
+        isOpen && suggestions.length > 0
+          ? "rounded-t-[1.8rem] rounded-b-none"
+          : "rounded-full",
+      )
+    : cn(
+        "h-9 pl-9 pr-3 text-sm rounded-md bg-background",
+        "transition-[box-shadow,background-color]",
+      );
+
+  const dropdownClasses = isHomepageVariant
+    ? "absolute top-full left-0 right-0 bg-white/5 backdrop-blur-md dark:backdrop-blur-md border border-t-0 border-border/60 dark:border-white/10 rounded-b-[1.8rem] shadow-lg z-50 max-h-80 overflow-y-auto"
+    : "absolute top-full left-0 right-0 mt-2 bg-background border border-border rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto";
+
+  const iconClasses = isHomepageVariant
+    ? "absolute left-4 top-[18px] h-5 w-5 text-muted-foreground z-10"
+    : "absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10";
 
   return (
     <div className={cn("relative", className)}>
       <form onSubmit={handleSubmit}>
-        <Search className="absolute left-4 top-[18px] h-5 w-5 text-muted-foreground z-10" />
+        <Search className={iconClasses} />
         <Input
           type="text"
           placeholder={placeholder}

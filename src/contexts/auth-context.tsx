@@ -116,19 +116,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     userType: "consumer" | "agent" | "manager" | "admin",
   ): Promise<boolean> => {
-    // 简单验证：只要邮箱和密码都有值就算登录成功
-    if (!email.trim() || !password.trim()) {
-      return false;
-    }
+    const normalizedEmail = email.trim() || `demo.user.${Date.now()}@demo.local`;
 
-    // 模拟API调用延迟
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // 模拟API调用延迟，保留示意效果
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-    // 创建用户对象
+    // 创建用户对象（即使输入为空也会生成有效身份）
     const newUser: User = {
       id: Date.now().toString(),
-      email,
-      name: email.split("@")[0], // 使用邮箱前缀作为姓名
+      email: normalizedEmail,
+      name: normalizedEmail.split("@")[0] || "demo_user",
       type: userType,
       role: userType, // Set role for RBAC compatibility
     };
@@ -149,41 +146,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     // 异步操作并行执行，避免阻塞
-    Promise.allSettled([
-      // 同步会话到服务端（带超时）
-      fetch("/api/auth/sync", {
+    try {
+      const response = await fetch("/api/auth/sync", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ user: newUser, action: "login" }),
-        signal: AbortSignal.timeout(5000), // 5秒超时
-      }),
-      // 记录审计跟踪
-      auditTrail.recordAuthentication(
-        newUser,
-        "login",
-        undefined,
-        getSafeUserAgent(),
-      ),
-    ]).then((results) => {
-      results.forEach((result, index) => {
-        if (result.status === "rejected") {
-          const operation = index === 0 ? "server_session_sync" : "audit_trail";
-          logger.warn("auth", `${operation}_failed`, {
-            user_id: newUser.id,
-            error:
-              result.reason instanceof Error
-                ? result.reason.message
-                : "Unknown error",
-          });
-        } else if (index === 0) {
-          logger.info("auth", "server_session_sync_success", {
-            user_id: newUser.id,
-          });
-        }
       });
-    });
+
+      if (!response.ok) {
+        logger.warn("auth", "server_session_sync_failed", {
+          user_id: newUser.id,
+          status: response.status,
+        });
+      } else {
+        logger.info("auth", "server_session_sync_success", {
+          user_id: newUser.id,
+        });
+      }
+    } catch (error) {
+      logger.warn("auth", "server_session_sync_failed", {
+        user_id: newUser.id,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+
+    auditTrail
+      .recordAuthentication(newUser, "login", undefined, getSafeUserAgent())
+      .catch((error) => {
+        logger.warn("auth", "audit_trail_failed", {
+          user_id: newUser.id,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      });
 
     // Cache session data (同步执行，因为是本地操作)
     try {

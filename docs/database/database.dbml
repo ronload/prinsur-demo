@@ -40,7 +40,6 @@ Table user_sessions [headercolor: #3498db] {
     Indexes {
         expires_at
         (user_id, is_active)
-        session_token_hash
     }
 }
 Ref: user_sessions.user_id > users.id [delete: cascade]
@@ -90,8 +89,8 @@ Table customer_profiles [headercolor: #3498db] {
 Ref: customer_profiles.user_id - users.id [delete: cascade]
 
 Table customer_medical_histories [headercolor: #3498db] {
-    id              int  [pk]
-    user_id         int
+    id              int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id         int  [not null]
     medical_history text
     Indexes {
         user_id
@@ -260,3 +259,55 @@ Table insurance_tags [headercolor: #f39c12] {
     }
 }
 Ref: insurance_tags.insurance_id > insurances.id [delete: cascade]
+
+Table policy_enrollments [headercolor: #127859] {
+    id               int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    customer_id      int         [not null]
+    agent_id         int         [not null]
+    insurance_id     int         [not null]
+    created_at       timestamptz [default: `now()`]
+    created_by       int         [not null]
+    updated_at       timestamptz [default: `now()`]
+    updated_by       int         [not null]
+    deleted_at       timestamptz
+    deleted_by       int
+    Indexes {
+        (customer_id,  agent_id, insurance_id) [unique]
+        customer_id
+        agent_id
+        insurance_id
+    }
+}
+Ref: policy_enrollments.customer_id > customer_profiles.user_id [delete: cascade]
+Ref: policy_enrollments.agent_id > agent_profiles.user_id [delete: cascade]
+Ref: policy_enrollments.insurance_id > insurances.id [delete: cascade]
+
+Table policy_enrollments_details [headercolor: #127859] {
+    id                   int            [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    policy_enrollment_id int            [not null]
+    transaction_date     timestamptz    [not null]
+    insured_amount       numeric(12, 2) [not null]
+    start_date           timestamptz
+    end_date             timestamptz
+    Indexes {
+        policy_enrollment_id
+        (agent_id, created_at) desc
+        (customer_id, created_at) desc
+    }
+}
+Ref: policy_enrollments_details.policy_enrollment_id - policy_enrollments.id
+
+Table notifications [headercolor: #A23456] {
+    id         int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id    int         [not null]
+    title      text        [not null]
+    payload    jsonb       [not null]
+    action_url text
+    sent_at    timestamptz [not null, default: `now()`]
+    read_at    timestamptz 
+    Indexes {
+        (user_id, read_at)
+    }
+}
+
+Ref: notifications.user_id > users.id

@@ -1,0 +1,313 @@
+Project user_module {
+    database_type: 'PostgreSQL'
+}
+
+//// User Domain
+Enum user_role {
+    admin
+    manager
+    staff
+    user
+}
+
+Table users [headercolor: #3498db] {
+    id                   int          [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    email                varchar      [not null, unique]
+    password_hash        varchar(60)  [not null]
+    password_attempts    int          [default: 0]
+    locked_until         timestamptz
+    last_password_change timestamptz
+    name                 varchar      [not null]
+    phone                varchar
+    role                 user_role    [not null, default: `user`]
+    created_at           timestamptz  [not null, default: `now()`]
+    updated_at           timestamptz  [not null, default: `now()`]
+    deleted_at           timestamptz
+    deleted_by           int
+}
+
+Table user_sessions [headercolor: #3498db] {
+    id                 int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id            int         [not null]
+    session_token_hash varchar(64) [not null, unique]
+    expires_at         timestamptz [not null]
+    ip_address         inet
+    user_agent         text
+    is_active          boolean     [default: true]
+    created_at         timestamptz [default: `now()`]
+    last_seen_at       timestamptz [default: `now()`]
+    terminated_at      timestamptz
+    Indexes {
+        expires_at
+        (user_id, is_active)
+    }
+}
+Ref: user_sessions.user_id > users.id [delete: cascade]
+
+Enum user_theme {
+    system
+    light
+    dark
+}
+
+Enum user_locale {
+    en
+    zh_TW
+}
+
+Table user_preferences [headercolor: #3498db] {
+    user_id    int         [pk]
+    theme      user_theme 
+    locale     user_locale
+    created_at timestamptz [default: `now()`]
+    created_by int         [not null]
+    updated_at timestamptz [default: `now()`]
+    updated_by int         [not null]
+}
+Ref: user_preferences.user_id - users.id [delete: cascade]
+
+Enum gender {
+    male
+    female
+}
+
+Table customer_profiles [headercolor: #3498db] {
+    user_id          int           [pk]
+    age              int
+    gender           gender
+    weight_kg        numeric(5, 2)
+    height_cm        numeric(5, 2)
+    location_city    varchar
+    occupation_level varchar
+    created_at       timestamptz   [default: `now()`]
+    created_by       int           [not null]
+    updated_at       timestamptz   [default: `now()`]
+    updated_by       int           [not null]
+    deleted_at       timestamptz
+    deleted_by       int
+}
+Ref: customer_profiles.user_id - users.id [delete: cascade]
+
+Table customer_medical_histories [headercolor: #3498db] {
+    id              int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id         int  [not null]
+    medical_history text
+    Indexes {
+        user_id
+        medical_history
+        (user_id, medical_history) [unique]
+    }
+}
+Ref: customer_medical_histories.user_id > customer_profiles.user_id
+
+Table agent_profiles [headercolor: #3498db] {
+    user_id            int         [pk]
+    license_number     varchar     [unique, not null]
+    company_id         int
+    position           varchar
+    address            varchar
+    bio                text
+    created_at         timestamptz [default: `now()`]
+    created_by         int         [not null]
+    updated_at         timestamptz [default: `now()`]
+    updated_by         int         [not null]
+    deleted_at         timestamptz
+    deleted_by         int
+    Indexes {
+        company_id
+    }
+}
+Ref: agent_profiles.user_id - users.id [delete: cascade]
+
+Table agent_service_areas [headercolor: #3498db] {
+    id           int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id      int  [not null]
+    service_area text [not null]
+    Indexes {
+        user_id
+        service_area
+        (user_id, service_area) [unique]
+    }
+}
+Ref: agent_service_areas.user_id > agent_profiles.user_id [delete: cascade]
+
+Table agent_service_categories [headercolor: #3498db] {
+    id               int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id          int  [not null]
+    service_category text [not null]
+    Indexes {
+        user_id
+        service_category
+        (user_id, service_category) [unique]
+    }
+}
+Ref: agent_service_categories.user_id > agent_profiles.user_id [delete: cascade]
+
+Enum action {
+    INSERT
+    UPDATE
+    DELETE
+}
+Table audit_logs [headercolor: #3498db] {
+    id         int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    table_name varchar     [not null]
+    record_id  int         [not null]
+    action     action      [not null]
+    old_values jsonb
+    new_values jsonb
+    user_id    int
+    ip_address inet
+    created_at timestamptz [default: `now()`]
+    Indexes {
+        (table_name, record_id)
+        created_at
+    }
+}
+Ref: audit_logs.user_id > users.id [delete: restrict]
+
+Table companies [headercolor: #f39c12] {
+    id               int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    name             varchar     [unique, not null]
+    created_at       timestamptz [default: `now()`] 
+    created_by       int         [not null]
+    updated_at       timestamptz [default: `now()`]
+    updated_by       int         [not null]
+    deleted_at       timestamptz
+    deleted_by       int
+}
+Ref: agent_profiles.company_id > companies.id
+
+Table company_details [headercolor: #f39c12] {
+    company_id       int            [pk]
+    paid_in_capital  numeric(14, 2)
+    market_share     numeric(6, 3)
+    insurance_income numeric(14, 2)
+    updated_at       timestamptz    [default: `now()`]
+}
+Ref: company_details.company_id - companies.id
+
+Enum insurance_categories {
+    life
+    health
+    accident
+    travel
+    vehicle
+    property
+}
+
+Table insurances [headercolor: #f39c12] {
+    id                  int                  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    company_id          int                  [not null]
+    category            insurance_categories [not null]
+    name                varchar              [not null]
+
+    rate                numeric(5, 4)
+    created_at          timestamptz          [default: `now()`]
+    created_by          int                  [not null]
+    updated_at          timestamptz          [default: `now()`]
+    updated_by          int                  [not null]
+    deleted_at          timestamptz
+    deleted_by          int
+    Indexes {
+        category
+        company_id
+        (category, company_id)
+    }
+}
+Ref: insurances.company_id > companies.id
+
+Table insurance_details [headercolor: #f39c12] {
+    insurance_id        int            [pk]
+    available_age       varchar
+    payment_period      varchar
+    is_renewable        boolean
+    is_foreign_currency boolean
+    highest_pay         numeric(12, 2)
+    updated_at          timestamptz    [default: `now()`]
+}
+Ref: insurance_details.insurance_id - insurances.id [delete: cascade]
+
+Table insurance_file_urls [headercolor: #f39c12] {
+    id           int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    insurance_id int  [not null]
+    url          text [not null]
+    Indexes {
+        insurance_id
+        (insurance_id, url) [unique]
+    }
+}
+Ref: insurance_file_urls.insurance_id > insurances.id [delete: cascade]
+
+Table insurance_coverages [headercolor: #f39c12] {
+    id           int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    insurance_id int  [not null]
+    coverage     text [not null]
+    Indexes {
+        insurance_id
+        (insurance_id, coverage) [unique]
+    }
+}
+Ref: insurance_coverages.insurance_id > insurances.id [delete: cascade]
+
+Table insurance_tags [headercolor: #f39c12] {
+    id           int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    insurance_id int  [not null]
+    tag          text [not null]
+    Indexes {
+        insurance_id
+        (insurance_id, tag) [unique]
+    }
+}
+Ref: insurance_tags.insurance_id > insurances.id [delete: cascade]
+
+Table policy_enrollments [headercolor: #127859] {
+    id               int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    customer_id      int         [not null]
+    agent_id         int         [not null]
+    insurance_id     int         [not null]
+    created_at       timestamptz [default: `now()`]
+    created_by       int         [not null]
+    updated_at       timestamptz [default: `now()`]
+    updated_by       int         [not null]
+    deleted_at       timestamptz
+    deleted_by       int
+    Indexes {
+        (customer_id,  agent_id, insurance_id) [unique]
+        customer_id
+        agent_id
+        insurance_id
+    }
+}
+Ref: policy_enrollments.customer_id > customer_profiles.user_id [delete: cascade]
+Ref: policy_enrollments.agent_id > agent_profiles.user_id [delete: cascade]
+Ref: policy_enrollments.insurance_id > insurances.id [delete: cascade]
+
+Table policy_enrollments_details [headercolor: #127859] {
+    id                   int            [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    policy_enrollment_id int            [not null]
+    transaction_date     timestamptz    [not null]
+    insured_amount       numeric(12, 2) [not null]
+    start_date           timestamptz
+    end_date             timestamptz
+    Indexes {
+        policy_enrollment_id
+        (agent_id, created_at) desc
+        (customer_id, created_at) desc
+    }
+}
+Ref: policy_enrollments_details.policy_enrollment_id - policy_enrollments.id
+
+Table notifications [headercolor: #A23456] {
+    id         int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id    int         [not null]
+    title      text        [not null]
+    payload    jsonb       [not null]
+    action_url text
+    sent_at    timestamptz [not null, default: `now()`]
+    read_at    timestamptz 
+    Indexes {
+        (user_id, read_at)
+    }
+}
+
+Ref: notifications.user_id > users.id

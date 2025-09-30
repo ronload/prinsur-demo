@@ -143,6 +143,20 @@ Table agent_service_categories [headercolor: #3498db] {
 }
 Ref: agent_service_categories.user_id > agent_profiles.user_id [delete: cascade]
 
+Enum language {
+    chinese
+    taiwanese
+    hakka
+    english
+}
+
+Table agent_supported_languages [headercolor: #3498db] {
+    id                 int      [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id            int      [not null]
+    supported_language language [not null]
+}
+Ref: agent_supported_languages.user_id > agent_profiles.user_id
+
 Enum action {
     INSERT
     UPDATE
@@ -265,6 +279,7 @@ Table policy_enrollments [headercolor: #127859] {
     customer_id      int         [not null]
     agent_id         int         [not null]
     insurance_id     int         [not null]
+    policy_number    text        [not null, unique]
     created_at       timestamptz [default: `now()`]
     created_by       int         [not null]
     updated_at       timestamptz [default: `now()`]
@@ -272,7 +287,6 @@ Table policy_enrollments [headercolor: #127859] {
     deleted_at       timestamptz
     deleted_by       int
     Indexes {
-        (customer_id,  agent_id, insurance_id) [unique]
         customer_id
         agent_id
         insurance_id
@@ -282,20 +296,51 @@ Ref: policy_enrollments.customer_id > customer_profiles.user_id [delete: cascade
 Ref: policy_enrollments.agent_id > agent_profiles.user_id [delete: cascade]
 Ref: policy_enrollments.insurance_id > insurances.id [delete: cascade]
 
+Enum payment_frequency {
+    monthly
+    annually
+    other
+}
+
 Table policy_enrollments_details [headercolor: #127859] {
-    id                   int            [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
-    policy_enrollment_id int            [not null]
-    transaction_date     timestamptz    [not null]
-    insured_amount       numeric(12, 2) [not null]
+    id                   int               [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    policy_enrollment_id int               [not null]
+    transaction_date     timestamptz       [not null]
+    insured_amount       numeric(12, 2)    [not null]
     start_date           timestamptz
     end_date             timestamptz
+    payment_frequency    payment_frequency [not null]
+    payment_amount       numeric(12, 2)    [not null]
+    next_due_date        timestamptz       [not null]
+    is_active            boolean           [not null]               
     Indexes {
         policy_enrollment_id
-        (agent_id, created_at) desc
-        (customer_id, created_at) desc
     }
 }
 Ref: policy_enrollments_details.policy_enrollment_id - policy_enrollments.id
+
+Enum claim_status {
+    pending
+    approved
+    rejected
+    processing
+}
+
+Table claims [headercolor: #127859] {
+    id                   int            [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    policy_enrollment_id int            [not null]
+    status               claim_status
+    message              text
+    amount               numeric(12, 2)
+    submit_date          timestamptz
+    create_at            timestamptz     [default: `now()`]
+    create_by            int             [not null]
+    updated_at           timestamptz     [default: `now()`]
+    updated_by           int             [not null]
+    deleted_at           timestamptz
+    deleted_by           int
+}
+Ref: claims.policy_enrollment_id - policy_enrollments.id
 
 Table notifications [headercolor: #A23456] {
     id         int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
@@ -309,5 +354,4 @@ Table notifications [headercolor: #A23456] {
         (user_id, read_at)
     }
 }
-
 Ref: notifications.user_id > users.id

@@ -13,17 +13,20 @@
 本次審核針對 Prinsur 保險平台的資料庫架構進行 ISO 27001 合規性檢查。
 
 ### 修復進度
+
 - ✅ **已修復**: 0 項
 - ⚠️ **部分修復**: 2 項 (問題 2: 密碼安全, 問題 6: 軟刪除)
 - ❌ **未修復**: 8 項
 
 ### 合規性評分
+
 - **整體合規度**: 65% (部分符合，較前次 60% 略有進步)
 - **嚴重問題**: 8 項 (含新發現 3 項)
 - **中等問題**: 5 項
 - **改進建議**: 5 項
 
 ### 新發現的問題
+
 - 主鍵缺失 (agent_recommendation_params, insurance_recommendation_params)
 - 外鍵關聯缺失 (created_by, updated_by, deleted_by 欄位)
 - 欄位命名不一致 (claims 表格)
@@ -37,13 +40,16 @@
 **ISO 27001 控制項**: A.10.1.1 - 加密控制政策
 
 #### 問題描述
+
 以下敏感資料以明文儲存，違反資料保護法規：
+
 - `customer_profiles`: `weight_kg`, `height_cm` (健康資訊)
 - `customer_medical_histories.medical_history` (醫療記錄)
 - `users.phone` (個人識別資訊)
 - `agent_profiles.address` (地址資訊)
 
 #### 風險評估
+
 - **風險等級**: 嚴重
 - **影響範圍**: 資料外洩可能導致法律責任、罰款和聲譽損失
 - **合規要求**: GDPR Art.32、個資法第27條、保險法第177-1條
@@ -88,14 +94,14 @@ FROM customer_profiles;
 
 ```typescript
 // 使用 AES-256-GCM 加密
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
 
 class FieldEncryption {
-  private algorithm = 'aes-256-gcm';
+  private algorithm = "aes-256-gcm";
   private keyId: string;
 
   constructor(private masterKey: Buffer) {
-    this.keyId = process.env.ENCRYPTION_KEY_VERSION || 'v1';
+    this.keyId = process.env.ENCRYPTION_KEY_VERSION || "v1";
   }
 
   encrypt(plaintext: string): {
@@ -107,14 +113,14 @@ class FieldEncryption {
     const iv = randomBytes(16);
     const cipher = createCipheriv(this.algorithm, this.masterKey, iv);
 
-    let encrypted = cipher.update(plaintext, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
+    let encrypted = cipher.update(plaintext, "utf8", "hex");
+    encrypted += cipher.final("hex");
 
     return {
       ciphertext: encrypted,
-      iv: iv.toString('hex'),
-      authTag: cipher.getAuthTag().toString('hex'),
-      keyId: this.keyId
+      iv: iv.toString("hex"),
+      authTag: cipher.getAuthTag().toString("hex"),
+      keyId: this.keyId,
     };
   }
 
@@ -127,13 +133,13 @@ class FieldEncryption {
     const decipher = createDecipheriv(
       this.algorithm,
       this.masterKey,
-      Buffer.from(encrypted.iv, 'hex')
+      Buffer.from(encrypted.iv, "hex"),
     );
 
-    decipher.setAuthTag(Buffer.from(encrypted.authTag, 'hex'));
+    decipher.setAuthTag(Buffer.from(encrypted.authTag, "hex"));
 
-    let decrypted = decipher.update(encrypted.ciphertext, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
+    let decrypted = decipher.update(encrypted.ciphertext, "hex", "utf8");
+    decrypted += decipher.final("utf8");
 
     return decrypted;
   }
@@ -141,12 +147,18 @@ class FieldEncryption {
 
 // 使用範例
 const encryptor = new FieldEncryption(getKeyFromVault());
-const encryptedPhone = encryptor.encrypt('+886912345678');
+const encryptedPhone = encryptor.encrypt("+886912345678");
 
 // 儲存到資料庫
 await db.query(
-  'INSERT INTO users (email, phone_enc, phone_iv, phone_tag, phone_key_id) VALUES ($1, $2, $3, $4, $5)',
-  [email, encryptedPhone.ciphertext, encryptedPhone.iv, encryptedPhone.authTag, encryptedPhone.keyId]
+  "INSERT INTO users (email, phone_enc, phone_iv, phone_tag, phone_key_id) VALUES ($1, $2, $3, $4, $5)",
+  [
+    email,
+    encryptedPhone.ciphertext,
+    encryptedPhone.iv,
+    encryptedPhone.authTag,
+    encryptedPhone.keyId,
+  ],
 );
 ```
 
@@ -173,6 +185,7 @@ ssl_key_file = '/etc/postgresql/server.key'
 #### 實施建議
 
 **更新 DBML 架構**:
+
 ```dbml
 Table customer_profiles [headercolor: #3498db] {
     user_id              int           [pk]
@@ -225,14 +238,14 @@ Table users [headercolor: #3498db] {
 
 ```typescript
 // 使用 AWS KMS / Azure Key Vault / Google Cloud KMS
-import { KMSClient, DecryptCommand } from '@aws-sdk/client-kms';
+import { KMSClient, DecryptCommand } from "@aws-sdk/client-kms";
 
 class KeyManagementService {
   private kmsClient: KMSClient;
   private cache: Map<string, { key: Buffer; expiresAt: number }>;
 
   constructor() {
-    this.kmsClient = new KMSClient({ region: 'ap-northeast-1' });
+    this.kmsClient = new KMSClient({ region: "ap-northeast-1" });
     this.cache = new Map();
   }
 
@@ -246,7 +259,10 @@ class KeyManagementService {
     // 從 KMS 取得資料加密金鑰
     const command = new DecryptCommand({
       KeyId: keyId,
-      CiphertextBlob: Buffer.from(process.env[`ENCRYPTED_KEY_${keyId}`], 'base64')
+      CiphertextBlob: Buffer.from(
+        process.env[`ENCRYPTED_KEY_${keyId}`],
+        "base64",
+      ),
     });
 
     const response = await this.kmsClient.send(command);
@@ -255,7 +271,7 @@ class KeyManagementService {
     // 快取 15 分鐘
     this.cache.set(keyId, {
       key,
-      expiresAt: Date.now() + 15 * 60 * 1000
+      expiresAt: Date.now() + 15 * 60 * 1000,
     });
 
     return key;
@@ -279,17 +295,20 @@ class KeyManagementService {
 **ISO 27001 控制項**: A.9.4.3 - 密碼管理系統
 
 **修復狀態**:
+
 - ✅ 已加入 `password_attempts`, `locked_until`, `last_password_change` 欄位
 - ❌ `password_hash` 長度仍不足 (60 → 應為 255)
 - ❌ 缺少 `password_algorithm`, `password_expires_at` 欄位
 - ❌ 缺少 `password_history` 表格和 MFA 支援
 
 #### 問題描述
+
 ```dbml
 password_hash varchar(60) [not null]
 ```
 
 存在以下問題：
+
 1. 長度限制 60 字元不足以支援未來演算法升級
 2. 未明確標註使用的雜湊演算法
 3. 缺少密碼歷史追蹤
@@ -301,15 +320,15 @@ password_hash varchar(60) [not null]
 ##### 方案 1: 使用 Argon2id (2023+ 推薦)
 
 ```typescript
-import argon2 from 'argon2';
+import argon2 from "argon2";
 
 class PasswordService {
   private readonly ARGON2_OPTIONS = {
     type: argon2.argon2id,
-    memoryCost: 65536,      // 64 MB
-    timeCost: 3,            // 3 iterations
-    parallelism: 4,         // 4 threads
-    hashLength: 32          // 32 bytes output
+    memoryCost: 65536, // 64 MB
+    timeCost: 3, // 3 iterations
+    parallelism: 4, // 4 threads
+    hashLength: 32, // 32 bytes output
   };
 
   async hashPassword(plaintext: string): Promise<string> {
@@ -328,24 +347,29 @@ class PasswordService {
 
   // 檢查是否需要重新雜湊 (演算法升級)
   needsRehash(hash: string): boolean {
-    return !hash.startsWith('$argon2id$') ||
-           !argon2.needsRehash(hash, this.ARGON2_OPTIONS);
+    return (
+      !hash.startsWith("$argon2id$") ||
+      !argon2.needsRehash(hash, this.ARGON2_OPTIONS)
+    );
   }
 }
 
 // 登入時自動升級舊密碼
 async function login(email: string, password: string) {
-  const user = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+  const user = await db.query("SELECT * FROM users WHERE email = $1", [email]);
 
   const passwordService = new PasswordService();
-  const isValid = await passwordService.verifyPassword(password, user.password_hash);
+  const isValid = await passwordService.verifyPassword(
+    password,
+    user.password_hash,
+  );
 
   if (isValid && passwordService.needsRehash(user.password_hash)) {
     // 自動升級到新演算法
     const newHash = await passwordService.hashPassword(password);
     await db.query(
-      'UPDATE users SET password_hash = $1, last_password_change = now() WHERE id = $2',
-      [newHash, user.id]
+      "UPDATE users SET password_hash = $1, last_password_change = now() WHERE id = $2",
+      [newHash, user.id],
     );
   }
 
@@ -426,7 +450,10 @@ interface PasswordPolicy {
 class PasswordValidator {
   constructor(private policy: PasswordPolicy) {}
 
-  validate(password: string, userId: string): {
+  validate(
+    password: string,
+    userId: string,
+  ): {
     valid: boolean;
     errors: string[];
   } {
@@ -439,48 +466,56 @@ class PasswordValidator {
 
     // 大寫字母
     if (this.policy.requireUppercase && !/[A-Z]/.test(password)) {
-      errors.push('密碼必須包含至少一個大寫字母');
+      errors.push("密碼必須包含至少一個大寫字母");
     }
 
     // 小寫字母
     if (this.policy.requireLowercase && !/[a-z]/.test(password)) {
-      errors.push('密碼必須包含至少一個小寫字母');
+      errors.push("密碼必須包含至少一個小寫字母");
     }
 
     // 數字
     if (this.policy.requireNumbers && !/\d/.test(password)) {
-      errors.push('密碼必須包含至少一個數字');
+      errors.push("密碼必須包含至少一個數字");
     }
 
     // 特殊字元
-    if (this.policy.requireSpecialChars && !/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      errors.push('密碼必須包含至少一個特殊字元');
+    if (
+      this.policy.requireSpecialChars &&
+      !/[!@#$%^&*(),.?":{}|<>]/.test(password)
+    ) {
+      errors.push("密碼必須包含至少一個特殊字元");
     }
 
     // 常見密碼檢查
     if (this.isCommonPassword(password)) {
-      errors.push('此密碼太常見，請使用更安全的密碼');
+      errors.push("此密碼太常見，請使用更安全的密碼");
     }
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
-  async checkPasswordHistory(userId: string, newPassword: string): Promise<boolean> {
+  async checkPasswordHistory(
+    userId: string,
+    newPassword: string,
+  ): Promise<boolean> {
     const history = await db.query(
       `SELECT password_hash FROM password_history
        WHERE user_id = $1
        ORDER BY created_at DESC
        LIMIT $2`,
-      [userId, this.policy.historyCount]
+      [userId, this.policy.historyCount],
     );
 
     const passwordService = new PasswordService();
 
     for (const record of history.rows) {
-      if (await passwordService.verifyPassword(newPassword, record.password_hash)) {
+      if (
+        await passwordService.verifyPassword(newPassword, record.password_hash)
+      ) {
         return false; // 密碼已使用過
       }
     }
@@ -490,11 +525,17 @@ class PasswordValidator {
 
   private isCommonPassword(password: string): boolean {
     const commonPasswords = [
-      'password', 'Password123', '12345678', 'qwerty123',
-      'admin123', 'letmein', 'welcome123', 'monkey123'
+      "password",
+      "Password123",
+      "12345678",
+      "qwerty123",
+      "admin123",
+      "letmein",
+      "welcome123",
+      "monkey123",
     ];
-    return commonPasswords.some(common =>
-      password.toLowerCase().includes(common.toLowerCase())
+    return commonPasswords.some((common) =>
+      password.toLowerCase().includes(common.toLowerCase()),
     );
   }
 }
@@ -518,23 +559,23 @@ class AccountLockoutService {
            END
        WHERE id = $2
        RETURNING password_attempts, locked_until`,
-      [this.MAX_ATTEMPTS, userId]
+      [this.MAX_ATTEMPTS, userId],
     );
 
     // 記錄到審計日誌
     await auditLogger.log({
-      action: 'failed_login_attempt',
+      action: "failed_login_attempt",
       userId,
       ipAddress,
-      attempts: result.rows[0].password_attempts
+      attempts: result.rows[0].password_attempts,
     });
 
     if (result.rows[0].password_attempts >= this.MAX_ATTEMPTS) {
       // 觸發安全警報
       await securityAlert.notify({
-        type: 'account_locked',
+        type: "account_locked",
         userId,
-        reason: 'too_many_failed_attempts'
+        reason: "too_many_failed_attempts",
       });
     }
   }
@@ -544,14 +585,14 @@ class AccountLockoutService {
       `UPDATE users
        SET password_attempts = 0, locked_until = NULL
        WHERE id = $1`,
-      [userId]
+      [userId],
     );
   }
 
   async isAccountLocked(userId: string): Promise<boolean> {
     const result = await db.query(
       `SELECT locked_until FROM users WHERE id = $1`,
-      [userId]
+      [userId],
     );
 
     const lockedUntil = result.rows[0]?.locked_until;
@@ -571,6 +612,7 @@ class AccountLockoutService {
 #### 問題描述
 
 當前 `audit_logs` 表格缺少關鍵資訊：
+
 - 操作結果 (成功/失敗)
 - 失敗原因
 - 操作來源 (API endpoint, 應用程式)
@@ -709,7 +751,7 @@ Ref: sensitive_data_access_logs.approved_by > users.id [delete: set null]
 ```typescript
 class AuditLogger {
   async logDataChange(params: {
-    action: 'INSERT' | 'UPDATE' | 'DELETE';
+    action: "INSERT" | "UPDATE" | "DELETE";
     tableName: string;
     recordId: number;
     oldValues?: Record<string, any>;
@@ -718,7 +760,16 @@ class AuditLogger {
     sessionId: string;
     request: Request;
   }): Promise<void> {
-    const { action, tableName, recordId, oldValues, newValues, userId, sessionId, request } = params;
+    const {
+      action,
+      tableName,
+      recordId,
+      oldValues,
+      newValues,
+      userId,
+      sessionId,
+      request,
+    } = params;
 
     // 計算風險分數
     const riskScore = this.calculateRiskScore({
@@ -726,22 +777,27 @@ class AuditLogger {
       tableName,
       changedFields: this.getChangedFields(oldValues, newValues),
       userId,
-      ipAddress: this.getIpAddress(request)
+      ipAddress: this.getIpAddress(request),
     });
 
     // 判斷資料敏感度
     const dataClassification = this.classifyData(tableName);
 
     // 加密敏感資料
-    const shouldEncrypt = ['confidential', 'restricted'].includes(dataClassification);
-    const encryptedOldValues = shouldEncrypt && oldValues
-      ? await this.encryptAuditData(oldValues)
-      : oldValues;
-    const encryptedNewValues = shouldEncrypt && newValues
-      ? await this.encryptAuditData(newValues)
-      : newValues;
+    const shouldEncrypt = ["confidential", "restricted"].includes(
+      dataClassification,
+    );
+    const encryptedOldValues =
+      shouldEncrypt && oldValues
+        ? await this.encryptAuditData(oldValues)
+        : oldValues;
+    const encryptedNewValues =
+      shouldEncrypt && newValues
+        ? await this.encryptAuditData(newValues)
+        : newValues;
 
-    await db.query(`
+    await db.query(
+      `
       INSERT INTO audit_logs (
         action, action_result, table_name, record_id,
         data_classification, old_values, new_values, affected_fields,
@@ -751,36 +807,38 @@ class AuditLogger {
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19
       )
-    `, [
-      action,
-      'success',
-      tableName,
-      recordId,
-      dataClassification,
-      encryptedOldValues,
-      encryptedNewValues,
-      this.getChangedFields(oldValues, newValues),
-      userId,
-      await this.getUserRole(userId),
-      sessionId,
-      this.getIpAddress(request),
-      request.headers.get('user-agent'),
-      this.getSourceApplication(request),
-      request.url,
-      request.headers.get('x-request-id'),
-      riskScore,
-      riskScore >= 70, // 高風險需要審查
-      this.calculateRetentionDate(tableName)
-    ]);
+    `,
+      [
+        action,
+        "success",
+        tableName,
+        recordId,
+        dataClassification,
+        encryptedOldValues,
+        encryptedNewValues,
+        this.getChangedFields(oldValues, newValues),
+        userId,
+        await this.getUserRole(userId),
+        sessionId,
+        this.getIpAddress(request),
+        request.headers.get("user-agent"),
+        this.getSourceApplication(request),
+        request.url,
+        request.headers.get("x-request-id"),
+        riskScore,
+        riskScore >= 70, // 高風險需要審查
+        this.calculateRetentionDate(tableName),
+      ],
+    );
 
     // 高風險操作觸發即時警報
     if (riskScore >= 80) {
       await this.triggerSecurityAlert({
-        type: 'high_risk_operation',
+        type: "high_risk_operation",
         userId,
         action,
         tableName,
-        riskScore
+        riskScore,
       });
     }
   }
@@ -795,23 +853,27 @@ class AuditLogger {
     let score = 0;
 
     // 動作風險
-    if (params.action === 'DELETE') score += 30;
-    else if (params.action === 'UPDATE') score += 20;
+    if (params.action === "DELETE") score += 30;
+    else if (params.action === "UPDATE") score += 20;
     else score += 10;
 
     // 表格敏感度
     const sensitiveTables = [
-      'customer_medical_histories',
-      'policy_enrollments',
-      'claims',
-      'user_sessions'
+      "customer_medical_histories",
+      "policy_enrollments",
+      "claims",
+      "user_sessions",
     ];
     if (sensitiveTables.includes(params.tableName)) score += 30;
 
     // 敏感欄位變更
-    const sensitiveFields = ['password_hash', 'medical_history', 'payment_amount'];
-    const touchedSensitiveFields = params.changedFields.filter(f =>
-      sensitiveFields.some(sf => f.includes(sf))
+    const sensitiveFields = [
+      "password_hash",
+      "medical_history",
+      "payment_amount",
+    ];
+    const touchedSensitiveFields = params.changedFields.filter((f) =>
+      sensitiveFields.some((sf) => f.includes(sf)),
     );
     score += touchedSensitiveFields.length * 15;
 
@@ -823,23 +885,23 @@ class AuditLogger {
 
   private classifyData(tableName: string): string {
     const classification: Record<string, string> = {
-      'customer_medical_histories': 'restricted',
-      'policy_enrollments': 'confidential',
-      'claims': 'confidential',
-      'customer_profiles': 'confidential',
-      'agent_profiles': 'internal',
-      'insurances': 'public',
-      'companies': 'public'
+      customer_medical_histories: "restricted",
+      policy_enrollments: "confidential",
+      claims: "confidential",
+      customer_profiles: "confidential",
+      agent_profiles: "internal",
+      insurances: "public",
+      companies: "public",
     };
-    return classification[tableName] || 'internal';
+    return classification[tableName] || "internal";
   }
 
   private calculateRetentionDate(tableName: string): Date {
     const retentionPeriods: Record<string, number> = {
-      'policy_enrollments': 7 * 365,      // 7 years (金融法規)
-      'claims': 7 * 365,
-      'audit_logs': 3 * 365,              // 3 years (一般營運)
-      'user_sessions': 90,                // 90 days
+      policy_enrollments: 7 * 365, // 7 years (金融法規)
+      claims: 7 * 365,
+      audit_logs: 3 * 365, // 3 years (一般營運)
+      user_sessions: 90, // 90 days
     };
 
     const days = retentionPeriods[tableName] || 365;
@@ -850,7 +912,7 @@ class AuditLogger {
 
   private async encryptAuditData(data: Record<string, any>): Promise<string> {
     const kms = new KeyManagementService();
-    const key = await kms.getDataKey('audit-encryption-key');
+    const key = await kms.getDataKey("audit-encryption-key");
     const encrypted = await encrypt(JSON.stringify(data), key);
     return encrypted;
   }
@@ -923,7 +985,8 @@ CREATE TRIGGER audit_claims
 ```typescript
 // Middleware for tracking sensitive data access
 class SensitiveDataAccessTracker {
-  private sensitiveTablePattern = /^(customer_profiles|customer_medical_histories|policy_enrollments|claims)$/;
+  private sensitiveTablePattern =
+    /^(customer_profiles|customer_medical_histories|policy_enrollments|claims)$/;
 
   async trackQuery(params: {
     userId: number;
@@ -937,28 +1000,33 @@ class SensitiveDataAccessTracker {
 
     // 解析 SQL 判斷是否存取敏感資料
     const tables = this.extractTablesFromQuery(query);
-    const sensitiveTables = tables.filter(t => this.sensitiveTablePattern.test(t));
+    const sensitiveTables = tables.filter((t) =>
+      this.sensitiveTablePattern.test(t),
+    );
 
     if (sensitiveTables.length === 0) return;
 
     // 記錄敏感資料存取
-    await db.query(`
+    await db.query(
+      `
       INSERT INTO sensitive_data_access_logs (
         user_id, accessed_table, access_type, fields_accessed,
         query_executed, rows_affected, session_id, ip_address,
         device_fingerprint
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-    `, [
-      userId,
-      sensitiveTables[0],
-      this.getAccessType(query),
-      this.extractFieldsFromQuery(query),
-      this.sanitizeQuery(query),
-      Array.isArray(result) ? result.length : 1,
-      sessionId,
-      this.getIpAddress(request),
-      request.headers.get('x-device-fingerprint')
-    ]);
+    `,
+      [
+        userId,
+        sensitiveTables[0],
+        this.getAccessType(query),
+        this.extractFieldsFromQuery(query),
+        this.sanitizeQuery(query),
+        Array.isArray(result) ? result.length : 1,
+        sessionId,
+        this.getIpAddress(request),
+        request.headers.get("x-device-fingerprint"),
+      ],
+    );
   }
 
   private extractTablesFromQuery(query: string): string[] {
@@ -967,15 +1035,15 @@ class SensitiveDataAccessTracker {
     const joinMatch = query.match(/JOIN\s+(\w+)/gi);
 
     const tables: string[] = [];
-    if (fromMatch) tables.push(...fromMatch.map(m => m.split(/\s+/)[1]));
-    if (joinMatch) tables.push(...joinMatch.map(m => m.split(/\s+/)[1]));
+    if (fromMatch) tables.push(...fromMatch.map((m) => m.split(/\s+/)[1]));
+    if (joinMatch) tables.push(...joinMatch.map((m) => m.split(/\s+/)[1]));
 
     return tables;
   }
 
   private sanitizeQuery(query: string): string {
     // 移除敏感資料值，保留查詢結構
-    return query.replace(/('[^']*'|"[^"]*"|\d+)/g, '?');
+    return query.replace(/('[^']*'|"[^"]*"|\d+)/g, "?");
   }
 }
 ```
@@ -989,6 +1057,7 @@ class SensitiveDataAccessTracker {
 #### 問題描述
 
 當前 `user_sessions` 表格存在多個安全問題：
+
 1. `session_token_hash` 長度不足且未標註雜湊演算法
 2. 缺少 refresh token 機制
 3. 缺少裝置指紋追蹤 (無法偵測 session 劫持)
@@ -1118,8 +1187,8 @@ Ref: session_activities.session_id > user_sessions.id [delete: cascade]
 ##### Session 管理實施程式碼
 
 ```typescript
-import { randomBytes, createHash } from 'crypto';
-import { sign, verify } from 'jsonwebtoken';
+import { randomBytes, createHash } from "crypto";
+import { sign, verify } from "jsonwebtoken";
 
 interface SessionTokens {
   accessToken: string;
@@ -1147,7 +1216,10 @@ class SessionManager {
     await this.enforceSessionLimit(userId);
 
     // 檢查裝置是否受信任
-    const isTrustedDevice = await this.isDeviceTrusted(userId, deviceFingerprint);
+    const isTrustedDevice = await this.isDeviceTrusted(
+      userId,
+      deviceFingerprint,
+    );
 
     // 生成 tokens
     const accessToken = this.generateSecureToken(32);
@@ -1163,7 +1235,8 @@ class SessionManager {
     const deviceInfo = this.parseUserAgent(userAgent);
 
     // 儲存 session
-    const session = await db.query(`
+    const session = await db.query(
+      `
       INSERT INTO user_sessions (
         user_id, session_token_hash, expires_at,
         refresh_token_hash, refresh_expires_at,
@@ -1174,50 +1247,58 @@ class SessionManager {
       ) VALUES (
         $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
       ) RETURNING id
-    `, [
-      userId,
-      this.hashToken(accessToken),
-      new Date(Date.now() + this.ACCESS_TOKEN_EXPIRY * 1000),
-      this.hashToken(refreshToken),
-      new Date(Date.now() + (isTrustedDevice ? this.TRUSTED_DEVICE_REFRESH_EXPIRY : this.REFRESH_TOKEN_EXPIRY) * 1000),
-      deviceHash,
-      deviceInfo.name,
-      deviceInfo.type,
-      ipAddress,
-      ipInfo.country,
-      ipInfo.city,
-      ipInfo.isVPN,
-      ipInfo.riskScore,
-      userAgent,
-      deviceInfo.browser.name,
-      deviceInfo.browser.version,
-      deviceInfo.os.name,
-      deviceInfo.os.version,
-      isTrustedDevice,
-      params.loginMethod
-    ]);
+    `,
+      [
+        userId,
+        this.hashToken(accessToken),
+        new Date(Date.now() + this.ACCESS_TOKEN_EXPIRY * 1000),
+        this.hashToken(refreshToken),
+        new Date(
+          Date.now() +
+            (isTrustedDevice
+              ? this.TRUSTED_DEVICE_REFRESH_EXPIRY
+              : this.REFRESH_TOKEN_EXPIRY) *
+              1000,
+        ),
+        deviceHash,
+        deviceInfo.name,
+        deviceInfo.type,
+        ipAddress,
+        ipInfo.country,
+        ipInfo.city,
+        ipInfo.isVPN,
+        ipInfo.riskScore,
+        userAgent,
+        deviceInfo.browser.name,
+        deviceInfo.browser.version,
+        deviceInfo.os.name,
+        deviceInfo.os.version,
+        isTrustedDevice,
+        params.loginMethod,
+      ],
+    );
 
     // 審計日誌
     await auditLogger.log({
-      action: 'LOGIN',
+      action: "LOGIN",
       userId,
       sessionId: session.rows[0].id,
       ipAddress,
       deviceFingerprint: deviceHash,
-      riskScore: ipInfo.riskScore
+      riskScore: ipInfo.riskScore,
     });
 
     // 高風險登入警報
     if (ipInfo.riskScore > 70 || (!isTrustedDevice && ipInfo.isVPN)) {
       await this.triggerSecurityAlert({
-        type: 'suspicious_login',
+        type: "suspicious_login",
         userId,
         ipAddress,
         riskFactors: [
-          ipInfo.isVPN && 'VPN detected',
+          ipInfo.isVPN && "VPN detected",
           ipInfo.riskScore > 70 && `High IP risk score: ${ipInfo.riskScore}`,
-          !isTrustedDevice && 'Untrusted device'
-        ].filter(Boolean)
+          !isTrustedDevice && "Untrusted device",
+        ].filter(Boolean),
       });
     }
 
@@ -1225,27 +1306,35 @@ class SessionManager {
       accessToken,
       refreshToken,
       expiresIn: this.ACCESS_TOKEN_EXPIRY,
-      refreshExpiresIn: isTrustedDevice ? this.TRUSTED_DEVICE_REFRESH_EXPIRY : this.REFRESH_TOKEN_EXPIRY
+      refreshExpiresIn: isTrustedDevice
+        ? this.TRUSTED_DEVICE_REFRESH_EXPIRY
+        : this.REFRESH_TOKEN_EXPIRY,
     };
   }
 
-  async refreshSession(refreshToken: string, deviceFingerprint: string): Promise<SessionTokens> {
+  async refreshSession(
+    refreshToken: string,
+    deviceFingerprint: string,
+  ): Promise<SessionTokens> {
     const refreshTokenHash = this.hashToken(refreshToken);
     const deviceHash = this.hashToken(deviceFingerprint);
 
     // 查找 session
-    const session = await db.query(`
+    const session = await db.query(
+      `
       SELECT * FROM user_sessions
       WHERE refresh_token_hash = $1
         AND is_active = true
         AND refresh_expires_at > now()
         AND device_fingerprint = $2
-    `, [refreshTokenHash, deviceHash]);
+    `,
+      [refreshTokenHash, deviceHash],
+    );
 
     if (session.rows.length === 0) {
       // 可能是 token 重用攻擊
       await this.handleSuspiciousRefresh(refreshTokenHash);
-      throw new Error('Invalid or expired refresh token');
+      throw new Error("Invalid or expired refresh token");
     }
 
     const sessionData = session.rows[0];
@@ -1253,23 +1342,30 @@ class SessionManager {
     // 檢測 token 重用
     if (sessionData.refresh_used_count > 0) {
       // 可能是重放攻擊，立即撤銷所有 sessions
-      await this.revokeAllUserSessions(sessionData.user_id, 'token_reuse_detected');
-      throw new Error('Token reuse detected - all sessions revoked');
+      await this.revokeAllUserSessions(
+        sessionData.user_id,
+        "token_reuse_detected",
+      );
+      throw new Error("Token reuse detected - all sessions revoked");
     }
 
     // 標記 refresh token 已使用
-    await db.query(`
+    await db.query(
+      `
       UPDATE user_sessions
       SET refresh_used_count = refresh_used_count + 1
       WHERE id = $1
-    `, [sessionData.id]);
+    `,
+      [sessionData.id],
+    );
 
     // 生成新的 tokens
     const newAccessToken = this.generateSecureToken(32);
     const newRefreshToken = this.generateSecureToken(32);
 
     // 更新 session (Token Rotation)
-    await db.query(`
+    await db.query(
+      `
       UPDATE user_sessions
       SET session_token_hash = $1,
           expires_at = $2,
@@ -1278,23 +1374,36 @@ class SessionManager {
           refresh_used_count = 0,
           last_activity_at = now()
       WHERE id = $5
-    `, [
-      this.hashToken(newAccessToken),
-      new Date(Date.now() + this.ACCESS_TOKEN_EXPIRY * 1000),
-      this.hashToken(newRefreshToken),
-      new Date(Date.now() + (sessionData.is_trusted_device ? this.TRUSTED_DEVICE_REFRESH_EXPIRY : this.REFRESH_TOKEN_EXPIRY) * 1000),
-      sessionData.id
-    ]);
+    `,
+      [
+        this.hashToken(newAccessToken),
+        new Date(Date.now() + this.ACCESS_TOKEN_EXPIRY * 1000),
+        this.hashToken(newRefreshToken),
+        new Date(
+          Date.now() +
+            (sessionData.is_trusted_device
+              ? this.TRUSTED_DEVICE_REFRESH_EXPIRY
+              : this.REFRESH_TOKEN_EXPIRY) *
+              1000,
+        ),
+        sessionData.id,
+      ],
+    );
 
     return {
       accessToken: newAccessToken,
       refreshToken: newRefreshToken,
       expiresIn: this.ACCESS_TOKEN_EXPIRY,
-      refreshExpiresIn: sessionData.is_trusted_device ? this.TRUSTED_DEVICE_REFRESH_EXPIRY : this.REFRESH_TOKEN_EXPIRY
+      refreshExpiresIn: sessionData.is_trusted_device
+        ? this.TRUSTED_DEVICE_REFRESH_EXPIRY
+        : this.REFRESH_TOKEN_EXPIRY,
     };
   }
 
-  async validateSession(accessToken: string, deviceFingerprint: string): Promise<{
+  async validateSession(
+    accessToken: string,
+    deviceFingerprint: string,
+  ): Promise<{
     valid: boolean;
     userId?: number;
     sessionId?: number;
@@ -1303,13 +1412,16 @@ class SessionManager {
     const tokenHash = this.hashToken(accessToken);
     const deviceHash = this.hashToken(deviceFingerprint);
 
-    const session = await db.query(`
+    const session = await db.query(
+      `
       SELECT id, user_id, device_fingerprint, expires_at, requires_mfa, mfa_verified_at
       FROM user_sessions
       WHERE session_token_hash = $1
         AND is_active = true
         AND expires_at > now()
-    `, [tokenHash]);
+    `,
+      [tokenHash],
+    );
 
     if (session.rows.length === 0) {
       return { valid: false };
@@ -1325,34 +1437,42 @@ class SessionManager {
     }
 
     // 檢查是否需要 MFA
-    const requiresMFA = sessionData.requires_mfa && !sessionData.mfa_verified_at;
+    const requiresMFA =
+      sessionData.requires_mfa && !sessionData.mfa_verified_at;
 
     // 更新最後活動時間
-    await db.query(`
+    await db.query(
+      `
       UPDATE user_sessions
       SET last_activity_at = now()
       WHERE id = $1
-    `, [sessionData.id]);
+    `,
+      [sessionData.id],
+    );
 
     return {
       valid: true,
       userId: sessionData.user_id,
       sessionId: sessionData.id,
-      requiresMFA
+      requiresMFA,
     };
   }
 
   private async enforceSessionLimit(userId: number): Promise<void> {
-    const activeSessions = await db.query(`
+    const activeSessions = await db.query(
+      `
       SELECT COUNT(*) FROM user_sessions
       WHERE user_id = $1 AND is_active = true
-    `, [userId]);
+    `,
+      [userId],
+    );
 
     const count = parseInt(activeSessions.rows[0].count);
 
     if (count >= this.MAX_CONCURRENT_SESSIONS) {
       // 撤銷最舊的 session
-      await db.query(`
+      await db.query(
+        `
         UPDATE user_sessions
         SET is_active = false,
             terminated_at = now(),
@@ -1363,30 +1483,38 @@ class SessionManager {
           ORDER BY last_activity_at ASC
           LIMIT 1
         )
-      `, [userId]);
+      `,
+        [userId],
+      );
     }
   }
 
-  private async isDeviceTrusted(userId: number, deviceFingerprint: string): Promise<boolean> {
+  private async isDeviceTrusted(
+    userId: number,
+    deviceFingerprint: string,
+  ): Promise<boolean> {
     const deviceHash = this.hashToken(deviceFingerprint);
 
-    const trusted = await db.query(`
+    const trusted = await db.query(
+      `
       SELECT id FROM trusted_devices
       WHERE user_id = $1
         AND device_fingerprint = $2
         AND revoked_at IS NULL
         AND expires_at > now()
-    `, [userId, deviceHash]);
+    `,
+      [userId, deviceHash],
+    );
 
     return trusted.rows.length > 0;
   }
 
   private generateSecureToken(bytes: number = 32): string {
-    return randomBytes(bytes).toString('base64url');
+    return randomBytes(bytes).toString("base64url");
   }
 
   private hashToken(token: string): string {
-    return createHash('sha256').update(token).digest('hex');
+    return createHash("sha256").update(token).digest("hex");
   }
 
   private async analyzeIPAddress(ipAddress: string): Promise<{
@@ -1401,11 +1529,11 @@ class SessionManager {
 
     // 這裡使用模擬資料
     return {
-      country: 'TW',
-      city: 'Taipei',
+      country: "TW",
+      city: "Taipei",
       isVPN: false,
       isProxy: false,
-      riskScore: 10
+      riskScore: 10,
     };
   }
 
@@ -1417,53 +1545,65 @@ class SessionManager {
   } {
     // 使用 ua-parser-js 或類似函式庫
     return {
-      name: 'Chrome on Windows',
-      type: 'web',
-      browser: { name: 'Chrome', version: '120.0' },
-      os: { name: 'Windows', version: '10' }
+      name: "Chrome on Windows",
+      type: "web",
+      browser: { name: "Chrome", version: "120.0" },
+      os: { name: "Windows", version: "10" },
     };
   }
 
   private async handleSessionHijacking(sessionId: number): Promise<void> {
     // 立即撤銷 session
-    await db.query(`
+    await db.query(
+      `
       UPDATE user_sessions
       SET is_active = false,
           terminated_at = now(),
           termination_reason = 'session_hijacking_detected',
           suspicious_activity = true
       WHERE id = $1
-    `, [sessionId]);
+    `,
+      [sessionId],
+    );
 
     // 觸發安全警報
     await this.triggerSecurityAlert({
-      type: 'session_hijacking',
-      sessionId
+      type: "session_hijacking",
+      sessionId,
     });
   }
 
-  private async handleSuspiciousRefresh(refreshTokenHash: string): Promise<void> {
+  private async handleSuspiciousRefresh(
+    refreshTokenHash: string,
+  ): Promise<void> {
     // 記錄可疑的 refresh 嘗試
     await auditLogger.log({
-      action: 'suspicious_refresh_attempt',
+      action: "suspicious_refresh_attempt",
       refreshTokenHash,
-      actionResult: 'failure'
+      actionResult: "failure",
     });
   }
 
-  private async revokeAllUserSessions(userId: number, reason: string): Promise<void> {
-    await db.query(`
+  private async revokeAllUserSessions(
+    userId: number,
+    reason: string,
+  ): Promise<void> {
+    await db.query(
+      `
       UPDATE user_sessions
       SET is_active = false,
           terminated_at = now(),
           termination_reason = $2
       WHERE user_id = $1 AND is_active = true
-    `, [userId, reason]);
+    `,
+      [userId, reason],
+    );
 
     // 通知用戶
     await this.notifyUser(userId, {
-      type: 'security_alert',
-      message: 'All your sessions have been terminated due to suspicious activity'
+      type: "security_alert",
+      message:
+        "All your sessions have been terminated due to suspicious activity",
     });
   }
 }
@@ -1479,7 +1619,7 @@ class DeviceFingerprint {
       // 瀏覽器資訊
       userAgent: navigator.userAgent,
       language: navigator.language,
-      languages: navigator.languages.join(','),
+      languages: navigator.languages.join(","),
       platform: navigator.platform,
 
       // 螢幕資訊
@@ -1505,7 +1645,9 @@ class DeviceFingerprint {
       fonts: await this.detectFonts(),
 
       // Plugins
-      plugins: Array.from(navigator.plugins).map(p => p.name).join(','),
+      plugins: Array.from(navigator.plugins)
+        .map((p) => p.name)
+        .join(","),
 
       // Touch support
       touchSupport: navigator.maxTouchPoints,
@@ -1524,30 +1666,30 @@ class DeviceFingerprint {
 
   private async sha256(message: string): Promise<string> {
     const msgBuffer = new TextEncoder().encode(message);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
   }
 
   private async getWebGLVendor(): Promise<string> {
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl');
-    if (!gl) return '';
-    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-    return debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : '';
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl");
+    if (!gl) return "";
+    const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+    return debugInfo ? gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) : "";
   }
 
   private async getCanvasFingerprint(): Promise<string> {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return '';
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return "";
 
-    ctx.textBaseline = 'top';
-    ctx.font = '14px Arial';
-    ctx.fillStyle = '#f60';
+    ctx.textBaseline = "top";
+    ctx.font = "14px Arial";
+    ctx.fillStyle = "#f60";
     ctx.fillRect(0, 0, 140, 20);
-    ctx.fillStyle = '#069';
-    ctx.fillText('Device Fingerprint', 2, 2);
+    ctx.fillStyle = "#069";
+    ctx.fillText("Device Fingerprint", 2, 2);
 
     return canvas.toDataURL();
   }
@@ -1574,6 +1716,7 @@ Table customer_medical_histories {
 ```
 
 存在的問題：
+
 1. 對敏感的 `medical_history` 欄位建立全文索引可能洩露資訊
 2. 沒有結構化的醫療資訊，難以查詢和分析
 3. 缺少資料脫敏機制
@@ -1741,18 +1884,21 @@ class MedicalDataAccessControl {
 
     // 驗證請求者權限
     const requester = await this.getUser(requesterId);
-    if (!['agent', 'manager', 'admin'].includes(requester.role)) {
-      throw new Error('Unauthorized to request medical data access');
+    if (!["agent", "manager", "admin"].includes(requester.role)) {
+      throw new Error("Unauthorized to request medical data access");
     }
 
     // 建立存取請求
-    const request = await db.query(`
+    const request = await db.query(
+      `
       INSERT INTO medical_data_access_requests (
         requester_id, patient_id, request_reason,
         business_purpose, requested_fields, status
       ) VALUES ($1, $2, $3, $4, $5, 'pending')
       RETURNING id
-    `, [requesterId, patientId, reason, purpose, fields]);
+    `,
+      [requesterId, patientId, reason, purpose, fields],
+    );
 
     const requestId = request.rows[0].id;
 
@@ -1761,10 +1907,10 @@ class MedicalDataAccessControl {
 
     // 審計日誌
     await auditLogger.log({
-      action: 'medical_data_access_requested',
+      action: "medical_data_access_requested",
       userId: requesterId,
       targetUserId: patientId,
-      details: { requestId, purpose, fields }
+      details: { requestId, purpose, fields },
     });
 
     return requestId;
@@ -1780,13 +1926,16 @@ class MedicalDataAccessControl {
 
     // 驗證審批者權限
     const approver = await this.getUser(approverId);
-    if (!['manager', 'admin'].includes(approver.role)) {
-      throw new Error('Unauthorized to approve medical data access');
+    if (!["manager", "admin"].includes(approver.role)) {
+      throw new Error("Unauthorized to approve medical data access");
     }
 
-    const expiresAt = new Date(Date.now() + accessDurationHours * 60 * 60 * 1000);
+    const expiresAt = new Date(
+      Date.now() + accessDurationHours * 60 * 60 * 1000,
+    );
 
-    await db.query(`
+    await db.query(
+      `
       UPDATE medical_data_access_requests
       SET status = 'approved',
           approver_id = $1,
@@ -1794,21 +1943,23 @@ class MedicalDataAccessControl {
           access_granted_at = now(),
           access_expires_at = $2
       WHERE id = $3
-    `, [approverId, expiresAt, requestId]);
+    `,
+      [approverId, expiresAt, requestId],
+    );
 
     // 通知請求者
     const request = await this.getRequest(requestId);
     await this.notifyUser(request.requester_id, {
-      type: 'medical_access_approved',
+      type: "medical_access_approved",
       message: `Your request to access patient ${request.patient_id} medical data has been approved`,
-      expiresAt
+      expiresAt,
     });
 
     // 審計日誌
     await auditLogger.log({
-      action: 'medical_data_access_approved',
+      action: "medical_data_access_approved",
       userId: approverId,
-      details: { requestId, expiresAt }
+      details: { requestId, expiresAt },
     });
   }
 
@@ -1821,7 +1972,8 @@ class MedicalDataAccessControl {
     const { requesterId, patientId, sessionId } = params;
 
     // 檢查是否有有效的存取權限
-    const accessGrant = await db.query(`
+    const accessGrant = await db.query(
+      `
       SELECT * FROM medical_data_access_requests
       WHERE requester_id = $1
         AND patient_id = $2
@@ -1829,23 +1981,31 @@ class MedicalDataAccessControl {
         AND access_expires_at > now()
       ORDER BY approved_at DESC
       LIMIT 1
-    `, [requesterId, patientId]);
+    `,
+      [requesterId, patientId],
+    );
 
     if (accessGrant.rows.length === 0) {
-      throw new Error('No valid access grant found. Please request access first.');
+      throw new Error(
+        "No valid access grant found. Please request access first.",
+      );
     }
 
     const grant = accessGrant.rows[0];
 
     // 記錄實際存取時間
-    await db.query(`
+    await db.query(
+      `
       UPDATE medical_data_access_requests
       SET actual_access_at = now()
       WHERE id = $1
-    `, [grant.id]);
+    `,
+      [grant.id],
+    );
 
     // 查詢醫療記錄
-    const records = await db.query(`
+    const records = await db.query(
+      `
       SELECT
         cmr.id,
         cmr.user_id,
@@ -1864,18 +2024,23 @@ class MedicalDataAccessControl {
       JOIN medical_condition_codes mcc ON cmr.condition_code_id = mcc.id
       WHERE cmr.user_id = $1
         AND cmr.deleted_at IS NULL
-    `, [patientId]);
+    `,
+      [patientId],
+    );
 
     // 解密詳細資訊
     const kms = new KeyManagementService();
     const decryptedRecords = await Promise.all(
       records.rows.map(async (record) => {
         const key = await kms.getDataKey(record.encryption_key_id);
-        const decrypted = await decrypt({
-          ciphertext: record.diagnosis_details_enc,
-          iv: record.diagnosis_details_iv,
-          authTag: record.diagnosis_details_tag
-        }, key);
+        const decrypted = await decrypt(
+          {
+            ciphertext: record.diagnosis_details_enc,
+            iv: record.diagnosis_details_iv,
+            authTag: record.diagnosis_details_tag,
+          },
+          key,
+        );
 
         return {
           ...record,
@@ -1884,38 +2049,41 @@ class MedicalDataAccessControl {
           diagnosis_details_enc: undefined,
           diagnosis_details_iv: undefined,
           diagnosis_details_tag: undefined,
-          encryption_key_id: undefined
+          encryption_key_id: undefined,
         };
-      })
+      }),
     );
 
     // 記錄到敏感資料存取日誌
-    await db.query(`
+    await db.query(
+      `
       INSERT INTO sensitive_data_access_logs (
         user_id, accessed_table, access_type,
         accessed_record_id, session_id, justification
       ) VALUES ($1, $2, $3, $4, $5, $6)
-    `, [
-      requesterId,
-      'customer_medical_records',
-      'read',
-      patientId,
-      sessionId,
-      grant.request_reason
-    ]);
+    `,
+      [
+        requesterId,
+        "customer_medical_records",
+        "read",
+        patientId,
+        sessionId,
+        grant.request_reason,
+      ],
+    );
 
     // 高敏感操作審計
     await auditLogger.log({
-      action: 'medical_data_accessed',
+      action: "medical_data_accessed",
       userId: requesterId,
       targetUserId: patientId,
-      dataClassification: 'restricted',
+      dataClassification: "restricted",
       riskScore: 90,
       requiresReview: true,
       details: {
         accessGrantId: grant.id,
-        recordCount: decryptedRecords.length
-      }
+        recordCount: decryptedRecords.length,
+      },
     });
 
     return decryptedRecords;
@@ -1925,11 +2093,11 @@ class MedicalDataAccessControl {
   maskMedicalData(data: any): any {
     return {
       ...data,
-      diagnosis_details: '***已遮罩***',
+      diagnosis_details: "***已遮罩***",
       // 只顯示類別和基本資訊
       condition_category: data.category,
       severity_level: data.severity_level,
-      is_ongoing: data.is_ongoing
+      is_ongoing: data.is_ongoing,
     };
   }
 }
@@ -1942,18 +2110,21 @@ class PrivacyPreservingQuery {
   // 不解密即可查詢特定病症
   async hasCondition(userId: number, conditionCode: string): Promise<boolean> {
     // 計算條件雜湊
-    const conditionHash = createHash('sha256')
+    const conditionHash = createHash("sha256")
       .update(`${userId}:${conditionCode}`)
-      .digest('hex');
+      .digest("hex");
 
-    const result = await db.query(`
+    const result = await db.query(
+      `
       SELECT COUNT(*) as count
       FROM customer_medical_records
       WHERE user_id = $1
         AND condition_hash = $2
         AND deleted_at IS NULL
         AND is_ongoing = true
-    `, [userId, conditionHash]);
+    `,
+      [userId, conditionHash],
+    );
 
     return parseInt(result.rows[0].count) > 0;
   }
@@ -1965,7 +2136,8 @@ class PrivacyPreservingQuery {
     genderDistribution: any;
   }> {
     // 使用聚合查詢，不存取個人資料
-    const stats = await db.query(`
+    const stats = await db.query(
+      `
       SELECT
         COUNT(DISTINCT cmr.user_id) as total_patients,
         AVG(cp.age) as average_age,
@@ -1977,7 +2149,9 @@ class PrivacyPreservingQuery {
       WHERE mcc.code = $1
         AND cmr.deleted_at IS NULL
       GROUP BY cp.gender
-    `, [conditionCode]);
+    `,
+      [conditionCode],
+    );
 
     return {
       totalPatients: parseInt(stats.rows[0]?.total_patients || 0),
@@ -1985,7 +2159,7 @@ class PrivacyPreservingQuery {
       genderDistribution: stats.rows.reduce((acc, row) => {
         acc[row.gender] = parseInt(row.count);
         return acc;
-      }, {})
+      }, {}),
     };
   }
 }
@@ -2030,6 +2204,7 @@ CREATE TRIGGER set_condition_hash
 **ISO 27001 控制項**: A.11.2.8 - 媒體處置安全
 
 **修復狀態**:
+
 - ✅ 核心表格都已加入完整的軟刪除欄位 (deleted_at, deleted_by)
 - ❌ `user_identities` 缺少軟刪除欄位
 - ❌ `notifications` 缺少 `expires_at` 欄位
@@ -2038,12 +2213,14 @@ CREATE TRIGGER set_condition_hash
 #### 問題描述
 
 某些表格有完整的軟刪除欄位 (`deleted_at`, `deleted_by`),但不一致：
+
 - ✅ `users`, `customer_profiles`, `agent_profiles`, `companies`, `insurances`, `policy_enrollments`, `claims` 有軟刪除
 - ❌ `user_identities`, `user_sessions`, `notifications`, `audit_logs` 缺少軟刪除
 
 #### Best Practice 解決方案
 
 **原則**:
+
 - **需要軟刪除**: 包含業務資料、用戶資料、交易記錄
 - **不需要軟刪除**: 日誌表、Session 表 (有其他狀態欄位)、通知表 (過期後可直接刪除)
 
@@ -2173,10 +2350,13 @@ class DataRetentionManager {
     const startTime = Date.now();
 
     // 取得保留政策
-    const policy = await db.query(`
+    const policy = await db.query(
+      `
       SELECT * FROM data_retention_policies
       WHERE table_name = $1 AND auto_purge_enabled = true
-    `, [tableName]);
+    `,
+      [tableName],
+    );
 
     if (policy.rows.length === 0) {
       throw new Error(`No purge policy found for table: ${tableName}`);
@@ -2191,40 +2371,49 @@ class DataRetentionManager {
     // 執行清理
     if (applies_to_deleted) {
       // 硬刪除已軟刪除的記錄
-      const result = await db.query(`
+      const result = await db.query(
+        `
         DELETE FROM ${tableName}
         WHERE deleted_at IS NOT NULL
           AND deleted_at < $1
-      `, [cutoffDate]);
+      `,
+        [cutoffDate],
+      );
       recordsAffected = result.rowCount;
     }
 
     const duration = Date.now() - startTime;
 
     // 記錄清理歷史
-    await db.query(`
+    await db.query(
+      `
       INSERT INTO data_purge_history (
         table_name, purge_type, records_affected,
         purge_criteria, executed_at, duration_ms
       ) VALUES ($1, $2, $3, $4, now(), $5)
-    `, [
-      tableName,
-      applies_to_deleted ? 'hard_delete' : 'soft_delete',
-      recordsAffected,
-      { retention_days, cutoff_date: cutoffDate },
-      duration
-    ]);
+    `,
+      [
+        tableName,
+        applies_to_deleted ? "hard_delete" : "soft_delete",
+        recordsAffected,
+        { retention_days, cutoff_date: cutoffDate },
+        duration,
+      ],
+    );
 
     // 更新下次清理時間
     const nextPurge = new Date();
     nextPurge.setDate(nextPurge.getDate() + 7); // 每週執行
 
-    await db.query(`
+    await db.query(
+      `
       UPDATE data_retention_policies
       SET last_purge_at = now(),
           next_purge_at = $1
       WHERE table_name = $2
-    `, [nextPurge, tableName]);
+    `,
+      [nextPurge, tableName],
+    );
 
     return { recordsAffected, duration };
   }
@@ -2239,7 +2428,8 @@ class DataRetentionManager {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - policy.retention_days);
 
-    const preview = await db.query(`
+    const preview = await db.query(
+      `
       SELECT
         COUNT(*) as count,
         MIN(deleted_at) as oldest,
@@ -2247,12 +2437,14 @@ class DataRetentionManager {
       FROM ${tableName}
       WHERE deleted_at IS NOT NULL
         AND deleted_at < $1
-    `, [cutoffDate]);
+    `,
+      [cutoffDate],
+    );
 
     return {
       recordCount: parseInt(preview.rows[0].count),
       oldestRecord: preview.rows[0].oldest,
-      newestRecord: preview.rows[0].newest
+      newestRecord: preview.rows[0].newest,
     };
   }
 }
@@ -2297,51 +2489,60 @@ class SafeDeleteService {
   // 刪除用戶前的檢查
   async deleteUser(userId: number, deletedBy: number): Promise<void> {
     // 1. 檢查是否有關聯的保單
-    const policies = await db.query(`
+    const policies = await db.query(
+      `
       SELECT COUNT(*) as count FROM policy_enrollments
       WHERE (customer_id = $1 OR agent_id = $1)
         AND deleted_at IS NULL
-    `, [userId]);
+    `,
+      [userId],
+    );
 
     if (parseInt(policies.rows[0].count) > 0) {
       throw new Error(
-        'Cannot delete user with active policies. Please archive policies first or wait for retention period.'
+        "Cannot delete user with active policies. Please archive policies first or wait for retention period.",
       );
     }
 
     // 2. 檢查是否有未解決的理賠
-    const claims = await db.query(`
+    const claims = await db.query(
+      `
       SELECT COUNT(*) as count FROM claims c
       JOIN policy_enrollments pe ON c.policy_enrollment_id = pe.id
       WHERE (pe.customer_id = $1 OR pe.agent_id = $1)
         AND c.status IN ('pending', 'processing')
-    `, [userId]);
+    `,
+      [userId],
+    );
 
     if (parseInt(claims.rows[0].count) > 0) {
       throw new Error(
-        'Cannot delete user with pending claims. Please resolve claims first.'
+        "Cannot delete user with pending claims. Please resolve claims first.",
       );
     }
 
     // 3. 軟刪除用戶 (而非硬刪除)
-    await db.query(`
+    await db.query(
+      `
       UPDATE users
       SET deleted_at = now(),
           deleted_by = $2,
           email = email || '.deleted.' || id,  -- 防止 email 衝突
           phone = NULL  -- 清除敏感資訊
       WHERE id = $1
-    `, [userId, deletedBy]);
+    `,
+      [userId, deletedBy],
+    );
 
     // 4. 匿名化個人資料
     await this.anonymizeUserData(userId);
 
     // 5. 審計日誌
     await auditLogger.log({
-      action: 'user_deleted',
+      action: "user_deleted",
       userId: deletedBy,
       targetUserId: userId,
-      dataClassification: 'restricted'
+      dataClassification: "restricted",
     });
   }
 
@@ -2352,12 +2553,13 @@ class SafeDeleteService {
 
     if (!retentionCheck.canDelete) {
       throw new Error(
-        `Cannot delete user data. Must retain until ${retentionCheck.retainUntil} due to: ${retentionCheck.reason}`
+        `Cannot delete user data. Must retain until ${retentionCheck.retainUntil} due to: ${retentionCheck.reason}`,
       );
     }
 
     // 2. 匿名化而非刪除
-    await db.query(`
+    await db.query(
+      `
       UPDATE customer_profiles
       SET
         location_city = NULL,
@@ -2366,27 +2568,36 @@ class SafeDeleteService {
         updated_at = now(),
         updated_by = $1
       WHERE user_id = $2
-    `, [userId, userId]);
+    `,
+      [userId, userId],
+    );
 
     // 3. 加密或移除敏感醫療資料
-    await db.query(`
+    await db.query(
+      `
       DELETE FROM customer_medical_records
       WHERE user_id = $1
         AND created_at < (now() - interval '7 years')
-    `, [userId]);
+    `,
+      [userId],
+    );
 
     // 4. 保留但匿名化財務交易 (法規要求)
-    await db.query(`
+    await db.query(
+      `
       UPDATE policy_enrollments
       SET customer_id = NULL,  -- 解除關聯
           updated_at = now()
       WHERE customer_id = $1
-    `, [userId]);
+    `,
+      [userId],
+    );
   }
 
   private async anonymizeUserData(userId: number): Promise<void> {
     // 用隨機或雜湊值取代個人識別資訊
-    await db.query(`
+    await db.query(
+      `
       UPDATE customer_profiles
       SET
         weight_kg = NULL,
@@ -2395,7 +2606,9 @@ class SafeDeleteService {
         occupation_level = 'ANONYMIZED',
         updated_at = now()
       WHERE user_id = $1
-    `, [userId]);
+    `,
+      [userId],
+    );
   }
 
   private async checkRetentionRequirements(userId: number): Promise<{
@@ -2404,11 +2617,14 @@ class SafeDeleteService {
     reason?: string;
   }> {
     // 檢查最近的保單或理賠
-    const lastPolicy = await db.query(`
+    const lastPolicy = await db.query(
+      `
       SELECT MAX(created_at) as last_date
       FROM policy_enrollments
       WHERE customer_id = $1 OR agent_id = $1
-    `, [userId]);
+    `,
+      [userId],
+    );
 
     if (lastPolicy.rows[0].last_date) {
       const retainUntil = new Date(lastPolicy.rows[0].last_date);
@@ -2418,7 +2634,8 @@ class SafeDeleteService {
         return {
           canDelete: false,
           retainUntil,
-          reason: 'Insurance regulations require 7-year retention of policy records'
+          reason:
+            "Insurance regulations require 7-year retention of policy records",
         };
       }
     }
@@ -2532,15 +2749,18 @@ class DataClassificationService {
     userId: number;
     tableName: string;
     fieldName: string;
-    accessType: 'read' | 'write';
+    accessType: "read" | "write";
   }): Promise<boolean> {
     const { userId, tableName, fieldName, accessType } = params;
 
     // 取得欄位分類
-    const classification = await db.query(`
+    const classification = await db.query(
+      `
       SELECT * FROM field_classifications
       WHERE table_name = $1 AND field_name = $2
-    `, [tableName, fieldName]);
+    `,
+      [tableName, fieldName],
+    );
 
     if (classification.rows.length === 0) {
       return true; // 未分類的欄位預設允許
@@ -2560,7 +2780,7 @@ class DataClassificationService {
     }
 
     // 如果是受限資料，檢查是否有存取批准
-    if (fieldClass.classification === 'restricted' && accessType === 'read') {
+    if (fieldClass.classification === "restricted" && accessType === "read") {
       const hasApproval = await this.hasAccessApproval(userId, tableName);
       return hasApproval;
     }
@@ -2570,20 +2790,20 @@ class DataClassificationService {
 
   private getUserAccessLevel(role: string): number {
     const levels: Record<string, number> = {
-      'consumer': 1,
-      'agent': 2,
-      'manager': 3,
-      'admin': 4
+      consumer: 1,
+      agent: 2,
+      manager: 3,
+      admin: 4,
     };
     return levels[role] || 0;
   }
 
   private getAccessLevelValue(accessLevel: string): number {
     const levels: Record<string, number> = {
-      'public': 0,
-      'authenticated': 1,
-      'privileged': 3,
-      'admin': 4
+      public: 0,
+      authenticated: 1,
+      privileged: 3,
+      admin: 4,
     };
     return levels[accessLevel] || 1;
   }
@@ -2591,14 +2811,14 @@ class DataClassificationService {
   // 自動資料遮罩
   async maskField(value: any, maskingRule: string): Promise<string> {
     switch (maskingRule) {
-      case 'full':
-        return '***';
+      case "full":
+        return "***";
 
-      case 'partial':
-        if (typeof value === 'string') {
-          if (value.includes('@')) {
+      case "partial":
+        if (typeof value === "string") {
+          if (value.includes("@")) {
             // Email: show first 2 chars and domain
-            const [local, domain] = value.split('@');
+            const [local, domain] = value.split("@");
             return `${local.substring(0, 2)}***@${domain}`;
           }
           if (value.match(/^\+?\d+$/)) {
@@ -2608,10 +2828,13 @@ class DataClassificationService {
           // General string: show first and last char
           return `${value[0]}***${value[value.length - 1]}`;
         }
-        return '***';
+        return "***";
 
-      case 'hash':
-        return createHash('sha256').update(value.toString()).digest('hex').substring(0, 8);
+      case "hash":
+        return createHash("sha256")
+          .update(value.toString())
+          .digest("hex")
+          .substring(0, 8);
 
       default:
         return value;
@@ -2630,11 +2853,14 @@ class DataClassificationService {
     const results = await db.query(query);
 
     // 取得表格的欄位分類
-    const fieldClassifications = await db.query(`
+    const fieldClassifications = await db.query(
+      `
       SELECT field_name, masking_rule, access_level
       FROM field_classifications
       WHERE table_name = $1
-    `, [tableName]);
+    `,
+      [tableName],
+    );
 
     const user = await this.getUser(userId);
     const userAccessLevel = this.getUserAccessLevel(user.role);
@@ -2650,7 +2876,7 @@ class DataClassificationService {
         if (userAccessLevel < requiredLevel && fieldClass.masking_rule) {
           maskedRow[fieldClass.field_name] = this.maskField(
             row[fieldClass.field_name],
-            fieldClass.masking_rule
+            fieldClass.masking_rule,
           );
         }
       }
@@ -2798,7 +3024,7 @@ class SecureNotificationService {
       message,
       actionUrl,
       payload,
-      containsPII
+      containsPII,
     } = params;
 
     // 檢查用戶偏好
@@ -2822,7 +3048,7 @@ class SecureNotificationService {
 
     if (payload && containsPII) {
       const kms = new KeyManagementService();
-      const key = await kms.getDataKey('notification-encryption-key');
+      const key = await kms.getDataKey("notification-encryption-key");
 
       const encrypted = await encrypt(JSON.stringify(payload), key);
       encryptedPayload = encrypted.ciphertext;
@@ -2836,29 +3062,32 @@ class SecureNotificationService {
     expiresAt.setDate(expiresAt.getDate() + 90); // 90 天後過期
 
     // 儲存通知
-    const notification = await db.query(`
+    const notification = await db.query(
+      `
       INSERT INTO notifications (
         user_id, type, channel, priority, title, message, action_url,
         payload, payload_iv, payload_tag, encryption_key_id,
         contains_pii, data_classification, expires_at
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
       RETURNING id
-    `, [
-      userId,
-      type,
-      channel,
-      this.getPriority(type),
-      title,
-      message,
-      actionUrl,
-      encryptedPayload,
-      payloadIV,
-      payloadTag,
-      keyId,
-      containsPII || false,
-      containsPII ? 'confidential' : 'internal',
-      expiresAt
-    ]);
+    `,
+      [
+        userId,
+        type,
+        channel,
+        this.getPriority(type),
+        title,
+        message,
+        actionUrl,
+        encryptedPayload,
+        payloadIV,
+        payloadTag,
+        keyId,
+        containsPII || false,
+        containsPII ? "confidential" : "internal",
+        expiresAt,
+      ],
+    );
 
     // 實際發送 (根據通道)
     await this.deliverNotification({
@@ -2867,26 +3096,26 @@ class SecureNotificationService {
       channel,
       title,
       message,
-      actionUrl
+      actionUrl,
     });
 
     // 審計日誌
     await auditLogger.log({
-      action: 'notification_sent',
+      action: "notification_sent",
       userId,
       details: {
         notificationId: notification.rows[0].id,
         type,
         channel,
-        containsPII
-      }
+        containsPII,
+      },
     });
   }
 
   private shouldSendNotification(
     type: string,
     channel: string,
-    preferences: any
+    preferences: any,
   ): boolean {
     // 檢查類型偏好
     const typeEnabled = preferences[`${type}_enabled`];
@@ -2897,7 +3126,7 @@ class SecureNotificationService {
     if (channelEnabled === false) return false;
 
     // 系統和安全通知始終發送
-    if (['system', 'security_alert'].includes(type)) return true;
+    if (["system", "security_alert"].includes(type)) return true;
 
     return true;
   }
@@ -2935,50 +3164,59 @@ class SecureNotificationService {
     message: string;
     actionUrl?: string;
   }): Promise<void> {
-    const { notificationId, userId, channel, title, message, actionUrl } = params;
+    const { notificationId, userId, channel, title, message, actionUrl } =
+      params;
 
     try {
       switch (channel) {
-        case 'email':
+        case "email":
           await this.sendEmail(userId, title, message, actionUrl);
           break;
-        case 'sms':
+        case "sms":
           await this.sendSMS(userId, message);
           break;
-        case 'push':
+        case "push":
           await this.sendPushNotification(userId, title, message);
           break;
-        case 'in_app':
+        case "in_app":
           // 已儲存到資料庫，無需額外動作
           break;
       }
 
       // 更新發送狀態
-      await db.query(`
+      await db.query(
+        `
         UPDATE notifications
         SET delivered_at = now()
         WHERE id = $1
-      `, [notificationId]);
-
+      `,
+        [notificationId],
+      );
     } catch (error) {
       // 記錄錯誤並標記重試
-      await db.query(`
+      await db.query(
+        `
         UPDATE notifications
         SET retry_count = retry_count + 1,
             last_error = $2
         WHERE id = $1
-      `, [notificationId, error instanceof Error ? error.message : 'Unknown error']);
+      `,
+        [
+          notificationId,
+          error instanceof Error ? error.message : "Unknown error",
+        ],
+      );
     }
   }
 
   private getPriority(type: string): number {
     const priorities: Record<string, number> = {
-      'security_alert': 10,
-      'system': 8,
-      'claim_update': 7,
-      'payment_reminder': 6,
-      'policy_update': 5,
-      'marketing': 1
+      security_alert: 10,
+      system: 8,
+      claim_update: 7,
+      payment_reminder: 6,
+      policy_update: 5,
+      marketing: 1,
     };
     return priorities[type] || 0;
   }
@@ -2992,16 +3230,19 @@ class SecureNotificationService {
 ### 修正優先順序路線圖
 
 #### Phase 1: 立即修正 (1-2 週)
+
 1. ✅ 敏感資料欄位加密 (問題 1)
 2. ✅ 密碼管理升級到 Argon2id (問題 2)
 3. ✅ 修正外鍵 cascade 刪除為 restrict (問題 8)
 
 #### Phase 2: 短期改善 (2-4 週)
+
 4. ✅ 完善審計追蹤系統 (問題 3)
 5. ✅ 強化 Session 安全管理 (問題 4)
 6. ✅ 醫療資訊結構化與存取控制 (問題 5)
 
 #### Phase 3: 中期優化 (1-2 個月)
+
 7. ✅ 統一軟刪除機制 (問題 6)
 8. ✅ 實施資料保留策略 (問題 7)
 9. ✅ 資料分類與標籤系統 (問題 9)
@@ -3009,22 +3250,23 @@ class SecureNotificationService {
 
 ### ISO 27001 控制項對照表
 
-| 控制項 | 要求 | 問題編號 | 修正後狀態 |
-|--------|------|----------|------------|
-| A.9.4.1 | 存取控制限制 | 9 | ✅ 符合 |
-| A.9.4.2 | 安全登入程序 | 4 | ✅ 符合 |
-| A.9.4.3 | 密碼管理系統 | 2 | ✅ 符合 |
-| A.10.1.1 | 加密控制政策 | 1 | ✅ 符合 |
-| A.11.2.7 | 安全處置或再利用 | 7, 8 | ✅ 符合 |
-| A.11.2.8 | 媒體處置安全 | 6 | ✅ 符合 |
-| A.12.4.1 | 事件日誌記錄 | 3 | ✅ 符合 |
-| A.13.2.1 | 資訊傳輸政策 | 10 | ✅ 符合 |
-| A.18.1.4 | 個人資料保護 | 1, 5, 9 | ✅ 符合 |
-| A.8.2.2 | 資訊的標示 | 9 | ✅ 符合 |
+| 控制項   | 要求             | 問題編號 | 修正後狀態 |
+| -------- | ---------------- | -------- | ---------- |
+| A.9.4.1  | 存取控制限制     | 9        | ✅ 符合    |
+| A.9.4.2  | 安全登入程序     | 4        | ✅ 符合    |
+| A.9.4.3  | 密碼管理系統     | 2        | ✅ 符合    |
+| A.10.1.1 | 加密控制政策     | 1        | ✅ 符合    |
+| A.11.2.7 | 安全處置或再利用 | 7, 8     | ✅ 符合    |
+| A.11.2.8 | 媒體處置安全     | 6        | ✅ 符合    |
+| A.12.4.1 | 事件日誌記錄     | 3        | ✅ 符合    |
+| A.13.2.1 | 資訊傳輸政策     | 10       | ✅ 符合    |
+| A.18.1.4 | 個人資料保護     | 1, 5, 9  | ✅ 符合    |
+| A.8.2.2  | 資訊的標示       | 9        | ✅ 符合    |
 
 ### 建議的開發工作流程
 
 1. **本地開發**
+
    ```bash
    # 使用 Docker 建立測試資料庫
    docker-compose up -d postgres
@@ -3037,6 +3279,7 @@ class SecureNotificationService {
    ```
 
 2. **CI/CD 整合**
+
    ```yaml
    # .github/workflows/security-check.yml
    name: Security Audit
@@ -3067,15 +3310,18 @@ class SecureNotificationService {
 ### 新問題 1: 推薦參數表格缺少主鍵 🔴 嚴重
 
 **問題描述**:
+
 - `agent_recommendation_params` 表格 (第163-169行) 沒有定義主鍵
 - `insurance_recommendation_params` 表格 (第313-320行) `insurance_id` 未標記為主鍵
 
 **風險**:
+
 - 無法唯一識別記錄
 - 可能出現重複資料
 - 難以進行資料更新和刪除操作
 
 **解決方案**:
+
 ```dbml
 Table agent_recommendation_params {
     user_id int [pk]  // 加上主鍵標記
@@ -3099,15 +3345,18 @@ Table insurance_recommendation_params {
 
 **問題描述**:
 多個表格的 `created_by`, `updated_by`, `deleted_by` 欄位沒有定義外鍵關係到 `users.id`：
+
 - `user_preferences`, `customer_profiles`, `agent_profiles`
 - `companies`, `insurances`, `policy_enrollments`, `claims`
 
 **風險**:
+
 - 無法保證這些欄位參照的用戶 ID 存在
 - 可能產生孤兒記錄
 - 審計追蹤不完整
 
 **解決方案**:
+
 ```dbml
 // 為所有審計欄位加上外鍵
 Ref: user_preferences.created_by > users.id [delete: set null]
@@ -3127,10 +3376,12 @@ Ref: customer_profiles.deleted_by > users.id [delete: set null]
 `agent_supported_languages` 表格 (第178-183行) 沒有 `(user_id, supported_language)` 的唯一約束。
 
 **風險**:
+
 - 同一業務員可能重複新增相同語言
 - 資料冗餘和不一致
 
 **解決方案**:
+
 ```dbml
 Table agent_supported_languages {
     id int [pk, increment]
@@ -3151,10 +3402,12 @@ Table agent_supported_languages {
 `claims` 表格使用 `create_at` 和 `create_by`，其他表格都使用 `created_at` 和 `created_by`。
 
 **風險**:
+
 - 命名不一致導致混淆
 - 潛在的程式錯誤
 
 **解決方案**:
+
 ```dbml
 Table claims {
     id int [pk, increment]
@@ -3180,10 +3433,12 @@ Table claims {
 `users.email` 有 `unique` 約束，但軟刪除後無法使用相同的 email 重新註冊。
 
 **風險**:
+
 - 用戶體驗不佳
 - 需要手動清理軟刪除的記錄
 
 **解決方案 1**: 軟刪除時修改 email
+
 ```sql
 -- 在軟刪除時自動修改 email
 UPDATE users
@@ -3195,6 +3450,7 @@ WHERE id = ?;
 ```
 
 **解決方案 2**: 使用部分唯一索引 (PostgreSQL 9.0+)
+
 ```sql
 CREATE UNIQUE INDEX users_email_unique
 ON users(email)
@@ -3210,6 +3466,7 @@ WHERE deleted_at IS NULL;
 
 **建議**:
 在專案說明中加入時區政策，並在關鍵時間欄位加上註釋：
+
 ```dbml
 created_at timestamptz [not null, default: `now()`, note: 'UTC timezone']
 ```

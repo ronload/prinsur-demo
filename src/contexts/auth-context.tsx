@@ -116,7 +116,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     userType: "consumer" | "agent" | "manager" | "admin",
   ): Promise<boolean> => {
-    const normalizedEmail = email.trim() || `demo.user.${Date.now()}@demo.local`;
+    const normalizedEmail =
+      email.trim() || `demo.user.${Date.now()}@demo.local`;
 
     // 模拟API调用延迟，保留示意效果
     await new Promise((resolve) => setTimeout(resolve, 300));

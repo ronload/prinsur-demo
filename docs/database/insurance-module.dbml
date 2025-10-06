@@ -1,0 +1,141 @@
+Project insurance_module {
+    database_type: 'PostgreSQL'
+    Note: '''
+    保險商品管理模組
+    包含：保險公司、保險商品、商品詳情、推薦參數
+    '''
+}
+
+//// ==========================================
+//// 保險商品管理模組 (Insurance Products)
+//// ==========================================
+
+//// 🔹 保險公司
+Table companies [headercolor: #f39c12] {
+    id         int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    name       varchar     [unique, not null]
+    created_at timestamptz [default: `now()`]
+    created_by int         [not null]
+    updated_at timestamptz [default: `now()`]
+    updated_by int         [not null]
+    deleted_at timestamptz
+    deleted_by int
+
+    Note: '保險公司主表'
+}
+
+//// 🔹 保險公司詳細資訊
+Table company_details [headercolor: #f39c12] {
+    company_id       int            [pk]
+    paid_in_capital  numeric(14, 2) [note: '實收資本額']
+    market_share     numeric(6, 3)  [note: '市場佔有率 (0.000-100.000)']
+    insurance_income numeric(14, 2) [note: '保費收入']
+    updated_at       timestamptz    [default: `now()`]
+
+    Note: '保險公司財務與市場資訊'
+}
+Ref: company_details.company_id - companies.id
+
+//// 🔹 保險商品類別
+Enum insurance_categories {
+    life
+    health
+    accident
+    travel
+    vehicle
+    property
+}
+
+//// 🔹 保險商品主表
+Table insurances [headercolor: #f39c12] {
+    id         int                  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    company_id int                  [not null]
+    category   insurance_categories [not null]
+    name       varchar              [not null]
+    created_at timestamptz          [default: `now()`]
+    created_by int                  [not null]
+    updated_at timestamptz          [default: `now()`]
+    updated_by int                  [not null]
+    deleted_at timestamptz
+    deleted_by int
+
+    Indexes {
+        category
+        company_id
+        (category, company_id)
+    }
+
+    Note: '保險商品主表'
+}
+Ref: insurances.company_id > companies.id
+
+//// 🔹 保險商品詳細資訊
+Table insurance_details [headercolor: #f39c12] {
+    insurance_id        int            [pk]
+    available_age       varchar        [note: '投保年齡範圍（如：0-65歲）']
+    payment_period      varchar        [note: '繳費年期（如：1年、20年、終身）']
+    is_renewable        boolean
+    is_foreign_currency boolean        [note: '是否為外幣保單']
+    highest_pay         numeric(12, 2) [note: '最高保額']
+    updated_at          timestamptz    [default: `now()`]
+
+    Note: '保險商品詳細資訊'
+}
+Ref: insurance_details.insurance_id - insurances.id [delete: cascade]
+
+//// 🔹 保險商品檔案 URL（保單條款、DM）
+Table insurance_file_urls [headercolor: #f39c12] {
+    id           int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    insurance_id int  [not null]
+    url          text [not null, note: '保單條款、DM 連結']
+
+    Indexes {
+        insurance_id
+        (insurance_id, url) [unique]
+    }
+
+    Note: '保險商品相關文件（多對多關係）'
+}
+Ref: insurance_file_urls.insurance_id > insurances.id [delete: cascade]
+
+//// 🔹 保險保障項目
+Table insurance_coverages [headercolor: #f39c12] {
+    id           int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    insurance_id int  [not null]
+    coverage     text [not null, note: '保障項目（如：身故、失能、住院）']
+
+    Indexes {
+        insurance_id
+        (insurance_id, coverage) [unique]
+    }
+
+    Note: '保險保障項目（多對多關係）'
+}
+Ref: insurance_coverages.insurance_id > insurances.id [delete: cascade]
+
+//// 🔹 保險商品標籤（用於分類與搜尋）
+Table insurance_tags [headercolor: #f39c12] {
+    id           int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    insurance_id int  [not null]
+    tag          text [not null, note: '標籤（如：熱門、高CP值、新上市）']
+
+    Indexes {
+        insurance_id
+        (insurance_id, tag) [unique]
+    }
+
+    Note: '保險商品標籤（多對多關係）'
+}
+Ref: insurance_tags.insurance_id > insurances.id [delete: cascade]
+
+//// 🔹 保險推薦參數（用於演算法排序）
+Table insurance_recommendation_params [headercolor: #f39c12] {
+    insurance_id   int           [pk, not null]
+    rating_score   numeric(2, 1) [not null, note: '平均評分 1.0-5.0']
+    rating_count   int           [default: 0]
+    view_count     int           [default: 0, note: '瀏覽次數']
+    matching_count int           [default: 0, note: '推薦命中次數']
+
+    Note: '保險推薦演算法參數（評分、瀏覽數、推薦次數）'
+}
+Ref: insurance_recommendation_params.insurance_id - insurances.id

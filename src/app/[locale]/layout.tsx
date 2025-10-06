@@ -51,10 +51,10 @@ export const metadata: Metadata = {
         url: "/opengraph-image.png",
         width: 1200,
         height: 630,
-        alt: "Prinsur - Smart Insurance Matching Preview"
+        alt: "Prinsur - Smart Insurance Matching Preview",
       },
     ],
-    type: "website"
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",

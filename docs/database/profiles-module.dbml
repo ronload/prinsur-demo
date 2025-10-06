@@ -1,0 +1,182 @@
+Project profiles_module {
+    database_type: 'PostgreSQL'
+    Note: '''
+    客戶與業務員檔案模組
+    包含：消費者檔案、病史管理、業務員檔案、推薦參數
+    '''
+}
+
+//// ==========================================
+//// 客戶與業務員檔案模組 (User Profiles)
+//// ==========================================
+
+// 引用主表（僅顯示關聯）
+Table users [headercolor: #E8E8E8] {
+    id   int [pk]
+    name text
+    Note: '來自 user-auth-module'
+}
+
+Enum gender {
+    male
+    female
+}
+
+//// 🔹 消費者檔案
+Table customer_profiles [headercolor: #3498db] {
+    user_id          int           [pk]
+    age              int
+    gender           gender
+    weight_kg        numeric(5, 2)
+    height_cm        numeric(5, 2)
+    location_city    varchar
+    occupation_level varchar
+    created_at       timestamptz   [default: `now()`]
+    created_by       int           [not null]
+    updated_at       timestamptz   [default: `now()`]
+    updated_by       int           [not null]
+    deleted_at       timestamptz
+    deleted_by       int
+
+    Note: '消費者基本資料檔案，用於保險推薦'
+}
+Ref: customer_profiles.user_id - users.id [delete: cascade]
+
+//// 🔹 病史加密儲存（AES-256-GCM + HMAC-SHA256）
+Table customer_medical_histories [headercolor: #3498db] {
+    id                        int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id                   int         [not null]
+
+    // 醫療資訊加密欄位
+    medical_history_encrypted bytea       [note: 'AES-256-GCM encrypted medical history']
+    medical_history_iv        bytea       [note: 'Initialization Vector']
+    medical_history_auth_tag  bytea       [note: 'Authentication Tag']
+    encryption_key_id         varchar(50) [not null, note: 'Encryption key version']
+
+    // 可搜尋雜湊（用於查詢特定疾病）
+    condition_hash            varchar(64) [not null, note: 'HMAC-SHA256(user_id:condition)']
+
+    created_at                timestamptz [default: `now()`]
+
+    Indexes {
+        user_id
+        condition_hash
+        (user_id, condition_hash) [unique]
+    }
+
+    Note: '病史加密儲存，支援特定疾病查詢（如：糖尿病、高血壓）'
+}
+Ref: customer_medical_histories.user_id > customer_profiles.user_id
+
+//// 🔹 業務員檔案
+Table agent_profiles [headercolor: #e74c3c] {
+    user_id        int         [pk]
+    license_number varchar     [unique, not null, note: '保險業務員執照號碼']
+    company_id     int
+    position       varchar
+    address        varchar
+    bio            text
+    created_at     timestamptz [default: `now()`]
+    created_by     int         [not null]
+    updated_at     timestamptz [default: `now()`]
+    updated_by     int         [not null]
+    deleted_at     timestamptz
+    deleted_by     int
+
+    Indexes {
+        company_id
+    }
+
+    Note: '保險業務員檔案'
+}
+Ref: agent_profiles.user_id - users.id [delete: cascade]
+
+//// 🔹 業務員服務地區
+Table agent_service_areas [headercolor: #e74c3c] {
+    id           int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id      int  [not null]
+    service_area text [not null, note: '服務地區（如：台北市、新北市）']
+
+    Indexes {
+        user_id
+        service_area
+        (user_id, service_area) [unique]
+    }
+
+    Note: '業務員服務地區（多對多關係）'
+}
+Ref: agent_service_areas.user_id > agent_profiles.user_id [delete: cascade]
+
+//// 🔹 業務員專業類別
+Table agent_service_categories [headercolor: #e74c3c] {
+    id               int  [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id          int  [not null]
+    service_category text [not null, note: '專業類別（如：壽險、健康險）']
+
+    Indexes {
+        user_id
+        service_category
+        (user_id, service_category) [unique]
+    }
+
+    Note: '業務員專業類別（多對多關係）'
+}
+Ref: agent_service_categories.user_id > agent_profiles.user_id [delete: cascade]
+
+//// 🔹 業務員支援語言
+Enum language {
+    chinese
+    taiwanese
+    hakka
+    english
+}
+
+Table agent_supported_languages [headercolor: #e74c3c] {
+    id                 int      [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    user_id            int      [not null]
+    supported_language language [not null]
+
+    Indexes {
+        user_id
+        (user_id, supported_language) [unique]
+    }
+
+    Note: '業務員支援語言（多對多關係）'
+}
+Ref: agent_supported_languages.user_id > agent_profiles.user_id
+
+//// 🔹 業務員推薦參數（用於演算法排序）
+Table agent_recommendation_params {
+    user_id      int           [pk, not null]
+    rating_score numeric(2, 1) [note: '平均評分 1.0-5.0']
+    rating_count int           [default: 0]
+    view_count   int           [default: 0]
+
+    Note: '業務員推薦演算法參數（評分、瀏覽數）'
+}
+Ref: agent_recommendation_params.user_id > agent_profiles.user_id
+
+//// 🔹 業務員與客戶關係
+Table agent_customer_relations [headercolor: #95a5a6] {
+    id          int         [pk, increment, note: 'GENERATED ALWAYS AS IDENTITY']
+    customer_id int
+    agent_id    int
+    created_at  timestamptz [default: `now()`]
+
+    Indexes {
+        customer_id
+        agent_id
+    }
+
+    Note: '記錄業務員服務過的客戶（多對多關係）'
+}
+Ref: agent_customer_relations.customer_id > customer_profiles.user_id
+Ref: agent_customer_relations.agent_id > agent_profiles.user_id
+
+// 保險公司（來自 insurance-module）
+Table companies [headercolor: #E8E8E8] {
+    id   int     [pk]
+    name varchar
+    Note: '來自 insurance-module'
+}
+Ref: agent_profiles.company_id > companies.id

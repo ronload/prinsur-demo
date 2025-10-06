@@ -280,7 +280,7 @@ export default function PoliciesPage({ params }: PoliciesPageProps) {
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm font-medium">
                         <Shield className="h-4 w-4" />
-                        {locale === "en" ? "Coverage Info" : "保障資訊"}
+                        {locale === "en" ? "Coverage Info" : "保障時間"}
                       </div>
                       <div className="text-2xl font-bold text-green-600">
                         {formatCurrency(policy.coverage.amount)}
